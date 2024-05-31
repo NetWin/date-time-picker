@@ -1,33 +1,36 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from '../../projects/picker/src/public_api';
 
-import { Moment } from 'moment';
-import * as moment from 'moment-timezone';
-
-import { OwlDateTimeComponent } from '../../projects/picker/src/public_api';
+/** One day in milliseconds */
+const ONE_DAY = 24 * 60 * 60 * 1000;
 
 @Component({
+  standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.sass']
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    FormsModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule
+  ]
 })
-export class AppComponent implements AfterViewInit {
-  @ViewChild('date_range_component', { static: true })
-  date_range_component: OwlDateTimeComponent<AppComponent>;
-  public selectedMoments: Moment[] = [
-    moment('2019-03-11T08:00:00+11:00').tz('America/Los_Angeles'),
-    moment('2019-03-11T15:00:00+11:00').tz('America/Los_Angeles')
+export class AppComponent {
+
+  protected readonly currentTab = signal<string>('date-range');
+
+  protected selectedDates: [Date, Date] = [
+    new Date(Date.now() - ONE_DAY),
+    new Date(Date.now() + ONE_DAY)
   ];
 
+  protected currentValue: Date = new Date(this.selectedDates[0]);
 
-  currentValue: Date = new Date('4/21/2020, 12:00 AM');
-  endValue: Date = new Date('4/21/2020, 11:59 PM');
+  protected endValue: Date = new Date(this.selectedDates[1]);
 
-  open_once = false;
-
-  ngAfterViewInit() {
-  }
-
-  selectedTrigger(_date) {
-    console.log(_date);
+  protected selectedTrigger(date: Date): void {
+    console.log(date);
   }
 }
