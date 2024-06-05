@@ -18,16 +18,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Upgrade Chrome browser
         run: |
             sudo apt-get update
             sudo apt-get --only-upgrade install google-chrome-stable
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
-            node-version: '20.10.0'
+            node-version: lts/*
       - name: Install dependencies
         run: npm ci
       - name: Run tests
-        run: npm run test-with-coverage     
+        run: npm run test-with-coverage
