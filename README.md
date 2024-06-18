@@ -1,3 +1,8 @@
+> [!NOTE]
+> This is a fork of https://github.com/danielmoncada/date-time-picker and will be kept up to date until the [Angular 18 Update](https://github.com/danielmoncada/date-time-picker/pull/199) is merged / released.
+
+----
+
 :date: :clock1: Angular Date/Time Picker
 ========================
 
