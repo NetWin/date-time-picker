@@ -1,24 +1,22 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from '../../projects/picker/src/public_api';
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from '../../../picker/src/public_api';
 
 /** One day in milliseconds */
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
 @Component({
   standalone: true,
-  selector: 'app-root',
+  selector: 'demo-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    FormsModule,
     OwlDateTimeModule,
-    OwlNativeDateTimeModule
-  ]
+    OwlNativeDateTimeModule,
+    FormsModule
+  ],
 })
 export class AppComponent {
-
   protected readonly currentTab = signal<string>('date-range');
 
   protected selectedDates: [Date, Date] = [
