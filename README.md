@@ -4,12 +4,13 @@
 [![npm](https://img.shields.io/npm/v/@danielmoncada/angular-datetime-picker.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/@danielmoncada/angular-datetime-picker)
 [![npm](https://img.shields.io/npm/dm/@danielmoncada/angular-datetime-picker.svg)](https://www.npmjs.com/package/@danielmoncada/angular-datetime-picker)
 
-**The current version of this package supports Angular 17**
+**The current version of this package supports Angular 18**
 
 If you need support for other Angular version, see *Breaking Changes* below.
 
 Breaking Changes
 -------
+ - Version 18.x.x >= no longer supports ng 17. If you need ng 17 support, stick with version 17.x.x.
  - Version 17.x.x >= no longer supports ng 16 - 13. If you need ng 16-13 support, stick with version 16.x.x.
  - Version 14.x.x >= no longer supports < ng 13. If you need View Engine support, stick with version 13.x.x.
  - Version 13.1.0+ no longer supports the `MomentJs` time adapter natively. If you want to use the MomentJs adapter, see [GitHub](https://github.com/danielmoncada/date-time-picker-moment-adapter) or [npm](https://www.npmjs.com/package/@danielmoncada/angular-datetime-picker-moment-adapter).
@@ -18,17 +19,17 @@ Breaking Changes
 Description
 -------
 Simple Angular date time picker. Online doc is [here](https://daniel-projects.firebaseapp.com/owlng/date-time-picker), Online demos(StackBlitz) are [here](https://stackblitz.com/edit/angular-vvp849) and [here](https://stackblitz.com/edit/angular-i7ykf5).
-This picker is responsive design, so feel free to try it in your desktops, tablets and mobile devices. 
+This picker is responsive design, so feel free to try it in your desktops, tablets and mobile devices.
 
 How to Use
 -------
 
  1. Install with [npm](https://www.npmjs.com): `npm install @danielmoncada/angular-datetime-picker --save`
  2. Add styles.
-    If you are using Angular CLI, you can add this to your styles.css: 
+    If you are using Angular CLI, you can add this to your styles.css:
     ```css
     @import "@danielmoncada/angular-datetime-picker/assets/style/picker.min.css";
-    ``` 
+    ```
     If you are not using the Angular CLI, you can include the picker.min.css via a ```<link>``` element in your index.html.
  3. Add __OwlDateTimeModule__ and __OwlNativeDateTimeModule__ to your __@NgModule__ like example below
     ```typescript
@@ -58,13 +59,13 @@ How to Use
     <span [owlDateTimeTrigger]="dt2"><i class="fa fa-calendar"></i></span>
     <owl-date-time #dt2></owl-date-time>
     ```
-    The examples above are quite basic. The picker has much more features, 
+    The examples above are quite basic. The picker has much more features,
     and you could learn more about those from [demo page](https://danielykpan.github.io/date-time-picker/).
-    
+
 
 Animation
 -------
-This picker uses angular animations to improve the user experience, 
+This picker uses angular animations to improve the user experience,
 therefore you need to install `@angular/animations` and import `BrowserAnimationsModule` to your application.
 ```
 npm install @angular/animations --save
@@ -114,7 +115,7 @@ Properties for `owl-date-time`
 |`yearOnly`|boolean|Optional|`false`| Restricts the calendar to only show the year and multi-year views for month selection. |
 |`multiyearOnly`|boolean|Optional|`false`| Restricts the calendar to only show the multi-year view for year selection. |
 |`startAt`| T/null |Optional|`null`| The moment to open the picker to initially. |
-|`endAt`| T/null |Optional|`null`| The the default selected time for range calendar end time | 
+|`endAt`| T/null |Optional|`null`| The the default selected time for range calendar end time |
 |`firstDayOfWeek`|number|Optional|`0`| Set the first day of week. Valid value is from 0 to 6. 0: Sunday - 6: Saturday|
 |`showSecondsTimer`|boolean|Optional|`false`| When specify it to true, it would show a timer to configure the second's value |
 |`hideOtherMonths`|boolean|Optional|`false`| Whether to hide dates in other months at the start or end of the current month |
@@ -182,7 +183,7 @@ Properties for `owl-date-time-inline`
 |`pickerType`|`both`, `calendar`, `timer`|Optional|`both`| Set the type of the dateTime picker. `both`: show both calendar and timer, `calendar`: only show calendar, `timer`: only show timer. |
 |`startView`|`month`, `year`, `multi-year`|Optional|`month`| The view that the calendar should start in. |
 |`startAt`| T/null |Optional|`null`| The moment to open the picker to initially. |
-|`endAt`| T/null |Optional|`null`| The the default selected time for range calendar end time | 
+|`endAt`| T/null |Optional|`null`| The the default selected time for range calendar end time |
 |`firstDayOfWeek`|number|Optional|`0`| Set the first day of week. Valid value is from 0 to 6. 0: Sunday - 6: Saturday|
 |`showSecondsTimer`|boolean|Optional|`false`| When specify it to true, it would show a timer to configure the second's value |
 |`hideOtherMonths`|boolean|Optional|`false`| Whether to hide dates in other months at the start or end of the current month |
