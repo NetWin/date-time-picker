@@ -1,7 +1,3 @@
-/**
- * date-time-picker.component.spec
- */
-
 import { ENTER, ESCAPE, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import {
@@ -30,7 +26,7 @@ import {
   dispatchKeyboardEvent,
   dispatchMouseEvent
 } from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
 import { OwlDateTimeInputDirective } from './date-time-picker-input.directive';
 import { OwlDateTimeTriggerDirective } from './date-time-picker-trigger.directive';

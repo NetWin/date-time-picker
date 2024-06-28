@@ -1,7 +1,3 @@
-/**
- * timer.component
- */
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -14,8 +10,8 @@ import {
   Optional,
   Output
 } from '@angular/core';
-import { take } from 'rxjs/operators';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { take } from 'rxjs';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 
 @Component({

@@ -1,6 +1,3 @@
-/**
- * dialog-ref.class
- */
 import { AnimationEvent } from '@angular/animations';
 import { ESCAPE } from '@angular/cdk/keycodes';
 import { GlobalPositionStrategy, OverlayRef } from '@angular/cdk/overlay';

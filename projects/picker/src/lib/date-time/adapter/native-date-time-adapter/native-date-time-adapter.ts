@@ -1,21 +1,17 @@
-/**
- * native-date-time-adapter.class
- */
-
 import { Platform } from '@angular/cdk/platform';
 import { Inject, Injectable, Optional } from '@angular/core';
-import { range } from '../../utils/array.utils';
+import { range } from '../../../utils/array.utils';
 import {
   DEFAULT_DATE_NAMES,
   DEFAULT_DAY_OF_WEEK_NAMES,
   DEFAULT_MONTH_NAMES,
   SUPPORTS_INTL_API
-} from '../../utils/constants';
-import { createDate, getNumDaysInMonth } from '../../utils/date.utils';
+} from '../../../utils/constants';
+import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import {
   DateTimeAdapter,
   OWL_DATE_TIME_LOCALE
-} from './date-time-adapter.class';
+} from '../date-time-adapter';
 
 /**
  * Matches strings that have the form of a valid RFC 3339 string

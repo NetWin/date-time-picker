@@ -1,7 +1,3 @@
-/**
- * calendar-body.component
- */
-
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,8 +8,8 @@ import {
   OnInit,
   Output
 } from '@angular/core';
-import { take } from 'rxjs/operators';
-import { SelectMode } from './date-time.class';
+import { take } from 'rxjs';
+import { SelectMode } from '../date-time.class';
 
 export class CalendarCell {
   constructor(

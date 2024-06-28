@@ -1,7 +1,3 @@
-/**
- * calendar.component.spec
- */
-
 import { ENTER, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import { Component, NgZone } from '@angular/core';
 import {
@@ -17,7 +13,7 @@ import {
   dispatchKeyboardEvent,
   dispatchMouseEvent
 } from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlYearViewComponent } from './calendar-year-view.component';

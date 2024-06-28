@@ -1,7 +1,3 @@
-/**
- * date-time-format.class
- */
-
 import { InjectionToken } from '@angular/core';
 
 export interface OwlDateTimeFormats {

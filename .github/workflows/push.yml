@@ -5,12 +5,12 @@ on:
     branches:
       - "**"
     paths-ignore:
-      - '*.md'
+      - "*.md"
   pull_request:
     branches:
       - "**"
     paths-ignore:
-      - '*.md'
+      - "*.md"
 
   workflow_dispatch:
 
@@ -28,10 +28,16 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version: lts/*
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests
         run: npm run test:ci
+
+      - name: Run build (picker)
+        run: npm run build:picker
+
+      - name: Run build (docs)
+        run: npm run build:docs

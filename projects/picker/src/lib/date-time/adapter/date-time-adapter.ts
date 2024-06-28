@@ -1,6 +1,3 @@
-/**
- * date-time-adapter.class
- */
 import { InjectionToken, LOCALE_ID, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 

@@ -1,6 +1,3 @@
-/**
- * calendar-month-view.component.spec
- */
 import {
   DOWN_ARROW,
   END,
@@ -18,8 +15,8 @@ import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MONTHS, dispatchKeyboardEvent } from '../../test-helpers';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';

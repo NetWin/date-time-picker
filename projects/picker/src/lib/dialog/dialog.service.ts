@@ -1,7 +1,3 @@
-/**
- * dialog.service
- */
-
 import {
   Overlay,
   OverlayConfig,
@@ -25,8 +21,7 @@ import {
   SkipSelf,
   TemplateRef
 } from '@angular/core';
-import { Observable, Subject, defer } from 'rxjs';
-import { startWith } from 'rxjs/operators';
+import { Observable, Subject, defer, startWith } from 'rxjs';
 import { extendObject } from '../utils';
 import { OwlDialogConfig, OwlDialogConfigInterface } from './dialog-config';
 import { OwlDialogContainerComponent } from './dialog-container.component';

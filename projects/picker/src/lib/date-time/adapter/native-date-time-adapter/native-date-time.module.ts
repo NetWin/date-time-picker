@@ -1,13 +1,9 @@
-/**
- * native-date-time.module
- */
-
 import { PlatformModule } from '@angular/cdk/platform';
 import { NgModule } from '@angular/core';
-import { DateTimeAdapter } from './date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS } from './date-time-format.class';
-import { NativeDateTimeAdapter } from './native-date-time-adapter.class';
-import { OWL_NATIVE_DATE_TIME_FORMATS } from './native-date-time-format.class';
+import { DateTimeAdapter } from '../date-time-adapter';
+import { OWL_DATE_TIME_FORMATS } from '../date-time-format';
+import { NativeDateTimeAdapter } from './native-date-time-adapter';
+import { OWL_NATIVE_DATE_TIME_FORMATS } from './native-date-time-format';
 
 @NgModule({
   imports: [PlatformModule],

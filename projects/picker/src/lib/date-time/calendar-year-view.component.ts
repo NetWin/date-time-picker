@@ -1,7 +1,3 @@
-/**
- * calendar-year-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -28,15 +24,15 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 import {
   CalendarCell,
   OwlCalendarBodyComponent
-} from './calendar-body.component';
+} from './calendar-body/calendar-body.component';
 import { SelectMode } from './date-time.class';
 
 const MONTHS_PER_YEAR = 12;

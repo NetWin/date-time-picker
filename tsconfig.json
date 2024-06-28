@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
+    "baseUrl": "./",
     "strict": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -17,6 +18,12 @@
       "picker": [
         "./projects/picker/src/public_api.ts",
         "./dist/picker"
+      ],
+      "@ng-doc/generated": [
+        "ng-doc/docs/index.ts"
+      ],
+      "@ng-doc/generated/*": [
+        "ng-doc/docs/*"
       ]
     },
     "importHelpers": true,

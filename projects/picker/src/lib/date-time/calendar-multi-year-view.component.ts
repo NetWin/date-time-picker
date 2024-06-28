@@ -21,8 +21,8 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body/calendar-body.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { SelectMode } from './date-time.class';
 import { OptionsTokens } from './options-provider';

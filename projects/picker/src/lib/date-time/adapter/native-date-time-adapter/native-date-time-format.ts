@@ -1,7 +1,4 @@
-/**
- * native-date-time-format.class
- */
-import { OwlDateTimeFormats } from './date-time-format.class';
+import { OwlDateTimeFormats } from '../date-time-format';
 
 export const OWL_NATIVE_DATE_TIME_FORMATS: OwlDateTimeFormats = {
   parseInput: null,

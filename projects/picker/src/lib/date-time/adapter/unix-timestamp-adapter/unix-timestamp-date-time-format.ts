@@ -1,7 +1,4 @@
-/**
- * unix-timestamp-date-time-format.class
- */
-import { OwlDateTimeFormats } from '../date-time-format.class';
+import { OwlDateTimeFormats } from '../date-time-format';
 
 export const OWL_UNIX_TIMESTAMP_DATE_TIME_FORMATS: OwlDateTimeFormats = {
   parseInput: null,

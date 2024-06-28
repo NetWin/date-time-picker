@@ -1,7 +1,3 @@
-/**
- * calendar.component
- */
-
 import {
   AfterContentInit,
   AfterViewChecked,
@@ -18,10 +14,9 @@ import {
   Optional,
   Output
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
+import { Subscription, take } from 'rxjs';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { DateView, DateViewType, SelectMode } from './date-time.class';
 

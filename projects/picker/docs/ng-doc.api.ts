@@ -4,10 +4,9 @@ const api: NgDocApi = {
   title: 'API Reference',
   scopes: [
     {
-      name: 'my-library-name',
-      route: 'my-library',
-      include: 'projects/picker/src/**/*.ts',
-      exclude: 'projects/picker/src/**/*.spec.ts'
+      name: 'DateTimePicker',
+      route: 'date-time-picker--api',
+      include: 'projects/picker/src/public_api.ts'
     },
   ],
 };

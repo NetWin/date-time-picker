@@ -1,7 +1,3 @@
-/**
- * numberFixedLen.pipe
- */
-
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'numberFixedLen' })

@@ -1,7 +1,3 @@
-/**
- * timer-box.component
- */
-
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
@@ -14,8 +10,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Subject, Subscription, debounceTime } from 'rxjs';
 
 @Component({
   exportAs: 'owlDateTimeTimerBox',

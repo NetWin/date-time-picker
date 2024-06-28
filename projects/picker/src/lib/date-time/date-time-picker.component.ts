@@ -1,7 +1,3 @@
-/**
- * date-time-picker.component
- */
-
 import { coerceArray, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ESCAPE, UP_ARROW } from '@angular/cdk/keycodes';
 import {
@@ -30,15 +26,14 @@ import {
   Output,
   ViewContainerRef
 } from '@angular/core';
-import { Subscription, merge } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { Subscription, filter, merge, take } from 'rxjs';
 import { OwlDialogRef } from '../dialog/dialog-ref.class';
 import { OwlDialogService } from '../dialog/dialog.service';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
 import { OwlDateTimeInputDirective } from './date-time-picker-input.directive';
 import {

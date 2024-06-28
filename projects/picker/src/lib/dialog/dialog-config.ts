@@ -1,6 +1,3 @@
-/**
- * dialog-config.class
- */
 import { NoopScrollStrategy, ScrollStrategy } from '@angular/cdk/overlay';
 import { ViewContainerRef } from '@angular/core';
 

@@ -1,6 +1,3 @@
-/**
- * date-time-picker.animations
- */
 import {
   animate, animateChild,
   AnimationTriggerMetadata,

@@ -1,7 +1,3 @@
-/**
- * date-time-picker-container.component
- */
-
 import { AnimationEvent } from '@angular/animations';
 import {
   DOWN_ARROW,
@@ -22,7 +18,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import { OwlCalendarComponent } from './calendar.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { owlDateTimePickerAnimations } from './date-time-picker.animations';

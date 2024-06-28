@@ -16,7 +16,7 @@ import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MONTHS, dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';

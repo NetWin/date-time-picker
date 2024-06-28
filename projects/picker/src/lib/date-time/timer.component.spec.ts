@@ -1,7 +1,3 @@
-/**
- * timer.component.spec
- */
-
 import { Component, DebugElement, NgZone } from '@angular/core';
 import {
   ComponentFixture,
@@ -11,7 +7,7 @@ import {
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MONTHS, MockNgZone, dispatchFakeEvent } from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 import { OwlTimerComponent } from './timer.component';
@@ -335,17 +331,18 @@ describe('OwlTimerComponent', () => {
 
 @Component({
   template: `
-        <owl-date-time-timer
-                [hour12Timer]="hour12Timer"
-                [showSecondsTimer]="showSecondsTimer"
-                [pickerMoment]="pickerMoment"
-                [stepHour]="stepHour"
-                [stepMinute]="stepMinute"
-                [stepSecond]="stepSecond"
-                [minDateTime]="minDateTime"
-                [maxDateTime]="maxDateTime"
-                (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
-    `
+    <owl-date-time-timer
+      [hour12Timer]="hour12Timer"
+      [showSecondsTimer]="showSecondsTimer"
+      [pickerMoment]="pickerMoment"
+      [stepHour]="stepHour"
+      [stepMinute]="stepMinute"
+      [stepSecond]="stepSecond"
+      [minDateTime]="minDateTime"
+      [maxDateTime]="maxDateTime"
+      (selectedChange)="handleSelectedChange($event)">
+    </owl-date-time-timer>
+  `
 })
 class StandardTimerComponent {
   stepHour = 1;

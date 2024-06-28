@@ -1,13 +1,9 @@
-/**
- * date-time.module
- */
-
 import { A11yModule } from '@angular/cdk/a11y';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OwlDialogModule } from '../dialog/dialog.module';
-import { OwlCalendarBodyComponent } from './calendar-body.component';
+import { OwlCalendarBodyComponent } from './calendar-body/calendar-body.component';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlYearViewComponent } from './calendar-year-view.component';

@@ -1,8 +1,3 @@
-/**
- * date-time-picker-trigger.directive
- */
-
-
 import {
   AfterContentInit,
   ChangeDetectorRef,

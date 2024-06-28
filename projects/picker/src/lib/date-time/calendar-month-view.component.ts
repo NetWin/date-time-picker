@@ -1,7 +1,3 @@
-/**
- * calendar-month-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -29,15 +25,15 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 import {
   CalendarCell,
   OwlCalendarBodyComponent
-} from './calendar-body.component';
+} from './calendar-body/calendar-body.component';
 import { SelectMode } from './date-time.class';
 
 const DAYS_PER_WEEK = 7;
@@ -48,10 +44,7 @@ const WEEKS_PER_VIEW = 6;
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
   styleUrls: ['./calendar-month-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
-  preserveWhitespaces: false,
+  host: { '[class.owl-dt-calendar-view]': 'owlDTCalendarView' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlMonthViewComponent<T>

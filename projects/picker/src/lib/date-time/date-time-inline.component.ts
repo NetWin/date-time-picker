@@ -1,7 +1,3 @@
-/**
- * date-time-inline.component
- */
-
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
@@ -16,11 +12,11 @@ import {
   ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
 import {
   OwlDateTime,

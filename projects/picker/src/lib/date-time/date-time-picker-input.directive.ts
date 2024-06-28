@@ -1,7 +1,3 @@
-/**
- * date-time-picker-input.directive
- */
-
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { DOWN_ARROW } from '@angular/cdk/keycodes';
 import {
@@ -29,11 +25,11 @@ import {
   Validators
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 import { OwlDateTimeComponent } from './date-time-picker.component';
 import { SelectMode } from './date-time.class';
 

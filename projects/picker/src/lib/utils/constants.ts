@@ -1,7 +1,3 @@
-/**
- * constants
- */
-
 import { range } from './array.utils';
 
 /** Whether the browser supports the Intl API. */

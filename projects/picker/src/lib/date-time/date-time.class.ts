@@ -1,16 +1,13 @@
-/**
- * date-time.class
- */
 import {
   coerceBooleanProperty,
   coerceNumberProperty
 } from '@angular/cdk/coercion';
 import { Directive, EventEmitter, Inject, Input, Optional } from '@angular/core';
-import { DateTimeAdapter } from './adapter/date-time-adapter.class';
+import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format.class';
+} from './adapter/date-time-format';
 
 let nextUniqueId = 0;
 
