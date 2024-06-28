@@ -1,9 +1,21 @@
 <ng-doc-root>
 
-  <ng-doc-navbar [leftContent]="leftContent" [glassEffect]="false">
+  <ng-doc-navbar
+    [leftContent]="leftContent"
+    [rightContent]="rightContent"
+    [glassEffect]="false">
     <ng-template #leftContent>
       <a routerLink="home">
         <h3>DateTimePicker</h3>
+      </a>
+    </ng-template>
+
+    <ng-template #rightContent>
+      <a
+        href="https://github.com/NetWin/date-time-picker"
+        target="_blank"
+        rel="noopener noreferrer">
+        <img src="github-mark-white.png" width="24px" height="24px">
       </a>
     </ng-template>
   </ng-doc-navbar>
