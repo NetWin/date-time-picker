@@ -1,4 +1,4 @@
-name: CI Test
+name: Push
 
 on:
   push:
@@ -36,8 +36,8 @@ jobs:
       - name: Run tests
         run: npm run test:ci
 
-      - name: Run build (picker)
-        run: npm run build:picker
+      - name: Run build (lib)
+        run: npm run build:lib
 
       - name: Run build (docs)
         run: npm run build:docs
