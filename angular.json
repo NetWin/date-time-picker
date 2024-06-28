@@ -4,7 +4,7 @@
   "cli": {
     "cache": {
       "enabled": true,
-      "path": ".cache",
+      "path": ".angular",
       "environment": "all"
     }
   },
@@ -44,36 +44,36 @@
         }
       }
     },
-    "demo-app": {
+    "docs": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/demo-app",
-      "sourceRoot": "projects/demo-app/src",
-      "prefix": "demo",
+      "root": "projects/docs",
+      "sourceRoot": "projects/docs/src",
+      "prefix": "doc",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/demo-app",
-            "index": "projects/demo-app/src/index.html",
-            "browser": "projects/demo-app/src/main.ts",
+            "outputPath": "dist/docs",
+            "index": "projects/docs/src/index.html",
+            "browser": "projects/docs/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "projects/demo-app/tsconfig.app.json",
+            "tsConfig": "projects/docs/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/demo-app/public"
+                "input": "projects/docs/public"
               }
             ],
             "styles": [
-              "projects/demo-app/src/styles.scss"
+              "projects/docs/src/styles.scss"
             ],
             "scripts": []
           },
@@ -105,10 +105,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "demo-app:build:production"
+              "buildTarget": "docs:build:production"
             },
             "development": {
-              "buildTarget": "demo-app:build:development"
+              "buildTarget": "docs:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -123,16 +123,16 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "projects/demo-app/tsconfig.spec.json",
+            "tsConfig": "projects/docs/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/demo-app/public"
+                "input": "projects/docs/public"
               }
             ],
             "styles": [
-              "projects/demo-app/src/styles.scss"
+              "projects/docs/src/styles.scss"
             ],
             "scripts": []
           }
