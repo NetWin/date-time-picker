@@ -6,31 +6,28 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Inject,
   Input,
   NgZone,
   OnDestroy,
-  OnInit,
   Optional,
   Output
 } from '@angular/core';
 import { Subscription, take } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format';
-import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { DateView, DateViewType, SelectMode } from './date-time.class';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter/date-time-format';
+import { DateView, DateViewType, SelectMode } from '../date-time';
+import { OwlDateTimeIntl } from '../date-time-intl.service';
 
 @Component({
   selector: 'owl-date-time-calendar',
   exportAs: 'owlDateTimeCalendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
-  host: { '[class.owl-dt-calendar]': 'owlDTCalendarClass' },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlCalendarComponent<T>
-  implements OnInit, AfterContentInit, AfterViewChecked, OnDestroy {
+export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked, OnDestroy {
 
   DateView = DateView;
 
@@ -40,14 +37,14 @@ export class OwlCalendarComponent<T>
   }
 
   set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    value = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    const validated = this.getValidDate(deserialized);
 
-    this._minDate = value
+    this._minDate = validated
       ? this.dateTimeAdapter.createDate(
-        this.dateTimeAdapter.getYear(value),
-        this.dateTimeAdapter.getMonth(value),
-        this.dateTimeAdapter.getDate(value)
+        this.dateTimeAdapter.getYear(validated),
+        this.dateTimeAdapter.getMonth(validated),
+        this.dateTimeAdapter.getDate(validated)
       )
       : null;
   }
@@ -58,14 +55,14 @@ export class OwlCalendarComponent<T>
   }
 
   set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    value = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    const validated = this.getValidDate(deserialized);
 
-    this._maxDate = value
+    this._maxDate = validated
       ? this.dateTimeAdapter.createDate(
-        this.dateTimeAdapter.getYear(value),
-        this.dateTimeAdapter.getMonth(value),
-        this.dateTimeAdapter.getDate(value)
+        this.dateTimeAdapter.getYear(validated),
+        this.dateTimeAdapter.getMonth(validated),
+        this.dateTimeAdapter.getDate(validated)
       )
       : null;
   }
@@ -76,9 +73,8 @@ export class OwlCalendarComponent<T>
   }
 
   set pickerMoment(value: T) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment =
-      this.getValidDate(value) || this.dateTimeAdapter.now();
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(deserialized) || this.dateTimeAdapter.now();
   }
 
   @Input()
@@ -87,29 +83,30 @@ export class OwlCalendarComponent<T>
   }
 
   set selected(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._selected = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._selected = this.getValidDate(deserialized);
   }
 
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
-    this._selecteds = values.map(v => {
-      v = this.dateTimeAdapter.deserialize(v);
-      return this.getValidDate(v);
+  set selecteds(values: Array<T>) {
+    this._selecteds = values.map(value => {
+      const deserialized = this.dateTimeAdapter.deserialize(value);
+      return this.getValidDate(deserialized);
     });
   }
 
   get periodButtonText(): string {
-    return this.isMonthView
-      ? this.dateTimeAdapter.format(
+    if (this.isMonthView) {
+      return this.dateTimeAdapter.format(
         this.pickerMoment,
         this.dateTimeFormats.monthYearLabel
-      )
-      : this.dateTimeAdapter.getYearName(this.pickerMoment);
+      );
+    }
+    return this.dateTimeAdapter.getYearName(this.pickerMoment);
   }
 
   get periodButtonLabel(): string {
@@ -170,6 +167,7 @@ export class OwlCalendarComponent<T>
   /**
    * Bind class 'owl-dt-calendar' to host
    * */
+  @HostBinding('class.owl-dt-calendar')
   get owlDTCalendarClass(): boolean {
     return true;
   }
@@ -216,7 +214,7 @@ export class OwlCalendarComponent<T>
   /** The currently selected moment. */
   private _selected: T | null;
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
 
   /**
    * The view that the calendar should start in.
@@ -294,9 +292,6 @@ export class OwlCalendarComponent<T>
         this.dateTimeAdapter.compare(date, this.maxDate) <= 0)
     );
   };
-
-  public ngOnInit() {
-  }
 
   public ngAfterContentInit(): void {
     this._currentView = this.startView;

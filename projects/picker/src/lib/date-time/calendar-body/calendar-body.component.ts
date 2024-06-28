@@ -3,13 +3,13 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   NgZone,
-  OnInit,
   Output
 } from '@angular/core';
 import { take } from 'rxjs';
-import { SelectMode } from '../date-time.class';
+import { SelectMode } from '../date-time';
 
 export class CalendarCell {
   constructor(
@@ -27,13 +27,9 @@ export class CalendarCell {
   exportAs: 'owlDateTimeCalendarBody',
   templateUrl: './calendar-body.component.html',
   styleUrls: ['./calendar-body.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-body]': 'owlDTCalendarBodyClass'
-  },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlCalendarBodyComponent implements OnInit {
+export class OwlCalendarBodyComponent {
   /**
    * The cell number of the active cell in the table.
    */
@@ -82,6 +78,7 @@ export class OwlCalendarBodyComponent implements OnInit {
   @Output()
   public readonly select = new EventEmitter<CalendarCell>();
 
+  @HostBinding('class.owl-dt-calendar-body')
   get owlDTCalendarBodyClass(): boolean {
     return true;
   }
@@ -99,8 +96,6 @@ export class OwlCalendarBodyComponent implements OnInit {
   }
 
   constructor(private elmRef: ElementRef, private ngZone: NgZone) { }
-
-  public ngOnInit() { }
 
   public selectCell(cell: CalendarCell): void {
     this.select.emit(cell);

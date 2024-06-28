@@ -1,54 +1,53 @@
 import { coerceArray, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ESCAPE, UP_ARROW } from '@angular/cdk/keycodes';
 import {
-  BlockScrollStrategy,
-  Overlay,
-  OverlayConfig,
-  OverlayRef,
-  PositionStrategy,
-  ScrollStrategy
+    BlockScrollStrategy,
+    Overlay,
+    OverlayConfig,
+    OverlayRef,
+    PositionStrategy,
+    ScrollStrategy
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ComponentRef,
-  EventEmitter,
-  Inject,
-  InjectionToken,
-  Input,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Output,
-  ViewContainerRef
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ComponentRef,
+    EventEmitter,
+    Inject,
+    InjectionToken,
+    Input,
+    NgZone,
+    OnDestroy,
+    Optional,
+    Output,
+    ViewContainerRef
 } from '@angular/core';
 import { Subscription, filter, merge, take } from 'rxjs';
-import { OwlDialogRef } from '../dialog/dialog-ref.class';
-import { OwlDialogService } from '../dialog/dialog.service';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { OwlDialogRef } from '../../dialog/dialog-ref.class';
+import { OwlDialogService } from '../../dialog/dialog.service';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
-  OWL_DATE_TIME_FORMATS,
-  OwlDateTimeFormats
-} from './adapter/date-time-format';
-import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
-import { OwlDateTimeInputDirective } from './date-time-picker-input.directive';
+    OWL_DATE_TIME_FORMATS,
+    OwlDateTimeFormats
+} from '../adapter/date-time-format';
 import {
-  OwlDateTime,
-  PickerMode,
-  PickerType,
-  SelectMode
-} from './date-time.class';
+    OwlDateTime,
+    PickerMode,
+    PickerType,
+    SelectMode
+} from '../date-time';
+import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
+import { OwlDateTimeInputDirective } from '../date-time-picker-input/date-time-picker-input.directive';
 
 /** Injection token that determines the scroll handling while the dtPicker is open. */
 export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<
   () => ScrollStrategy
 >('owl-dtpicker-scroll-strategy');
 
-/** @docs-private */
+/** @internal */
 export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(
   overlay: Overlay
 ): () => BlockScrollStrategy {
@@ -56,7 +55,7 @@ export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(
   return fn;
 }
 
-/** @docs-private */
+/** @internal */
 export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
   provide: OWL_DTPICKER_SCROLL_STRATEGY,
   deps: [Overlay],
@@ -68,18 +67,16 @@ export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
   exportAs: 'owlDateTime',
   templateUrl: './date-time-picker.component.html',
   styleUrls: ['./date-time-picker.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  preserveWhitespaces: false
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlDateTimeComponent<T> extends OwlDateTime<T>
-  implements OnInit, OnDestroy {
+export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy {
   /** Custom class for the picker backdrop. */
   @Input()
-  public backdropClass: string | string[] = [];
+  public backdropClass: string | Array<string> = [];
 
   /** Custom class for the picker overlay pane. */
   @Input()
-  public panelClass: string | string[] = [];
+  public panelClass: string | Array<string> = [];
 
   /** The date to open the calendar to initially. */
   private _startAt: T | null;
@@ -255,7 +252,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T>
   /**
    * Emit when the selected value has been confirmed
    * */
-  public confirmSelectedChange = new EventEmitter<T[] | T>();
+  public confirmSelectedChange = new EventEmitter<Array<T> | T>();
 
   /**
    * Emits when the date time picker is disabled.
@@ -292,12 +289,12 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T>
     this.changeDetector.markForCheck();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   get selecteds() {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.changeDetector.markForCheck();
   }
@@ -349,8 +346,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T>
     this.defaultScrollStrategy = defaultScrollStrategy;
   }
 
-  public ngOnInit() { }
-
   public ngOnDestroy(): void {
     this.close();
     this.dtInputSub.unsubscribe();
@@ -370,7 +365,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T>
 
     this._dtInput = input;
     this.dtInputSub = this._dtInput.valueChange.subscribe(
-      (value: T[] | T | null) => {
+      (value: Array<T> | T | null) => {
         if (Array.isArray(value)) {
           this.selecteds = value;
         } else {
@@ -437,7 +432,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T>
   /**
    * Selects the given date
    */
-  public select(date: T[] | T): void {
+  public select(date: Array<T> | T): void {
     if (Array.isArray(date)) {
       this.selecteds = [...date];
     } else {

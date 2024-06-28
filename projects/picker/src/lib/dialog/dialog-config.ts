@@ -56,7 +56,7 @@ export interface OwlDialogConfigInterface {
   /**
    * Custom class for the pane
    */
-  paneClass?: string | string[];
+  paneClass?: string | Array<string>;
 
   /**
    * Mouse Event
@@ -66,7 +66,7 @@ export interface OwlDialogConfigInterface {
   /**
    * Custom class for the backdrop
    */
-  backdropClass?: string | string[];
+  backdropClass?: string | Array<string>;
 
   /**
    * Whether the dialog should close when the user goes backwards/forwards in history.
@@ -153,7 +153,7 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
   /**
    * Custom class for the pane
    */
-  public paneClass: string | string[] = '';
+  public paneClass: string | Array<string> = '';
 
   /**
    * Mouse Event
@@ -163,7 +163,7 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
   /**
    * Custom class for the backdrop
    */
-  public backdropClass: string | string[] = '';
+  public backdropClass: string | Array<string> = '';
 
   /**
    * Whether the dialog should close when the user goes backwards/forwards in history.

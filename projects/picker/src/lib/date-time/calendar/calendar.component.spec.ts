@@ -12,15 +12,15 @@ import {
   dispatchFakeEvent,
   dispatchKeyboardEvent,
   dispatchMouseEvent
-} from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
-import { OwlMonthViewComponent } from './calendar-month-view.component';
-import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
-import { OwlYearViewComponent } from './calendar-year-view.component';
+} from '../../../test-helpers';
+import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { OwlMonthViewComponent } from '../calendar-month-view';
+import { OwlMultiYearViewComponent } from '../calendar-multi-year-view';
+import { OwlYearViewComponent } from '../calendar-year-view';
+import { DateView } from '../date-time';
+import { OwlDateTimeIntl } from '../date-time-intl.service';
+import { OwlDateTimeModule } from '../date-time.module';
 import { OwlCalendarComponent } from './calendar.component';
-import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { DateView } from './date-time.class';
-import { OwlDateTimeModule } from './date-time.module';
 
 describe('OwlCalendarComponent', () => {
   let zone: MockNgZone;

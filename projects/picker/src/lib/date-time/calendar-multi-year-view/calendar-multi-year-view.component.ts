@@ -14,32 +14,27 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostBinding,
   Inject,
   Input,
-  OnInit,
   Optional,
   Output,
   ViewChild
 } from '@angular/core';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
-import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body/calendar-body.component';
-import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { SelectMode } from './date-time.class';
-import { OptionsTokens } from './options-provider';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { CalendarCell, OwlCalendarBodyComponent } from '../calendar-body';
+import { SelectMode } from '../date-time';
+import { OwlDateTimeIntl } from '../date-time-intl.service';
+import { OptionsTokens } from '../options-provider';
 
 @Component({
   selector: 'owl-date-time-multi-year-view',
   templateUrl: './calendar-multi-year-view.component.html',
   styleUrls: ['./calendar-multi-year-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView',
-    '[class.owl-dt-calendar-multi-year-view]': 'owlDTCalendarMultiYearView'
-  },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
+export class OwlMultiYearViewComponent<T> implements AfterContentInit {
 
   /**
    * The select mode of the picker;
@@ -67,24 +62,24 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
 
   set selected(value: T | null) {
     const oldSelected = this._selected;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._selected = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._selected = this.getValidDate(deserialized);
 
     if (!this.dateTimeAdapter.isSameDay(oldSelected, this._selected)) {
       this.setSelectedYears();
     }
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
-    this._selecteds = values.map((v) => {
-      v = this.dateTimeAdapter.deserialize(v);
-      return this.getValidDate(v);
+  set selecteds(values: Array<T>) {
+    this._selecteds = values.map((value) => {
+      const deserialized = this.dateTimeAdapter.deserialize(value);
+      return this.getValidDate(deserialized);
     });
     this.setSelectedYears();
   }
@@ -97,8 +92,8 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
 
   set pickerMoment(value: T) {
     const oldMoment = this._pickerMoment;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment = this.getValidDate(value) || this.dateTimeAdapter.now();
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(deserialized) || this.dateTimeAdapter.now();
 
     if (oldMoment && this._pickerMoment &&
       !this.isSameYearList(oldMoment, this._pickerMoment)) {
@@ -130,8 +125,8 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
   }
 
   set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._minDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._minDate = this.getValidDate(deserialized);
     if (this.initiated) {
       this.generateYearList();
     }
@@ -145,8 +140,8 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
   }
 
   set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._maxDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._maxDate = this.getValidDate(deserialized);
     if (this.initiated) {
       this.generateYearList();
     }
@@ -224,10 +219,12 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true }) calendarBodyElm: OwlCalendarBodyComponent;
 
+  @HostBinding('class.owl-dt-calendar-view')
   get owlDTCalendarView(): boolean {
     return true;
   }
 
+  @HostBinding('class.owl-dt-calendar-multi-year-view')
   get owlDTCalendarMultiYearView(): boolean {
     return true;
   }
@@ -236,9 +233,6 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
     private pickerIntl: OwlDateTimeIntl,
     @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
     @Inject(OptionsTokens.multiYear) private options: any) {
-  }
-
-  public ngOnInit() {
   }
 
   public ngAfterContentInit(): void {

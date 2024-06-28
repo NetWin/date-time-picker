@@ -1,6 +1,11 @@
 import { InjectionToken, LOCALE_ID, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
+/** @internal */
+export function OWL_DATE_TIME_LOCALE_FACTORY(): string {
+  return inject(LOCALE_ID);
+}
+
 /** InjectionToken for date time picker that can be used to override default locale code. */
 export const OWL_DATE_TIME_LOCALE = new InjectionToken<string>(
   'OWL_DATE_TIME_LOCALE',
@@ -10,11 +15,6 @@ export const OWL_DATE_TIME_LOCALE = new InjectionToken<string>(
   }
 );
 
-/** @docs-private */
-export function OWL_DATE_TIME_LOCALE_FACTORY(): string {
-  return inject(LOCALE_ID);
-}
-
 /** Provider for OWL_DATE_TIME_LOCALE injection token. */
 export const OWL_DATE_TIME_LOCALE_PROVIDER = {
   provide: OWL_DATE_TIME_LOCALE,
@@ -23,7 +23,7 @@ export const OWL_DATE_TIME_LOCALE_PROVIDER = {
 
 export abstract class DateTimeAdapter<T> {
   /** The locale to use for all dates. */
-  protected locale: any;
+  protected locale: string;
 
   /** A stream that emits when the locale changes. */
   protected _localeChanges = new Subject<string>();
@@ -32,10 +32,10 @@ export abstract class DateTimeAdapter<T> {
   }
 
   /** total milliseconds in a day. */
-  protected readonly millisecondsInDay = 86400000;
+  protected readonly millisecondsInDay: number = 86400000;
 
   /** total milliseconds in a minute. */
-  protected readonly milliseondsInMinute = 60000;
+  protected readonly milliseondsInMinute: number = 60000;
 
   /**
    * Get the year of the given date
@@ -101,17 +101,17 @@ export abstract class DateTimeAdapter<T> {
   /**
    * Get a list of month names
    */
-  abstract getMonthNames(style: 'long' | 'short' | 'narrow'): string[];
+  abstract getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string>;
 
   /**
    * Get a list of week names
    */
-  abstract getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[];
+  abstract getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string>;
 
   /**
    * Gets a list of names for the dates of the month.
    */
-  abstract getDateNames(): string[];
+  abstract getDateNames(): Array<string>;
 
   /**
    * Return a Date object as a string, using the ISO standard
@@ -288,7 +288,7 @@ export abstract class DateTimeAdapter<T> {
   /**
   * Get the locale used for all dates.
   * */
-  getLocale() {
+  getLocale(): string {
     return this.locale;
   }
 

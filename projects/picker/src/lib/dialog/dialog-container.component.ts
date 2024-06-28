@@ -22,12 +22,22 @@ import {
   ElementRef,
   EmbeddedViewRef,
   EventEmitter,
+  HostBinding,
+  HostListener,
   Inject,
-  OnInit,
   Optional,
   ViewChild
 } from '@angular/core';
 import { OwlDialogConfigInterface } from './dialog-config';
+
+type AnimationState = 'void' | 'enter' | 'exit';
+type AnimationParams = {
+  x: string;
+  y: string;
+  ox: string;
+  oy: string;
+  scale: number;
+};
 
 const zoomFadeIn = {
   opacity: 0,
@@ -76,21 +86,9 @@ const zoomFadeInFrom = {
         { params: { x: '0px', y: '0px', ox: '50%', oy: '50%' } }
       )
     ])
-  ],
-  host: {
-    '(@slideModal.start)': 'onAnimationStart($event)',
-    '(@slideModal.done)': 'onAnimationDone($event)',
-    '[class.owl-dialog-container]': 'owlDialogContainerClass',
-    '[attr.tabindex]': 'owlDialogContainerTabIndex',
-    '[attr.id]': 'owlDialogContainerId',
-    '[attr.role]': 'owlDialogContainerRole',
-    '[attr.aria-labelledby]': 'owlDialogContainerAriaLabelledby',
-    '[attr.aria-describedby]': 'owlDialogContainerAriaDescribedby',
-    '[@slideModal]': 'owlDialogContainerAnimation'
-  }
+  ]
 })
-export class OwlDialogContainerComponent extends BasePortalOutlet
-  implements OnInit {
+export class OwlDialogContainerComponent extends BasePortalOutlet {
   @ViewChild(CdkPortalOutlet, { static: true })
   portalOutlet: CdkPortalOutlet | null = null;
 
@@ -110,10 +108,10 @@ export class OwlDialogContainerComponent extends BasePortalOutlet
     return this._config;
   }
 
-  private state: 'void' | 'enter' | 'exit' = 'enter';
+  private state: AnimationState = 'enter';
 
   // for animation purpose
-  private params: any = {
+  private params: AnimationParams = {
     x: '0px',
     y: '0px',
     ox: '50%',
@@ -125,31 +123,38 @@ export class OwlDialogContainerComponent extends BasePortalOutlet
   // This would help us to refocus back to element when the dialog was closed.
   private elementFocusedBeforeDialogWasOpened: HTMLElement | null = null;
 
+  @HostBinding('class.owl-dialog-container')
   get owlDialogContainerClass(): boolean {
     return true;
   }
 
+  @HostBinding('attr.tabindex')
   get owlDialogContainerTabIndex(): number {
     return -1;
   }
 
+  @HostBinding('attr.id')
   get owlDialogContainerId(): string {
     return this._config.id;
   }
 
+  @HostBinding('attr.role')
   get owlDialogContainerRole(): string {
     return this._config.role || null;
   }
 
+  @HostBinding('attr.aria-labelledby')
   get owlDialogContainerAriaLabelledby(): string {
     return this.ariaLabelledBy;
   }
 
+  @HostBinding('attr.aria-describedby')
   get owlDialogContainerAriaDescribedby(): string {
     return this._config.ariaDescribedBy || null;
   }
 
-  get owlDialogContainerAnimation(): any {
+  @HostBinding('@slideModal')
+  get owlDialogContainerAnimation(): { value: AnimationState, params: AnimationParams } {
     return { value: this.state, params: this.params };
   }
 
@@ -163,8 +168,6 @@ export class OwlDialogContainerComponent extends BasePortalOutlet
   ) {
     super();
   }
-
-  public ngOnInit() { }
 
   /**
    * Attach a ComponentPortal as content to this dialog container.
@@ -196,11 +199,13 @@ export class OwlDialogContainerComponent extends BasePortalOutlet
     }
   }
 
+  @HostListener('@slideModal.start', ['$event'])
   public onAnimationStart(event: AnimationEvent): void {
     this.isAnimating = true;
     this.animationStateChanged.emit(event);
   }
 
+  @HostListener('@slideModal.done', ['$event'])
   public onAnimationDone(event: AnimationEvent): void {
     if (event.toState === 'enter') {
       this.trapFocus();

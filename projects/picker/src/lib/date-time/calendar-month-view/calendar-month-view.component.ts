@@ -16,6 +16,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostBinding,
   Inject,
   Input,
   OnDestroy,
@@ -25,16 +26,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format';
+} from '../adapter/date-time-format';
 import {
   CalendarCell,
   OwlCalendarBodyComponent
-} from './calendar-body/calendar-body.component';
-import { SelectMode } from './date-time.class';
+} from '../calendar-body';
+import { SelectMode } from '../date-time';
 
 const DAYS_PER_WEEK = 7;
 const WEEKS_PER_VIEW = 6;
@@ -44,11 +45,9 @@ const WEEKS_PER_VIEW = 6;
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
   styleUrls: ['./calendar-month-view.component.scss'],
-  host: { '[class.owl-dt-calendar-view]': 'owlDTCalendarView' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlMonthViewComponent<T>
-  implements OnInit, AfterContentInit, OnDestroy {
+export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
   /**
    * Whether to hide dates in other months at the start or end of the current month.
    * */
@@ -107,24 +106,24 @@ export class OwlMonthViewComponent<T>
 
   set selected(value: T | null) {
     const oldSelected = this._selected;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._selected = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._selected = this.getValidDate(deserialized);
 
     if (!this.dateTimeAdapter.isSameDay(oldSelected, this._selected)) {
       this.setSelectedDates();
     }
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
-    this._selecteds = values.map(v => {
-      v = this.dateTimeAdapter.deserialize(v);
-      return this.getValidDate(v);
+  set selecteds(values: Array<T>) {
+    this._selecteds = values.map(value => {
+      const deserialized = this.dateTimeAdapter.deserialize(value);
+      return this.getValidDate(deserialized);
     });
     this.setSelectedDates();
   }
@@ -137,9 +136,8 @@ export class OwlMonthViewComponent<T>
 
   set pickerMoment(value: T) {
     const oldMoment = this._pickerMoment;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment =
-      this.getValidDate(value) || this.dateTimeAdapter.now();
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(deserialized) || this.dateTimeAdapter.now();
 
     this.firstDateOfMonth = this.dateTimeAdapter.createDate(
       this.dateTimeAdapter.getYear(this._pickerMoment),
@@ -180,8 +178,8 @@ export class OwlMonthViewComponent<T>
   }
 
   set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._minDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._minDate = this.getValidDate(deserialized);
     if (this.initiated) {
       this.generateCalendar();
       this.cdRef.markForCheck();
@@ -196,8 +194,8 @@ export class OwlMonthViewComponent<T>
   }
 
   set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._maxDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._maxDate = this.getValidDate(deserialized);
 
     if (this.initiated) {
       this.generateCalendar();
@@ -244,7 +242,7 @@ export class OwlMonthViewComponent<T>
 
   private initiated = false;
 
-  private dateNames: string[];
+  private dateNames: Array<string>;
 
   /**
    * The date of the month that today falls on.
@@ -280,6 +278,7 @@ export class OwlMonthViewComponent<T>
   @ViewChild(OwlCalendarBodyComponent, { static: true })
   calendarBodyElm: OwlCalendarBodyComponent;
 
+  @HostBinding('class.owl-dt-calendar-view')
   get owlDTCalendarView(): boolean {
     return true;
   }

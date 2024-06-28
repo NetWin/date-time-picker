@@ -25,14 +25,14 @@ import {
   dispatchFakeEvent,
   dispatchKeyboardEvent,
   dispatchMouseEvent
-} from '../../test-helpers';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
-import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
-import { OwlDateTimeInputDirective } from './date-time-picker-input.directive';
-import { OwlDateTimeTriggerDirective } from './date-time-picker-trigger.directive';
+} from '../../../test-helpers';
+import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { DateView } from '../date-time';
+import { OwlDateTimeTriggerDirective } from '../date-time-inline-trigger/date-time-trigger.directive';
+import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
+import { OwlDateTimeInputDirective } from '../date-time-picker-input/date-time-picker-input.directive';
+import { OwlDateTimeModule } from '../date-time.module';
 import { OwlDateTimeComponent } from './date-time-picker.component';
-import { DateView } from './date-time.class';
-import { OwlDateTimeModule } from './date-time.module';
 
 describe('OwlDateTimeComponent', () => {
   const SUPPORTS_INTL = typeof Intl !== 'undefined';

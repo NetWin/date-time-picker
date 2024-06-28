@@ -4,29 +4,24 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   NgZone,
-  OnInit,
   Optional,
   Output
 } from '@angular/core';
 import { take } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
-import { OwlDateTimeIntl } from './date-time-picker-intl.service';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { OwlDateTimeIntl } from '../date-time-intl.service';
 
 @Component({
   exportAs: 'owlDateTimeTimer',
   selector: 'owl-date-time-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.scss'],
-  preserveWhitespaces: false,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.owl-dt-timer]': 'owlDTTimerClass',
-    '[attr.tabindex]': 'owlDTTimeTabIndex'
-  }
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlTimerComponent<T> implements OnInit {
+export class OwlTimerComponent<T> {
   /** The current picker moment */
   private _pickerMoment: T;
   @Input()
@@ -35,9 +30,8 @@ export class OwlTimerComponent<T> implements OnInit {
   }
 
   set pickerMoment(value: T) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment =
-      this.getValidDate(value) || this.dateTimeAdapter.now();
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(deserialized) || this.dateTimeAdapter.now();
   }
 
   /** The minimum selectable date time. */
@@ -48,8 +42,8 @@ export class OwlTimerComponent<T> implements OnInit {
   }
 
   set minDateTime(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._minDateTime = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._minDateTime = this.getValidDate(deserialized);
   }
 
   /** The maximum selectable date time. */
@@ -60,8 +54,8 @@ export class OwlTimerComponent<T> implements OnInit {
   }
 
   set maxDateTime(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._maxDateTime = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._maxDateTime = this.getValidDate(deserialized);
   }
 
   private isPM = false; // a flag indicates the current timer moment is in PM or AM
@@ -168,10 +162,12 @@ export class OwlTimerComponent<T> implements OnInit {
   @Output()
   selectedChange = new EventEmitter<T>();
 
+  @HostBinding('class.owl-dt-timer')
   get owlDTTimerClass(): boolean {
     return true;
   }
 
+  @HostBinding('attr.tabindex')
   get owlDTTimeTabIndex(): number {
     return -1;
   }
@@ -183,8 +179,6 @@ export class OwlTimerComponent<T> implements OnInit {
     private cdRef: ChangeDetectorRef,
     @Optional() private dateTimeAdapter: DateTimeAdapter<T>
   ) { }
-
-  public ngOnInit() { }
 
   /**
    * Focus to the host element

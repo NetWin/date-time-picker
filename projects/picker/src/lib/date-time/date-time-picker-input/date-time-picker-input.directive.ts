@@ -6,6 +6,8 @@ import {
   ElementRef,
   EventEmitter,
   forwardRef,
+  HostBinding,
+  HostListener,
   Inject,
   Input,
   OnDestroy,
@@ -25,13 +27,13 @@ import {
   Validators
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format';
-import { OwlDateTimeComponent } from './date-time-picker.component';
-import { SelectMode } from './date-time.class';
+} from '../adapter/date-time-format';
+import { SelectMode } from '../date-time';
+import { OwlDateTimeComponent } from '../date-time-picker/date-time-picker.component';
 
 export const OWL_DATETIME_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -48,30 +50,13 @@ export const OWL_DATETIME_VALIDATORS: any = {
 @Directive({
   selector: 'input[owlDateTime]',
   exportAs: 'owlDateTimeInput',
-  host: {
-    '(keydown)': 'handleKeydownOnHost($event)',
-    '(blur)': 'handleBlurOnHost($event)',
-    '(input)': 'handleInputOnHost($event)',
-    '(change)': 'handleChangeOnHost($event)',
-    '[attr.aria-haspopup]': 'owlDateTimeInputAriaHaspopup',
-    '[attr.aria-owns]': 'owlDateTimeInputAriaOwns',
-    '[attr.min]': 'minIso8601',
-    '[attr.max]': 'maxIso8601',
-    '[disabled]': 'owlDateTimeInputDisabled'
-  },
   providers: [
     OWL_DATETIME_VALUE_ACCESSOR,
     OWL_DATETIME_VALIDATORS,
   ],
 })
 export class OwlDateTimeInputDirective<T>
-  implements
-  OnInit,
-  AfterContentInit,
-  OnDestroy,
-  ControlValueAccessor,
-  Validator {
-  static ngAcceptInputType_disabled: boolean | '';
+  implements OnInit, AfterContentInit, OnDestroy, ControlValueAccessor, Validator {
 
   /**
   * Required flag to be used for range of [null, null]
@@ -193,32 +178,32 @@ export class OwlDateTimeInputDirective<T>
   }
 
   set value(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this.lastValueValid = !value || this.dateTimeAdapter.isValid(value);
-    value = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this.lastValueValid = !deserialized || this.dateTimeAdapter.isValid(deserialized);
+    const validated = this.getValidDate(deserialized);
     const oldDate = this._value;
-    this._value = value;
+    this._value = validated;
 
     // set the input property 'value'
     this.formatNativeInputValue();
 
     // check if the input value changed
-    if (!this.dateTimeAdapter.isEqual(oldDate, value)) {
-      this.valueChange.emit(value);
+    if (!this.dateTimeAdapter.isEqual(oldDate, validated)) {
+      this.valueChange.emit(validated);
     }
   }
 
-  private _values: T[] = [];
+  private _values: Array<T> = [];
   @Input()
   get values() {
     return this._values;
   }
 
-  set values(values: T[]) {
+  set values(values: Array<T>) {
     if (values && values.length > 0) {
-      this._values = values.map(v => {
-        v = this.dateTimeAdapter.deserialize(v);
-        return this.getValidDate(v);
+      this._values = values.map(value => {
+        const deserialized = this.dateTimeAdapter.deserialize(value);
+        return this.getValidDate(deserialized);
       });
       this.lastValueValid =
         (!this._values[0] ||
@@ -427,27 +412,32 @@ export class OwlDateTimeInputDirective<T>
   ]);
 
   /** Emits when the value changes (either due to user input or programmatic change). */
-  public valueChange = new EventEmitter<T[] | T | null>();
+  public valueChange = new EventEmitter<Array<T> | T | null>();
 
   /** Emits when the disabled state has changed */
   public disabledChange = new EventEmitter<boolean>();
 
+  @HostBinding('attr.aria-haspopup')
   get owlDateTimeInputAriaHaspopup(): boolean {
     return true;
   }
 
+  @HostBinding('attr.aria-owns')
   get owlDateTimeInputAriaOwns(): string {
     return (this.dtPicker.opened && this.dtPicker.id) || null;
   }
 
+  @HostBinding('attr.min')
   get minIso8601(): string {
     return this.min ? this.dateTimeAdapter.toIso8601(this.min) : null;
   }
 
+  @HostBinding('attr.max')
   get maxIso8601(): string {
     return this.max ? this.dateTimeAdapter.toIso8601(this.max) : null;
   }
 
+  @HostBinding('disabled')
   get owlDateTimeInputDisabled(): boolean {
     return this.disabled;
   }
@@ -490,7 +480,7 @@ export class OwlDateTimeInputDirective<T>
 
   public ngAfterContentInit(): void {
     this.dtPickerSub = this.dtPicker.confirmSelectedChange.subscribe(
-      (selecteds: T[] | T) => {
+      (selecteds: Array<T> | T) => {
         if (Array.isArray(selecteds)) {
           this.values = selecteds;
         } else {
@@ -551,6 +541,7 @@ export class OwlDateTimeInputDirective<T>
   /**
    * Open the picker when user hold alt + DOWN_ARROW
    * */
+  @HostListener('keydown', ['$event'])
   public handleKeydownOnHost(event: KeyboardEvent): void {
     if (event.altKey && event.keyCode === DOWN_ARROW) {
       this.dtPicker.open();
@@ -558,12 +549,15 @@ export class OwlDateTimeInputDirective<T>
     }
   }
 
+  @HostListener('blur', ['$event'])
   public handleBlurOnHost(event: Event): void {
     this.onModelTouched();
   }
 
-  public handleInputOnHost(event: any): void {
-    const value = event.target.value;
+  @HostListener('input', ['$event'])
+  public handleInputOnHost(event: InputEvent): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
     if (this._selectMode === 'single') {
       this.changeInputInSingleMode(value);
     } else if (this._selectMode === 'range') {
@@ -573,6 +567,7 @@ export class OwlDateTimeInputDirective<T>
     }
   }
 
+  @HostListener('change', ['$event'])
   public handleChangeOnHost(event: any): void {
 
     let v;

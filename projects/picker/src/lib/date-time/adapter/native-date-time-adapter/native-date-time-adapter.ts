@@ -123,7 +123,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return String(this.getYear(date));
   }
 
-  public getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
+  public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         month: style,
@@ -138,7 +138,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return DEFAULT_MONTH_NAMES[style];
   }
 
-  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
+  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         weekday: style,
@@ -154,7 +154,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return DEFAULT_DAY_OF_WEEK_NAMES[style];
   }
 
-  public getDateNames(): string[] {
+  public getDateNames(): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         day: 'numeric',

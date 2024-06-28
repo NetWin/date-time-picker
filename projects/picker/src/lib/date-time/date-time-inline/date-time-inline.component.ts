@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component, EventEmitter,
   forwardRef,
+  HostBinding,
   Inject,
   Input,
   OnInit,
@@ -12,18 +13,18 @@ import {
   ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format';
-import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
+} from '../adapter/date-time-format';
 import {
   OwlDateTime,
   PickerMode,
   PickerType,
   SelectMode
-} from './date-time.class';
+} from '../date-time';
+import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
 
 export const OWL_DATETIME_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -35,16 +36,13 @@ export const OWL_DATETIME_VALUE_ACCESSOR: any = {
   selector: 'owl-date-time-inline',
   templateUrl: './date-time-inline.component.html',
   styleUrls: ['./date-time-inline.component.scss'],
-  host: {
-    '[class.owl-dt-inline]': 'owlDTInlineClass'
-  },
   changeDetection: ChangeDetectionStrategy.OnPush,
-  preserveWhitespaces: false,
   providers: [OWL_DATETIME_VALUE_ACCESSOR]
 })
 export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
+
   @ViewChild(OwlDateTimeContainerComponent, { static: true })
-  container: OwlDateTimeContainerComponent<T>;
+  public container: OwlDateTimeContainerComponent<T>;
 
   /**
    * Set the type of the dateTime picker
@@ -190,24 +188,24 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   }
 
   set value(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    value = this.getValidDate(value);
-    this._value = value;
-    this.selected = value;
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    const validated = this.getValidDate(deserialized);
+    this._value = validated;
+    this.selected = validated;
   }
 
-  private _values: T[] = [];
+  private _values: Array<T> = [];
   @Input()
   get values() {
     return this._values;
   }
 
-  set values(values: T[]) {
+  set values(values: Array<T>) {
     if (values && values.length > 0) {
-      values = values.map(v => {
-        v = this.dateTimeAdapter.deserialize(v);
-        v = this.getValidDate(v);
-        return v ? this.dateTimeAdapter.clone(v) : null;
+      values = values.map(value => {
+        const deserialized = this.dateTimeAdapter.deserialize(value);
+        const validated = this.getValidDate(deserialized);
+        return validated ? this.dateTimeAdapter.clone(validated) : null;
       });
       this._values = [...values];
       this.selecteds = [...values];
@@ -247,12 +245,12 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.changeDetector.markForCheck();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   get selecteds() {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.changeDetector.markForCheck();
   }
@@ -277,6 +275,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     );
   }
 
+  @HostBinding('class.owl-dt-inline')
   get owlDTInlineClass(): boolean {
     return true;
   }
@@ -322,7 +321,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.disabled = isDisabled;
   }
 
-  public select(date: T[] | T): void {
+  public select(date: Array<T> | T): void {
     if (this.disabled) {
       return;
     }

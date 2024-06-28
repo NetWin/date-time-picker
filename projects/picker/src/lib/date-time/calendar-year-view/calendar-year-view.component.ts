@@ -15,6 +15,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  HostBinding,
   Inject,
   Input,
   OnDestroy,
@@ -24,16 +25,16 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format';
+} from '../adapter/date-time-format';
 import {
   CalendarCell,
   OwlCalendarBodyComponent
-} from './calendar-body/calendar-body.component';
-import { SelectMode } from './date-time.class';
+} from '../calendar-body';
+import { SelectMode } from '../date-time';
 
 const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
@@ -43,14 +44,9 @@ const MONTHS_PER_ROW = 3;
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',
   styleUrls: ['./calendar-year-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlYearViewComponent<T>
-  implements OnInit, AfterContentInit, OnDestroy {
+export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
   /**
    * The select mode of the picker;
    * */
@@ -76,22 +72,22 @@ export class OwlYearViewComponent<T>
   }
 
   set selected(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._selected = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._selected = this.getValidDate(deserialized);
     this.setSelectedMonths();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = [];
     for (let i = 0; i < values.length; i++) {
-      const value = this.dateTimeAdapter.deserialize(values[i]);
-      this._selecteds.push(this.getValidDate(value));
+      const deserialized = this.dateTimeAdapter.deserialize(values[i]);
+      this._selecteds.push(this.getValidDate(deserialized));
     }
 
     this.setSelectedMonths();
@@ -105,9 +101,8 @@ export class OwlYearViewComponent<T>
 
   set pickerMoment(value: T) {
     const oldMoment = this._pickerMoment;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment =
-      this.getValidDate(value) || this.dateTimeAdapter.now();
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(deserialized) || this.dateTimeAdapter.now();
 
     if (
       !this.hasSameYear(oldMoment, this._pickerMoment) &&
@@ -141,8 +136,8 @@ export class OwlYearViewComponent<T>
   }
 
   set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._minDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._minDate = this.getValidDate(deserialized);
     if (this.initiated) {
       this.generateMonthList();
     }
@@ -156,14 +151,14 @@ export class OwlYearViewComponent<T>
   }
 
   set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._maxDate = this.getValidDate(value);
+    const deserialized = this.dateTimeAdapter.deserialize(value);
+    this._maxDate = this.getValidDate(deserialized);
     if (this.initiated) {
       this.generateMonthList();
     }
   }
 
-  private readonly monthNames: string[];
+  private readonly monthNames: Array<string>;
 
   private _months: CalendarCell[][];
   get months() {
@@ -225,6 +220,7 @@ export class OwlYearViewComponent<T>
   @ViewChild(OwlCalendarBodyComponent, { static: true })
   calendarBodyElm: OwlCalendarBodyComponent;
 
+  @HostBinding('class.owl-dt-calendar-view')
   get owlDTCalendarView(): boolean {
     return true;
   }

@@ -43,7 +43,7 @@ export function OWL_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(
   return fn;
 }
 
-/** @docs-private */
+/** @internal */
 export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
   provide: OWL_DIALOG_SCROLL_STRATEGY,
   deps: [Overlay],
@@ -112,13 +112,9 @@ export class OwlDialogService {
     private overlay: Overlay,
     private injector: Injector,
     @Optional() private location: Location,
-    @Inject(OWL_DIALOG_SCROLL_STRATEGY) scrollStrategy: any,
-    @Optional()
-    @Inject(OWL_DIALOG_DEFAULT_OPTIONS)
-    private defaultOptions: OwlDialogConfigInterface,
-    @Optional()
-    @SkipSelf()
-    private parentDialog: OwlDialogService,
+    @Inject(OWL_DIALOG_SCROLL_STRATEGY) scrollStrategy: () => ScrollStrategy,
+    @Optional() @Inject(OWL_DIALOG_DEFAULT_OPTIONS) private defaultOptions: OwlDialogConfigInterface,
+    @Optional() @SkipSelf() private parentDialog: OwlDialogService,
     private overlayContainer: OverlayContainer
   ) {
     this.scrollStrategy = scrollStrategy;

@@ -14,12 +14,12 @@ import localeDutch from '@angular/common/locales/nl';
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { MONTHS, dispatchKeyboardEvent } from '../../test-helpers';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
-import { OwlNativeDateTimeModule } from './adapter/native-date-time-adapter/native-date-time.module';
+import { MONTHS, dispatchKeyboardEvent } from '../../../test-helpers';
+import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { OwlDateTimeIntl } from '../date-time-intl.service';
+import { OwlDateTimeModule } from '../date-time.module';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
-import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { OwlDateTimeModule } from './date-time.module';
 
 describe('OwlMonthViewComponent', () => {
   beforeEach(() => {

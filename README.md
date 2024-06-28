@@ -130,8 +130,8 @@ Properties for `owl-date-time`
 |`stepSecond`|number|Optional|`1`| Seconds to change per step.|
 |`scrollStrategy`|ScrollStrategy|Optional|`BlockScrollStrategy`| Define the scroll strategy when the picker is open. Learn more this from https://material.angular.io/cdk/overlay/overview#scroll-strategies.|
 |`disabled`|boolean|Optional|`false`|When specify to true, it would disable the picker.|
-|`backdropClass`|string/string[]|Optional|`null`|Custom class for the picker backdrop.|
-|`panelClass`|string/string[]|Optional|`null`|Custom class for the picker overlay panel.|
+|`backdropClass`|string/Array<string>|Optional|`null`|Custom class for the picker backdrop.|
+|`panelClass`|string/Array<string>|Optional|`null`|Custom class for the picker overlay panel.|
 
 Events for `owl-date-time`
 -------

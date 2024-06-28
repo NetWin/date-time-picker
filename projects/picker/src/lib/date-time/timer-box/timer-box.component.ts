@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   Input,
   OnDestroy,
   OnInit,
@@ -17,9 +18,7 @@ import { Subject, Subscription, debounceTime } from 'rxjs';
   selector: 'owl-date-time-timer-box',
   templateUrl: './timer-box.component.html',
   styleUrls: ['./timer-box.component.scss'],
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[class.owl-dt-timer-box]': 'owlDTTimerBoxClass' }
 })
 
 export class OwlTimerBoxComponent implements OnInit, OnDestroy {
@@ -75,6 +74,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
     return value < 10 ? '0' + value.toString() : value.toString();
   }
 
+  @HostBinding('class.owl-dt-timer-box')
   get owlDTTimerBoxClass(): boolean {
     return true;
   }
