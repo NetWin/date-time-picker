@@ -2,8 +2,13 @@
 
 <br>
 
-This package provides a simple to use but flexible date / time / date-time picker.
+This library provides a simple to use but flexible date / time / date-time picker.
 Just checkout the pages on the left for documentation and examples.
+
+<br>
+
+> The documentation is currently under construction.<br>
+> Examples will come soon. 🚧👷🛠️
 
 ### Attributions
 
