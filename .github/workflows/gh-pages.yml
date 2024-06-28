@@ -3,7 +3,8 @@ name: Deploy docs to github-pages
 on:
   push:
     branches:
-      - "**" # TODO: Update to master branch
+      - "master"
+      - "feature/project-revamp"
 
   workflow_dispatch:
 
