@@ -5,7 +5,7 @@ const api: NgDocApi = {
   scopes: [
     {
       name: 'DateTimePicker',
-      route: 'date-time-picker--api',
+      route: '',
       include: 'projects/picker/src/public_api.ts'
     },
   ],
