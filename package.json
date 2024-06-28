@@ -18,7 +18,7 @@
   "scripts": {
     "start": "ng serve docs",
     "build": "npm run build:lib && npm run build:docs",
-    "build:docs": "ng build picker",
+    "build:docs": "ng build docs",
     "build:lib": "ng build picker",
     "test": "ng test picker",
     "test:ci": "npm run test -- --watch=false",
