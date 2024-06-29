@@ -2,6 +2,7 @@
   "name": "@netwin/angular-datetime-picker",
   "version": "18.0.0",
   "description": "Angular Date Time Picker",
+  "sideEffects": false,
   "keywords": [
     "Angular",
     "datepicker",
@@ -21,7 +22,8 @@
   },
   "homepage": "https://github.com/NetWin/date-time-picker",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://github.com/NetWin/date-time-picker.git"
   },
   "peerDependencies": {
     "@angular/common": "^18.0.0",
@@ -33,7 +35,7 @@
   },
   "exports": {
     "./assets/style/picker.min.css": {
-      "default":  "./assets/style/picker.min.css"
+      "default": "./assets/style/picker.min.css"
     }
   }
 }
