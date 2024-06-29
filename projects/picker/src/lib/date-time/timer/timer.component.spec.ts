@@ -7,7 +7,7 @@ import {
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { MONTHS, MockNgZone, dispatchFakeEvent } from '../../../test-helpers';
-import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from '../adapter';
 import { OwlDateTimeIntl } from '../date-time-intl.service';
 import { OwlDateTimeModule } from '../date-time.module';
 import { OwlTimerComponent } from './timer.component';

@@ -5,13 +5,13 @@
  * @param dest The object which will have properties copied to it.
  * @param sources The source objects from which properties will be copied.
  */
-export function extendObject(dest: any, ...sources: any[]): any {
+export function extendObject(dest: object, ...sources: object[]): any {
   if (dest == null) {
     throw TypeError('Cannot convert undefined or null to object');
   }
 
   for (const source of sources) {
-    if (source != null) {
+    if (source !== null) {
       for (const key in source) {
         if (source.hasOwnProperty(key)) {
           dest[key] = source[key];

@@ -13,7 +13,7 @@ import {
   dispatchKeyboardEvent,
   dispatchMouseEvent
 } from '../../../test-helpers';
-import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from '../adapter';
 import { OwlMonthViewComponent } from '../calendar-month-view';
 import { OwlMultiYearViewComponent } from '../calendar-multi-year-view';
 import { OwlYearViewComponent } from '../calendar-year-view';

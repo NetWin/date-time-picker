@@ -15,8 +15,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription, take } from 'rxjs';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter/date-time-format';
+import { DateTimeAdapter, OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter';
 import { DateView, DateViewType, SelectMode } from '../date-time';
 import { OwlDateTimeIntl } from '../date-time-intl.service';
 

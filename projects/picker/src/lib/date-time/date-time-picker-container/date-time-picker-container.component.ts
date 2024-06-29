@@ -20,7 +20,7 @@ import {
   inject
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter';
 import { OwlCalendarComponent } from '../calendar';
 import { OwlDateTime, PickerType } from '../date-time';
 import { OwlDateTimeIntl } from '../date-time-intl.service';

@@ -1,12 +1,6 @@
 import { Platform } from '@angular/cdk/platform';
 import { Injectable, inject } from '@angular/core';
 import { range } from '../../../utils/array.utils';
-import {
-  DEFAULT_DATE_NAMES,
-  DEFAULT_DAY_OF_WEEK_NAMES,
-  DEFAULT_MONTH_NAMES,
-  SUPPORTS_INTL_API
-} from '../../../utils/constants';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import {
   DateTimeAdapter,
@@ -114,60 +108,35 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   }
 
   public getYearName(date: Date): string {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        year: 'numeric',
-        timeZone: 'utc'
-      });
-      return this.stripDirectionalityCharacters(this._format(dtf, date));
-    }
-    return String(this.getYear(date));
+    const dtf = new Intl.DateTimeFormat(this.getLocale(), { year: 'numeric', timeZone: 'utc' });
+    return this.stripDirectionalityCharacters(this._format(dtf, date));
   }
 
   public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        month: style,
-        timeZone: 'utc'
-      });
-      return range(12, i =>
-        this.stripDirectionalityCharacters(
-          this._format(dtf, new Date(2017, i, 1))
-        )
-      );
-    }
-    return DEFAULT_MONTH_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.getLocale(), { month: style, timeZone: 'utc' });
+    return range(12, i =>
+      this.stripDirectionalityCharacters(
+        this._format(dtf, new Date(2017, i, 1))
+      )
+    );
   }
 
   public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        weekday: style,
-        timeZone: 'utc'
-      });
-      return range(7, i =>
-        this.stripDirectionalityCharacters(
-          this._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-
-    return DEFAULT_DAY_OF_WEEK_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.getLocale(), { weekday: style, timeZone: 'utc' });
+    return range(7, i =>
+      this.stripDirectionalityCharacters(
+        this._format(dtf, new Date(2017, 0, i + 1))
+      )
+    );
   }
 
   public getDateNames(): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        day: 'numeric',
-        timeZone: 'utc'
-      });
-      return range(31, i =>
-        this.stripDirectionalityCharacters(
-          this._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-    return DEFAULT_DATE_NAMES;
+    const dtf = new Intl.DateTimeFormat(this.getLocale(), { day: 'numeric', timeZone: 'utc' });
+    return range(31, i =>
+      this.stripDirectionalityCharacters(
+        this._format(dtf, new Date(2017, 0, i + 1))
+      )
+    );
   }
 
   public toIso8601(date: Date): string {
@@ -284,23 +253,16 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
       throw Error('JSNativeDate: Cannot format invalid date.');
     }
 
-    if (SUPPORTS_INTL_API) {
-      if (
-        this._clampDate &&
-        (date.getFullYear() < 1 || date.getFullYear() > 9999)
-      ) {
-        date = this.clone(date);
-        date.setFullYear(
-          Math.max(1, Math.min(9999, date.getFullYear()))
-        );
-      }
-
-      displayFormat = { ...displayFormat, timeZone: 'utc' };
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), displayFormat);
-      return this.stripDirectionalityCharacters(this._format(dtf, date));
+    if (this._clampDate && (date.getFullYear() < 1 || date.getFullYear() > 9999)) {
+      date = this.clone(date);
+      date.setFullYear(
+        Math.max(1, Math.min(9999, date.getFullYear()))
+      );
     }
 
-    return this.stripDirectionalityCharacters(date.toDateString());
+    displayFormat = { ...displayFormat, timeZone: 'utc' };
+    const dtf = new Intl.DateTimeFormat(this.getLocale(), displayFormat);
+    return this.stripDirectionalityCharacters(this._format(dtf, date));
   }
 
   public parse(value: any, parseFormat: any): Date | null {

@@ -24,11 +24,11 @@ import {
   inject
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
+  DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from '../adapter/date-time-format';
+} from '../adapter';
 import {
   CalendarCell,
   OwlCalendarBodyComponent

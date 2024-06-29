@@ -26,7 +26,7 @@ import {
   dispatchKeyboardEvent,
   dispatchMouseEvent
 } from '../../../test-helpers';
-import { OwlNativeDateTimeModule } from '../adapter/native-date-time-adapter/native-date-time.module';
+import { OwlNativeDateTimeModule } from '../adapter';
 import { DateView } from '../date-time';
 import { OwlDateTimeTriggerDirective } from '../date-time-inline-trigger/date-time-trigger.directive';
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';

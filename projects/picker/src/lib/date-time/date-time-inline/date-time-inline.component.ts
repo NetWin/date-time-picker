@@ -13,8 +13,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter/date-time-format';
+import { DateTimeAdapter, OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter';
 import {
   OwlDateTime,
   PickerMode,
@@ -23,7 +22,7 @@ import {
 } from '../date-time';
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
 
-export const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
+const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => OwlDateTimeInlineComponent),
   multi: true

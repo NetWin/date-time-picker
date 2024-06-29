@@ -20,7 +20,7 @@ import {
   ViewChild,
   inject
 } from '@angular/core';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter';
 import { CalendarCell, OwlCalendarBodyComponent } from '../calendar-body';
 import { SelectMode } from '../date-time';
 import { OwlDateTimeIntl } from '../date-time-intl.service';

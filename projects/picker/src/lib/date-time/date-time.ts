@@ -3,11 +3,11 @@ import {
   coerceNumberProperty
 } from '@angular/cdk/coercion';
 import { Directive, EventEmitter, Input, inject } from '@angular/core';
-import { DateTimeAdapter } from './adapter/date-time-adapter';
 import {
+  DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from './adapter/date-time-format';
+} from './adapter';
 
 let nextUniqueId = 0;
 

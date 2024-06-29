@@ -27,11 +27,11 @@ import {
 import { Subscription, filter, merge, take } from 'rxjs';
 import { OwlDialogRef } from '../../dialog/dialog-ref.class';
 import { OwlDialogService } from '../../dialog/dialog.service';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
+  DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from '../adapter/date-time-format';
+} from '../adapter';
 import {
   OwlDateTime,
   PickerMode,

@@ -13,6 +13,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Provider,
   Renderer2
 } from '@angular/core';
 import {
@@ -26,21 +27,21 @@ import {
   Validators
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
+  DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
   OwlDateTimeFormats
-} from '../adapter/date-time-format';
+} from '../adapter';
 import { SelectMode } from '../date-time';
 import { OwlDateTimeComponent } from '../date-time-picker/date-time-picker.component';
 
-export const OWL_DATETIME_VALUE_ACCESSOR: any = {
+const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => OwlDateTimeInputDirective),
   multi: true
 };
 
-export const OWL_DATETIME_VALIDATORS: any = {
+const OWL_DATETIME_VALIDATORS: Provider = {
   provide: NG_VALIDATORS,
   useExisting: forwardRef(() => OwlDateTimeInputDirective),
   multi: true

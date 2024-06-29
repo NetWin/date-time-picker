@@ -11,7 +11,7 @@ import {
   inject
 } from '@angular/core';
 import { take } from 'rxjs';
-import { DateTimeAdapter } from '../adapter/date-time-adapter';
+import { DateTimeAdapter } from '../adapter';
 import { OwlDateTimeIntl } from '../date-time-intl.service';
 
 @Component({

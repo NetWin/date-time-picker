@@ -7,8 +7,7 @@ import {
 } from '@angular/cdk/overlay';
 import {
   ComponentPortal,
-  ComponentType,
-  PortalInjector
+  ComponentType
 } from '@angular/cdk/portal';
 import { Location } from '@angular/common';
 import {
@@ -16,6 +15,7 @@ import {
   Injectable,
   InjectionToken,
   Injector,
+  StaticProvider,
   TemplateRef,
   inject
 } from '@angular/core';
@@ -51,9 +51,7 @@ export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
 /**
  * Injection token that can be used to specify default dialog options.
  */
-export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>(
-  'owl-dialog-default-options'
-);
+export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>('owl-dialog-default-options');
 
 @Injectable()
 export class OwlDialogService {
@@ -129,7 +127,7 @@ export class OwlDialogService {
     componentOrTemplateRef: ComponentType<T> | TemplateRef<T>,
     config?: OwlDialogConfigInterface
   ): OwlDialogRef<any> {
-    config = applyConfigDefaults(config, this.#defaultOptions);
+    config = extendObject(new OwlDialogConfig(), config, this.#defaultOptions);
 
     if (config.id && this.getDialogById(config.id)) {
       throw Error(
@@ -225,20 +223,15 @@ export class OwlDialogService {
     dialogRef: OwlDialogRef<T>,
     dialogContainer: OwlDialogContainerComponent
   ) {
-    const userInjector =
-      config &&
-      config.viewContainerRef &&
-      config.viewContainerRef.injector;
-    const injectionTokens = new WeakMap();
+    const userInjector = config?.viewContainerRef?.injector;
+    const parentInjector = userInjector || this.#injector;
+    const providers: Array<StaticProvider> = [
+      { provide: OwlDialogRef, useValue: dialogRef },
+      { provide: OwlDialogContainerComponent, useValue: dialogContainer },
+      { provide: OWL_DIALOG_DATA, useValue: config.data }
+    ];
 
-    injectionTokens.set(OwlDialogRef, dialogRef);
-    injectionTokens.set(OwlDialogContainerComponent, dialogContainer);
-    injectionTokens.set(OWL_DIALOG_DATA, config.data);
-
-    return new PortalInjector(
-      userInjector || this.#injector,
-      injectionTokens
-    );
+    return Injector.create({ providers, parent: parentInjector });
   }
 
   private createOverlay(config: OwlDialogConfigInterface): OverlayRef {
@@ -332,17 +325,4 @@ export class OwlDialogService {
       }
     }
   }
-}
-
-/**
- * Applies default options to the dialog config.
- * @param config Config to be modified.
- * @param defaultOptions Default config setting
- * @returns The new configuration object.
- */
-function applyConfigDefaults(
-  config?: OwlDialogConfigInterface,
-  defaultOptions?: OwlDialogConfigInterface
-): OwlDialogConfig {
-  return extendObject(new OwlDialogConfig(), config, defaultOptions);
 }

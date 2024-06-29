@@ -1,7 +1,6 @@
 import { Platform } from '@angular/cdk/platform';
 import { Injectable, inject } from '@angular/core';
 import { range } from '../../../utils/array.utils';
-import { DEFAULT_DATE_NAMES, DEFAULT_DAY_OF_WEEK_NAMES, DEFAULT_MONTH_NAMES, SUPPORTS_INTL_API } from '../../../utils/constants';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter';
 
@@ -141,20 +140,18 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
 
     const jsDate = new Date(date);
 
-    if (SUPPORTS_INTL_API) {
-      if (this._clampDate &&
-        (jsDate.getFullYear() < 1 || jsDate.getFullYear() > 9999)) {
-        jsDate.setFullYear(
-          Math.max(1, Math.min(9999, jsDate.getFullYear()))
-        );
-      }
-
-      displayFormat = { ...displayFormat, timeZone: 'utc' };
-      const dtf = new Intl.DateTimeFormat(this.locale, displayFormat);
-      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(UnixTimestampDateTimeAdapter._format(dtf, jsDate));
+    if (this._clampDate &&
+      (jsDate.getFullYear() < 1 || jsDate.getFullYear() > 9999)) {
+      jsDate.setFullYear(
+        Math.max(1, Math.min(9999, jsDate.getFullYear()))
+      );
     }
 
-    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(jsDate.toDateString());
+    displayFormat = { ...displayFormat, timeZone: 'utc' };
+    const dtf = new Intl.DateTimeFormat(this.locale, displayFormat);
+    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+      UnixTimestampDateTimeAdapter._format(dtf, jsDate)
+    );
   }
 
   getDate(date: number): number {
@@ -162,18 +159,12 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   getDateNames(): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        day: 'numeric',
-        timeZone: 'utc'
-      });
-      return range(31, i =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-    return DEFAULT_DATE_NAMES;
+    const dtf = new Intl.DateTimeFormat(this.locale, { day: 'numeric', timeZone: 'utc' });
+    return range(31, i =>
+      UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+        UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
+      )
+    );
   }
 
   getDay(date: number): number {
@@ -181,19 +172,12 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        weekday: style,
-        timeZone: 'utc'
-      });
-      return range(7, i =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-
-    return DEFAULT_DAY_OF_WEEK_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.locale, { weekday: style, timeZone: 'utc' });
+    return range(7, i =>
+      UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+        UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
+      )
+    );
   }
 
   getHours(date: number): number {
@@ -209,18 +193,12 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        month: style,
-        timeZone: 'utc'
-      });
-      return range(12, i =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, i, 1))
-        )
-      );
-    }
-    return DEFAULT_MONTH_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.locale, { month: style, timeZone: 'utc' });
+    return range(12, i =>
+      UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+        UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, i, 1))
+      )
+    );
   }
 
   getNumDaysInMonth(date: number): number {
@@ -240,14 +218,10 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   getYearName(date: number): string {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        year: 'numeric',
-        timeZone: 'utc'
-      });
-      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(UnixTimestampDateTimeAdapter._format(dtf, new Date(date)));
-    }
-    return String(this.getYear(date));
+    const dtf = new Intl.DateTimeFormat(this.locale, { year: 'numeric', timeZone: 'utc' });
+    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+      UnixTimestampDateTimeAdapter._format(dtf, new Date(date))
+    );
   }
 
   invalid(): number {
