@@ -39,7 +39,6 @@ export class OwlTimerComponent<T> {
   get pickerMoment() {
     return this._pickerMoment;
   }
-
   set pickerMoment(value: T) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._pickerMoment = this.getValidDate(deserialized) || this.#dateTimeAdapter.now();
@@ -51,7 +50,6 @@ export class OwlTimerComponent<T> {
   get minDateTime(): T | null {
     return this._minDateTime;
   }
-
   set minDateTime(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._minDateTime = this.getValidDate(deserialized);
@@ -63,43 +61,47 @@ export class OwlTimerComponent<T> {
   get maxDateTime(): T | null {
     return this._maxDateTime;
   }
-
   set maxDateTime(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._maxDateTime = this.getValidDate(deserialized);
   }
 
-  private isPM = false; // a flag indicates the current timer moment is in PM or AM
-
   /**
    * Whether to show the second's timer
    */
-  @Input()
-  showSecondsTimer: boolean;
+  @Input() public showSecondsTimer: boolean;
 
   /**
    * Whether the timer is in hour12 format
    */
-  @Input()
-  hour12Timer: boolean;
+  @Input() public hour12Timer: boolean;
 
   /**
    * Hours to change per step
    */
-  @Input()
-  stepHour = 1;
+  @Input() public stepHour = 1;
 
   /**
    * Minutes to change per step
    */
-  @Input()
-  stepMinute = 1;
+  @Input() public stepMinute = 1;
 
   /**
    * Seconds to change per step
    */
-  @Input()
-  stepSecond = 1;
+  @Input() public stepSecond = 1;
+
+  @Output() public readonly selectedChange = new EventEmitter<T>();
+
+  @HostBinding('class.owl-dt-timer')
+  get owlDTTimerClass(): boolean {
+    return true;
+  }
+
+  @HostBinding('attr.tabindex')
+  get owlDTTimeTabIndex(): number {
+    return -1;
+  }
 
   get hourValue(): number {
     return this.#dateTimeAdapter.getHours(this.pickerMoment);
@@ -115,21 +117,29 @@ export class OwlTimerComponent<T> {
 
     if (!this.hour12Timer) {
       return hours;
-    } else {
-      if (hours === 0) {
-        hours = 12;
-        this.isPM = false;
-      } else if (hours > 0 && hours < 12) {
-        this.isPM = false;
-      } else if (hours === 12) {
-        this.isPM = true;
-      } else if (hours > 12 && hours < 24) {
-        hours = hours - 12;
-        this.isPM = true;
-      }
+    }
 
+    if (hours === 0) {
+      this.isPM = false;
+      return 12;
+    }
+
+    if (hours > 0 && hours < 12) {
+      this.isPM = false;
       return hours;
     }
+
+    if (hours === 12) {
+      this.isPM = true;
+      return hours;
+    }
+
+    if (hours > 12 && hours < 24) {
+      this.isPM = true;
+      return hours - 12
+    }
+
+    return hours;
   }
 
   get minuteValue(): number {
@@ -170,18 +180,7 @@ export class OwlTimerComponent<T> {
       : this.#pickerIntl.hour12AMLabel;
   }
 
-  @Output()
-  selectedChange = new EventEmitter<T>();
-
-  @HostBinding('class.owl-dt-timer')
-  get owlDTTimerClass(): boolean {
-    return true;
-  }
-
-  @HostBinding('attr.tabindex')
-  get owlDTTimeTabIndex(): number {
-    return -1;
-  }
+  private isPM = false; // a flag indicates the current timer moment is in PM or AM
 
   /**
    * Focus to the host element
