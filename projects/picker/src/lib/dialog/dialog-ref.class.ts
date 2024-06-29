@@ -29,10 +29,12 @@ export class OwlDialogRef<T> {
   /** Whether the user is allowed to close the dialog. */
   public disableClose = true;
 
-  constructor(private overlayRef: OverlayRef,
-    private container: OwlDialogContainerComponent,
+  constructor(
+    private readonly overlayRef: OverlayRef,
+    private readonly container: OwlDialogContainerComponent,
     public readonly id: string,
-    location?: Location) {
+    readonly location?: Location
+  ) {
     this.disableClose = this.container.config.disableClose;
 
     this.container.animationStateChanged

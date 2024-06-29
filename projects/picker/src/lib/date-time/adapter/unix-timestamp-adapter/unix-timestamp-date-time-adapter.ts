@@ -1,5 +1,5 @@
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { range } from '../../../utils/array.utils';
 import { DEFAULT_DATE_NAMES, DEFAULT_DAY_OF_WEEK_NAMES, DEFAULT_MONTH_NAMES, SUPPORTS_INTL_API } from '../../../utils/constants';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
@@ -7,17 +7,17 @@ import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter';
 
 @Injectable()
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
+  readonly #owlDateTimeLocale = inject<string>(OWL_DATE_TIME_LOCALE, { optional: true });
 
-  constructor(
-    @Optional() @Inject(OWL_DATE_TIME_LOCALE) owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  readonly #platform = inject(Platform);
+
+  constructor() {
     super();
-    super.setLocale(owlDateTimeLocale);
+    super.setLocale(this.#owlDateTimeLocale);
 
     // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !platform.TRIDENT;
-    this._clampDate = platform.TRIDENT || platform.EDGE;
+    this.useUtcForDisplay = !this.#platform.TRIDENT;
+    this._clampDate = this.#platform.TRIDENT || this.#platform.EDGE;
   }
 
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */

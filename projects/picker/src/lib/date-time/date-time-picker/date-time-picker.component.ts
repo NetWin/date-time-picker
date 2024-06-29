@@ -1,43 +1,42 @@
 import { coerceArray, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ESCAPE, UP_ARROW } from '@angular/cdk/keycodes';
 import {
-    BlockScrollStrategy,
-    Overlay,
-    OverlayConfig,
-    OverlayRef,
-    PositionStrategy,
-    ScrollStrategy
+  BlockScrollStrategy,
+  Overlay,
+  OverlayConfig,
+  OverlayRef,
+  PositionStrategy,
+  ScrollStrategy
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    ComponentRef,
-    EventEmitter,
-    Inject,
-    InjectionToken,
-    Input,
-    NgZone,
-    OnDestroy,
-    Optional,
-    Output,
-    ViewContainerRef
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  InjectionToken,
+  Input,
+  NgZone,
+  OnDestroy,
+  Output,
+  ViewContainerRef,
+  inject
 } from '@angular/core';
 import { Subscription, filter, merge, take } from 'rxjs';
 import { OwlDialogRef } from '../../dialog/dialog-ref.class';
 import { OwlDialogService } from '../../dialog/dialog.service';
 import { DateTimeAdapter } from '../adapter/date-time-adapter';
 import {
-    OWL_DATE_TIME_FORMATS,
-    OwlDateTimeFormats
+  OWL_DATE_TIME_FORMATS,
+  OwlDateTimeFormats
 } from '../adapter/date-time-format';
 import {
-    OwlDateTime,
-    PickerMode,
-    PickerType,
-    SelectMode
+  OwlDateTime,
+  PickerMode,
+  PickerType,
+  SelectMode
 } from '../date-time';
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
 import { OwlDateTimeInputDirective } from '../date-time-picker-input/date-time-picker-input.directive';
@@ -70,6 +69,25 @@ export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy {
+
+  readonly #overlay = inject(Overlay);
+
+  readonly #changeDetector = inject(ChangeDetectorRef);
+
+  readonly #viewContainerRef = inject(ViewContainerRef);
+
+  readonly #dialogService = inject(OwlDialogService);
+
+  readonly #ngZone = inject(NgZone);
+
+  readonly #defaultScrollStrategy = inject<() => ScrollStrategy>(OWL_DTPICKER_SCROLL_STRATEGY);
+
+  readonly #document = inject(DOCUMENT, { optional: true });
+
+  protected override readonly dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
+  protected override readonly dateTimeFormats = inject<OwlDateTimeFormats>(OWL_DATE_TIME_FORMATS, { optional: true });
+
   /** Custom class for the picker backdrop. */
   @Input()
   public backdropClass: string | Array<string> = [];
@@ -207,56 +225,56 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * The scroll strategy when the picker is open
    * Learn more this from https://material.angular.io/cdk/overlay/overview#scroll-strategies
-   * */
+   */
   @Input()
   public scrollStrategy: ScrollStrategy;
 
   /**
    * Callback when the picker is closed
-   * */
+   */
   @Output()
   afterPickerClosed = new EventEmitter<any>();
 
   /**
    * Callback before the picker is open
-   * */
+   */
   @Output()
   beforePickerOpen = new EventEmitter<any>();
 
   /**
    * Callback when the picker is open
-   * */
+   */
   @Output()
   afterPickerOpen = new EventEmitter<any>();
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
   dateSelected = new EventEmitter<T>();
 
   /**
    * Emit when the selected value has been confirmed
-   * */
+   */
   public confirmSelectedChange = new EventEmitter<Array<T> | T>();
 
   /**
    * Emits when the date time picker is disabled.
-   * */
+   */
   public disabledChange = new EventEmitter<boolean>();
 
   private pickerContainerPortal: ComponentPortal<
@@ -272,7 +290,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   private pickerBeforeOpenedStreamSub = Subscription.EMPTY;
 
   /** The element that was focused before the date time picker was opened. */
-  private focusedElementBeforeOpen: HTMLElement | null = null;
+  private focusedElementBeforeOpen: Element | null = null;
 
   private _dtInput: OwlDateTimeInputDirective<T>;
   get dtInput() {
@@ -286,7 +304,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   set selected(value: T | null) {
     this._selected = value;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   private _selecteds: Array<T> = [];
@@ -296,7 +314,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   set selecteds(values: Array<T>) {
     this._selecteds = values;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   /** The minimum selectable date. */
@@ -323,27 +341,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   get isInRangeMode(): boolean {
     return this._dtInput.isInRangeMode;
-  }
-
-  private readonly defaultScrollStrategy: () => ScrollStrategy;
-
-  constructor(
-    public overlay: Overlay,
-    private viewContainerRef: ViewContainerRef,
-    private dialogService: OwlDialogService,
-    private ngZone: NgZone,
-    protected changeDetector: ChangeDetectorRef,
-    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
-    @Inject(OWL_DTPICKER_SCROLL_STRATEGY) defaultScrollStrategy: any,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    protected override dateTimeFormats: OwlDateTimeFormats,
-    @Optional()
-    @Inject(DOCUMENT)
-    private document: any
-  ) {
-    super(dateTimeAdapter, dateTimeFormats);
-    this.defaultScrollStrategy = defaultScrollStrategy;
   }
 
   public ngOnDestroy(): void {
@@ -386,8 +383,8 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       );
     }
 
-    if (this.document) {
-      this.focusedElementBeforeOpen = this.document.activeElement;
+    if (this.#document) {
+      this.focusedElementBeforeOpen = this.#document.activeElement;
     }
 
     // reset the picker selected value
@@ -447,7 +444,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
      *    the 'selecteds' has 'from'(selecteds[0]) and 'to'(selecteds[1]) values.
      * 4) selectMode is 'rangeFrom' and selecteds[0] has value.
      * 5) selectMode is 'rangeTo' and selecteds[1] has value.
-     * */
+     */
     if (
       this.pickerMode !== 'dialog' &&
       this.pickerType === 'calendar' &&
@@ -464,21 +461,21 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }
@@ -538,6 +535,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
     if (
       this.focusedElementBeforeOpen &&
+      'focus' in this.focusedElementBeforeOpen &&
       typeof this.focusedElementBeforeOpen.focus === 'function'
     ) {
       // Because IE moves focus asynchronously, we can't count on it being restored before we've
@@ -572,7 +570,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
    * Open the picker as a dialog
    */
   private openAsDialog(): void {
-    this.dialogRef = this.dialogService.open(
+    this.dialogRef = this.#dialogService.open(
       OwlDateTimeContainerComponent,
       {
         autoFocus: false,
@@ -581,9 +579,9 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
           ...coerceArray(this.backdropClass)
         ],
         paneClass: ['owl-dt-dialog', ...coerceArray(this.panelClass)],
-        viewContainerRef: this.viewContainerRef,
+        viewContainerRef: this.#viewContainerRef,
         scrollStrategy:
-          this.scrollStrategy || this.defaultScrollStrategy()
+          this.scrollStrategy || this.#defaultScrollStrategy()
       }
     );
     this.pickerContainer = this.dialogRef.componentInstance;
@@ -605,7 +603,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     if (!this.pickerContainerPortal) {
       this.pickerContainerPortal = new ComponentPortal<
         OwlDateTimeContainerComponent<T>
-      >(OwlDateTimeContainerComponent, this.viewContainerRef);
+      >(OwlDateTimeContainerComponent, this.#viewContainerRef);
     }
 
     if (!this.popupRef) {
@@ -619,7 +617,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.pickerContainer = componentRef.instance;
 
       // Update the position once the calendar has rendered.
-      this.ngZone.onStable
+      this.#ngZone.onStable
         .asObservable()
         .pipe(take(1))
         .subscribe(() => {
@@ -650,11 +648,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
         'cdk-overlay-transparent-backdrop',
         ...coerceArray(this.backdropClass)
       ],
-      scrollStrategy: this.scrollStrategy || this.defaultScrollStrategy(),
+      scrollStrategy: this.scrollStrategy || this.#defaultScrollStrategy(),
       panelClass: ['owl-dt-popup', ...coerceArray(this.panelClass)]
     });
 
-    this.popupRef = this.overlay.create(overlayConfig);
+    this.popupRef = this.#overlay.create(overlayConfig);
 
     merge(
       this.popupRef.backdropClick(),
@@ -675,9 +673,9 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   /**
    * Create the popup PositionStrategy.
-   * */
+   */
   private createPopupPositionStrategy(): PositionStrategy {
-    return this.overlay
+    return this.#overlay
       .position()
       .flexibleConnectedTo(this._dtInput.elementRef)
       .withTransformOriginOn('.owl-dt-container')

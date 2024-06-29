@@ -16,8 +16,8 @@ import {
   HostBinding,
   HostListener,
   OnInit,
-  Optional,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { DateTimeAdapter } from '../adapter/date-time-adapter';
@@ -40,6 +40,14 @@ import { owlDateTimePickerAnimations } from './date-time-picker.animations';
 })
 export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentInit, AfterViewInit {
 
+  readonly #cdRef = inject(ChangeDetectorRef);
+
+  readonly #elmRef = inject(ElementRef);
+
+  readonly #pickerIntl = inject(OwlDateTimeIntl);
+
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
   @ViewChild(OwlCalendarComponent)
   public calendar: OwlCalendarComponent<T>;
 
@@ -55,7 +63,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to hide picker
-   * */
+   */
   private hidePicker$ = new Subject<any>();
 
   get hidePickerStream(): Observable<any> {
@@ -64,7 +72,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to confirm the selected value
-   * */
+   */
   private confirmSelected$ = new Subject<any>();
 
   get confirmSelectedStream(): Observable<any> {
@@ -95,13 +103,13 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   set pickerMoment(value: T) {
     if (value) {
-      this._clamPickerMoment = this.dateTimeAdapter.clampDate(
+      this._clamPickerMoment = this.#dateTimeAdapter.clampDate(
         value,
         this.picker.minDateTime,
         this.picker.maxDateTime
       );
     }
-    this.cdRef.markForCheck();
+    this.#cdRef.markForCheck();
   }
 
   get pickerType(): PickerType {
@@ -109,44 +117,44 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   }
 
   get cancelLabel(): string {
-    return this.pickerIntl.cancelBtnLabel;
+    return this.#pickerIntl.cancelBtnLabel;
   }
 
   get setLabel(): string {
-    return this.pickerIntl.setBtnLabel;
+    return this.#pickerIntl.setBtnLabel;
   }
 
   /**
    * The range 'from' label
-   * */
+   */
   get fromLabel(): string {
-    return this.pickerIntl.rangeFromLabel;
+    return this.#pickerIntl.rangeFromLabel;
   }
 
   /**
    * The range 'to' label
-   * */
+   */
   get toLabel(): string {
-    return this.pickerIntl.rangeToLabel;
+    return this.#pickerIntl.rangeToLabel;
   }
 
   /**
    * The range 'from' formatted value
-   * */
+   */
   get fromFormattedValue(): string {
     const value = this.picker.selecteds[0];
     return value
-      ? this.dateTimeAdapter.format(value, this.picker.formatString)
+      ? this.#dateTimeAdapter.format(value, this.picker.formatString)
       : '';
   }
 
   /**
    * The range 'to' formatted value
-   * */
+   */
   get toFormattedValue(): string {
     const value = this.picker.selecteds[1];
     return value
-      ? this.dateTimeAdapter.format(value, this.picker.formatString)
+      ? this.#dateTimeAdapter.format(value, this.picker.formatString)
       : '';
   }
 
@@ -154,7 +162,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * Cases in which the control buttons show in the picker
    * 1) picker mode is 'dialog'
    * 2) picker type is NOT 'calendar' and the picker mode is NOT 'inline'
-   * */
+   */
   get showControlButtons(): boolean {
     return (
       this.picker.pickerMode === 'dialog' ||
@@ -164,7 +172,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   }
 
   get containerElm(): HTMLElement {
-    return this.elmRef.nativeElement;
+    return this.#elmRef.nativeElement;
   }
 
   @HostBinding('class.owl-dt-container')
@@ -202,20 +210,13 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     return this.picker.pickerMode === 'inline' ? '' : 'enter';
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    private elmRef: ElementRef,
-    private pickerIntl: OwlDateTimeIntl,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>
-  ) { }
-
   public ngOnInit() {
     if (this.picker.selectMode === 'range') {
       if (this.picker.selecteds[0]) {
-        this.retainStartTime = this.dateTimeAdapter.clone(this.picker.selecteds[0]);
+        this.retainStartTime = this.#dateTimeAdapter.clone(this.picker.selecteds[0]);
       }
       if (this.picker.selecteds[1]) {
-        this.retainEndTime = this.dateTimeAdapter.clone(this.picker.selecteds[1]);
+        this.retainEndTime = this.#dateTimeAdapter.clone(this.picker.selecteds[1]);
       }
     }
   }
@@ -271,7 +272,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   }
 
   public timeSelected(time: T): void {
-    this.pickerMoment = this.dateTimeAdapter.clone(time);
+    this.pickerMoment = this.#dateTimeAdapter.clone(time);
 
     if (!this.picker.dateTimeChecker(this.pickerMoment)) {
       return;
@@ -290,13 +291,13 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
       if (
         (this.activeSelectedIndex === 0 &&
           selecteds[1] &&
-          this.dateTimeAdapter.compare(
+          this.#dateTimeAdapter.compare(
             this.pickerMoment,
             selecteds[1]
           ) === 1) ||
         (this.activeSelectedIndex === 1 &&
           selecteds[0] &&
-          this.dateTimeAdapter.compare(
+          this.#dateTimeAdapter.compare(
             this.pickerMoment,
             selecteds[0]
           ) === -1)
@@ -308,10 +309,10 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
       }
 
       if (selecteds[0]) {
-        this.retainStartTime = this.dateTimeAdapter.clone(selecteds[0]);
+        this.retainStartTime = this.#dateTimeAdapter.clone(selecteds[0]);
       }
       if (selecteds[1]) {
-        this.retainEndTime = this.dateTimeAdapter.clone(selecteds[1]);
+        this.retainEndTime = this.#dateTimeAdapter.clone(selecteds[1]);
       }
       this.picker.select(selecteds);
     }
@@ -392,14 +393,14 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
       const selected = this.picker.selecteds[this.activeSelectedIndex];
       if (this.picker.selecteds && selected) {
-        this.pickerMoment = this.dateTimeAdapter.clone(selected);
+        this.pickerMoment = this.#dateTimeAdapter.clone(selected);
       }
     }
     return;
   }
 
   private initPicker(): void {
-    this.pickerMoment = this.picker.startAt || this.dateTimeAdapter.now();
+    this.pickerMoment = this.picker.startAt || this.#dateTimeAdapter.now();
     this.activeSelectedIndex = this.picker.selectMode === 'rangeTo' ? 1 : 0;
   }
 
@@ -408,7 +409,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * it returns null when date is not selected.
    */
   private dateSelectedInSingleMode(date: T): T | null {
-    if (this.dateTimeAdapter.isSameDay(date, this.picker.selected)) {
+    if (this.#dateTimeAdapter.isSameDay(date, this.picker.selected)) {
       return null;
     }
 
@@ -437,46 +438,46 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
         this.picker.selecteds.length &&
         !to &&
         from &&
-        this.dateTimeAdapter.differenceInCalendarDays(result, from) >= 0
+        this.#dateTimeAdapter.differenceInCalendarDays(result, from) >= 0
       ) {
         if (this.picker.endAt && !this.retainEndTime) {
-          to = this.dateTimeAdapter.createDate(
-            this.dateTimeAdapter.getYear(result),
-            this.dateTimeAdapter.getMonth(result),
-            this.dateTimeAdapter.getDate(result),
-            this.dateTimeAdapter.getHours(this.picker.endAt),
-            this.dateTimeAdapter.getMinutes(this.picker.endAt),
-            this.dateTimeAdapter.getSeconds(this.picker.endAt));
+          to = this.#dateTimeAdapter.createDate(
+            this.#dateTimeAdapter.getYear(result),
+            this.#dateTimeAdapter.getMonth(result),
+            this.#dateTimeAdapter.getDate(result),
+            this.#dateTimeAdapter.getHours(this.picker.endAt),
+            this.#dateTimeAdapter.getMinutes(this.picker.endAt),
+            this.#dateTimeAdapter.getSeconds(this.picker.endAt));
         } else if (this.retainEndTime) {
-          to = this.dateTimeAdapter.createDate(
-            this.dateTimeAdapter.getYear(result),
-            this.dateTimeAdapter.getMonth(result),
-            this.dateTimeAdapter.getDate(result),
-            this.dateTimeAdapter.getHours(this.retainEndTime),
-            this.dateTimeAdapter.getMinutes(this.retainEndTime),
-            this.dateTimeAdapter.getSeconds(this.retainEndTime));
+          to = this.#dateTimeAdapter.createDate(
+            this.#dateTimeAdapter.getYear(result),
+            this.#dateTimeAdapter.getMonth(result),
+            this.#dateTimeAdapter.getDate(result),
+            this.#dateTimeAdapter.getHours(this.retainEndTime),
+            this.#dateTimeAdapter.getMinutes(this.retainEndTime),
+            this.#dateTimeAdapter.getSeconds(this.retainEndTime));
         } else {
           to = result;
         }
         this.activeSelectedIndex = 1;
       } else {
         if (this.picker.startAt && !this.retainStartTime) {
-          from = this.dateTimeAdapter.createDate(
-            this.dateTimeAdapter.getYear(result),
-            this.dateTimeAdapter.getMonth(result),
-            this.dateTimeAdapter.getDate(result),
-            this.dateTimeAdapter.getHours(this.picker.startAt),
-            this.dateTimeAdapter.getMinutes(this.picker.startAt),
-            this.dateTimeAdapter.getSeconds(this.picker.startAt)
+          from = this.#dateTimeAdapter.createDate(
+            this.#dateTimeAdapter.getYear(result),
+            this.#dateTimeAdapter.getMonth(result),
+            this.#dateTimeAdapter.getDate(result),
+            this.#dateTimeAdapter.getHours(this.picker.startAt),
+            this.#dateTimeAdapter.getMinutes(this.picker.startAt),
+            this.#dateTimeAdapter.getSeconds(this.picker.startAt)
           );
         } else if (this.retainStartTime) {
-          from = this.dateTimeAdapter.createDate(
-            this.dateTimeAdapter.getYear(result),
-            this.dateTimeAdapter.getMonth(result),
-            this.dateTimeAdapter.getDate(result),
-            this.dateTimeAdapter.getHours(this.retainStartTime),
-            this.dateTimeAdapter.getMinutes(this.retainStartTime),
-            this.dateTimeAdapter.getSeconds(this.retainStartTime));
+          from = this.#dateTimeAdapter.createDate(
+            this.#dateTimeAdapter.getYear(result),
+            this.#dateTimeAdapter.getMonth(result),
+            this.#dateTimeAdapter.getDate(result),
+            this.#dateTimeAdapter.getHours(this.retainStartTime),
+            this.#dateTimeAdapter.getMinutes(this.retainStartTime),
+            this.#dateTimeAdapter.getSeconds(this.retainStartTime));
         } else {
           from = result;
         }
@@ -487,14 +488,14 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
       from = result;
 
       // if the from value is after the to value, set the to value as null
-      if (to && this.dateTimeAdapter.compare(from, to) > 0) {
+      if (to && this.#dateTimeAdapter.compare(from, to) > 0) {
         to = null;
       }
     } else if (this.picker.selectMode === 'rangeTo') {
       to = result;
 
       // if the from value is after the to value, set the from value as null
-      if (from && this.dateTimeAdapter.compare(from, to) > 0) {
+      if (from && this.#dateTimeAdapter.compare(from, to) > 0) {
         from = null;
       }
     }
@@ -514,21 +515,21 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
     // if the picker is 'both', update the calendar date's time value
     if (this.picker.pickerType === 'both') {
-      result = this.dateTimeAdapter.createDate(
-        this.dateTimeAdapter.getYear(date),
-        this.dateTimeAdapter.getMonth(date),
-        this.dateTimeAdapter.getDate(date),
-        this.dateTimeAdapter.getHours(this.pickerMoment),
-        this.dateTimeAdapter.getMinutes(this.pickerMoment),
-        this.dateTimeAdapter.getSeconds(this.pickerMoment)
+      result = this.#dateTimeAdapter.createDate(
+        this.#dateTimeAdapter.getYear(date),
+        this.#dateTimeAdapter.getMonth(date),
+        this.#dateTimeAdapter.getDate(date),
+        this.#dateTimeAdapter.getHours(this.pickerMoment),
+        this.#dateTimeAdapter.getMinutes(this.pickerMoment),
+        this.#dateTimeAdapter.getSeconds(this.pickerMoment)
       );
-      result = this.dateTimeAdapter.clampDate(
+      result = this.#dateTimeAdapter.clampDate(
         result,
         this.picker.minDateTime,
         this.picker.maxDateTime
       );
     } else {
-      result = this.dateTimeAdapter.clone(date);
+      result = this.#dateTimeAdapter.clone(date);
     }
 
     // check the updated dateTime
@@ -537,7 +538,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Focus to the picker
-   * */
+   */
   private focusPicker(): void {
     if (this.picker.pickerMode === 'inline') {
       return;

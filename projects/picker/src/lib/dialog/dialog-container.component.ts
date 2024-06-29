@@ -24,9 +24,8 @@ import {
   EventEmitter,
   HostBinding,
   HostListener,
-  Inject,
-  Optional,
-  ViewChild
+  ViewChild,
+  inject
 } from '@angular/core';
 import { OwlDialogConfigInterface } from './dialog-config';
 
@@ -89,6 +88,15 @@ const zoomFadeInFrom = {
   ]
 })
 export class OwlDialogContainerComponent extends BasePortalOutlet {
+
+  readonly #changeDetector = inject(ChangeDetectorRef);
+
+  readonly #elementRef = inject(ElementRef);
+
+  readonly #focusTrapFactory = inject(FocusTrapFactory);
+
+  readonly #document = inject(DOCUMENT, { optional: true });
+
   @ViewChild(CdkPortalOutlet, { static: true })
   portalOutlet: CdkPortalOutlet | null = null;
 
@@ -158,17 +166,6 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
     return { value: this.state, params: this.params };
   }
 
-  constructor(
-    private changeDetector: ChangeDetectorRef,
-    private elementRef: ElementRef,
-    private focusTrapFactory: FocusTrapFactory,
-    @Optional()
-    @Inject(DOCUMENT)
-    private document: any
-  ) {
-    super();
-  }
-
   /**
    * Attach a ComponentPortal as content to this dialog container.
    */
@@ -219,7 +216,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
 
   public startExitAnimation() {
     this.state = 'exit';
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   /**
@@ -254,18 +251,18 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
    * Save the focused element before dialog was open
    */
   private savePreviouslyFocusedElement(): void {
-    if (this.document) {
-      this.elementFocusedBeforeDialogWasOpened = this.document
+    if (this.#document) {
+      this.elementFocusedBeforeDialogWasOpened = this.#document
         .activeElement as HTMLElement;
 
-      Promise.resolve().then(() => this.elementRef.nativeElement.focus());
+      Promise.resolve().then(() => this.#elementRef.nativeElement.focus());
     }
   }
 
   private trapFocus(): void {
     if (!this.focusTrap) {
-      this.focusTrap = this.focusTrapFactory.create(
-        this.elementRef.nativeElement
+      this.focusTrap = this.#focusTrapFactory.create(
+        this.#elementRef.nativeElement
       );
     }
 

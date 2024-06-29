@@ -5,19 +5,16 @@ import {
   Component, EventEmitter,
   forwardRef,
   HostBinding,
-  Inject,
+  inject,
   Input,
   OnInit,
-  Optional,
   Output,
+  Provider,
   ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DateTimeAdapter } from '../adapter/date-time-adapter';
-import {
-  OWL_DATE_TIME_FORMATS,
-  OwlDateTimeFormats
-} from '../adapter/date-time-format';
+import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from '../adapter/date-time-format';
 import {
   OwlDateTime,
   PickerMode,
@@ -26,7 +23,7 @@ import {
 } from '../date-time';
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
 
-export const OWL_DATETIME_VALUE_ACCESSOR: any = {
+export const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => OwlDateTimeInlineComponent),
   multi: true
@@ -40,6 +37,12 @@ export const OWL_DATETIME_VALUE_ACCESSOR: any = {
   providers: [OWL_DATETIME_VALUE_ACCESSOR]
 })
 export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
+
+  readonly #changeDetector = inject(ChangeDetectorRef);
+
+  protected override dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
+  protected override dateTimeFormats = inject<OwlDateTimeFormats>(OWL_DATE_TIME_FORMATS, { optional: true })
 
   @ViewChild(OwlDateTimeContainerComponent, { static: true })
   public container: OwlDateTimeContainerComponent<T>;
@@ -165,7 +168,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   @Input('min')
   set minDateTime(value: T | null) {
     this._min = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   /** The maximum valid date. */
@@ -178,7 +181,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   @Input('max')
   set maxDateTime(value: T | null) {
     this._max = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   private _value: T | null;
@@ -218,20 +221,20 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
   dateSelected = new EventEmitter<T>();
 
@@ -242,7 +245,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   set selected(value: T | null) {
     this._selected = value;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   private _selecteds: Array<T> = [];
@@ -252,7 +255,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   set selecteds(values: Array<T>) {
     this._selecteds = values;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   get opened(): boolean {
@@ -282,16 +285,6 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   private onModelChange: Function = () => { };
   private onModelTouched: Function = () => { };
-
-  constructor(
-    protected changeDetector: ChangeDetectorRef,
-    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    protected override dateTimeFormats: OwlDateTimeFormats
-  ) {
-    super(dateTimeAdapter, dateTimeFormats);
-  }
 
   public ngOnInit() {
     this.container.picker = this;
@@ -337,21 +330,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }

@@ -143,7 +143,7 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
   /**
    * ID for the modal. If omitted, a unique one will be generated.
    */
-  public id: string;
+  public id: string = `owl-dialog-${uniqueId++}`;
 
   /**
    * The ARIA role of the dialog element.
@@ -211,7 +211,4 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
 
   public viewContainerRef?: ViewContainerRef;
 
-  constructor() {
-    this.id = `owl-dialog-${uniqueId++}`;
-  }
 }

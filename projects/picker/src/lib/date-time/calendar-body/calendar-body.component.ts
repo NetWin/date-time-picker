@@ -6,7 +6,8 @@ import {
   HostBinding,
   Input,
   NgZone,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 import { take } from 'rxjs';
 import { SelectMode } from '../date-time';
@@ -30,6 +31,11 @@ export class CalendarCell {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlCalendarBodyComponent {
+
+  readonly #elmRef = inject(ElementRef);
+
+  readonly #ngZone = inject(NgZone);
+
   /**
    * The cell number of the active cell in the table.
    */
@@ -38,13 +44,13 @@ export class OwlCalendarBodyComponent {
 
   /**
    * The cells to display in the table.
-   * */
+   */
   @Input()
   rows: CalendarCell[][];
 
   /**
    * The number of columns in the table.
-   * */
+   */
   @Input()
   numCols = 7;
 
@@ -56,13 +62,13 @@ export class OwlCalendarBodyComponent {
 
   /**
    * The value in the table that corresponds to today.
-   * */
+   */
   @Input()
   todayValue: number;
 
   /**
    * The value in the table that is currently selected.
-   * */
+   */
   @Input()
   selectedValues: number[];
 
@@ -74,7 +80,7 @@ export class OwlCalendarBodyComponent {
 
   /**
    * Emit when a calendar cell is selected
-   * */
+   */
   @Output()
   public readonly select = new EventEmitter<CalendarCell>();
 
@@ -94,8 +100,6 @@ export class OwlCalendarBodyComponent {
       this.selectMode === 'rangeTo'
     );
   }
-
-  constructor(private elmRef: ElementRef, private ngZone: NgZone) { }
 
   public selectCell(cell: CalendarCell): void {
     this.select.emit(cell);
@@ -130,7 +134,7 @@ export class OwlCalendarBodyComponent {
 
   /**
    * Check if the cell in the range
-   * */
+   */
   public isInRange(value: number): boolean {
     if (!this.isInRangeMode) {
       return false;
@@ -148,7 +152,7 @@ export class OwlCalendarBodyComponent {
 
   /**
    * Check if the cell is the range from
-   * */
+   */
   public isRangeFrom(value: number): boolean {
     if (!this.isInRangeMode) {
       return false;
@@ -160,7 +164,7 @@ export class OwlCalendarBodyComponent {
 
   /**
    * Check if the cell is the range to
-   * */
+   */
   public isRangeTo(value: number): boolean {
     if (!this.isInRangeMode) {
       return false;
@@ -171,14 +175,14 @@ export class OwlCalendarBodyComponent {
 
   /**
    * Focus to a active cell
-   * */
+   */
   public focusActiveCell(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.ngZone.onStable
+    this.#ngZone.runOutsideAngular(() => {
+      this.#ngZone.onStable
         .asObservable()
         .pipe(take(1))
         .subscribe(() => {
-          this.elmRef.nativeElement
+          this.#elmRef.nativeElement
             .querySelector('.owl-dt-calendar-cell-active')
             .focus();
         });

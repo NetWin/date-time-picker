@@ -36,7 +36,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   /**
    * Value would be displayed in the box
    * If it is null, the box would display [value]
-   * */
+   */
   @Input() boxValue: number;
 
   @Input() value: number;
@@ -82,9 +82,6 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   @ViewChild('valueInput', { static: true })
   private valueInput: ElementRef<HTMLInputElement>;
   private onValueInputMouseWheelBind = this.onValueInputMouseWheel.bind(this);
-
-  constructor() {
-  }
 
   public ngOnInit() {
     this.inputStreamSub = this.inputStream.pipe(debounceTime(750)).subscribe((val: string) => {

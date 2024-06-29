@@ -1,5 +1,5 @@
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { range } from '../../../utils/array.utils';
 import {
   DEFAULT_DATE_NAMES,
@@ -22,6 +22,11 @@ const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?
 
 @Injectable()
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
+
+  readonly #owlDateTimeLocale = inject<string>(OWL_DATE_TIME_LOCALE, { optional: true });
+
+  readonly #platform = inject(Platform);
+
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
 
@@ -33,18 +38,13 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    */
   useUtcForDisplay: boolean;
 
-  constructor(
-    @Optional()
-    @Inject(OWL_DATE_TIME_LOCALE)
-    private owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  constructor() {
     super();
-    super.setLocale(owlDateTimeLocale);
+    super.setLocale(this.#owlDateTimeLocale);
 
     // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !platform.TRIDENT;
-    this._clampDate = platform.TRIDENT || platform.EDGE;
+    this.useUtcForDisplay = !this.#platform.TRIDENT;
+    this._clampDate = this.#platform.TRIDENT || this.#platform.EDGE;
   }
 
   public getYear(date: Date): number {
@@ -84,32 +84,33 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   }
 
   public differenceInCalendarDays(dateLeft: Date, dateRight: Date): number {
-    if (this.isValid(dateLeft) && this.isValid(dateRight)) {
-      const dateLeftStartOfDay = this.createDate(
-        this.getYear(dateLeft),
-        this.getMonth(dateLeft),
-        this.getDate(dateLeft)
-      );
-      const dateRightStartOfDay = this.createDate(
-        this.getYear(dateRight),
-        this.getMonth(dateRight),
-        this.getDate(dateRight)
-      );
-
-      const timeStampLeft =
-        this.getTime(dateLeftStartOfDay) -
-        dateLeftStartOfDay.getTimezoneOffset() *
-        this.milliseondsInMinute;
-      const timeStampRight =
-        this.getTime(dateRightStartOfDay) -
-        dateRightStartOfDay.getTimezoneOffset() *
-        this.milliseondsInMinute;
-      return Math.round(
-        (timeStampLeft - timeStampRight) / this.millisecondsInDay
-      );
-    } else {
+    if (!this.isValid(dateLeft) || !this.isValid(dateRight)) {
       return null;
     }
+
+    const dateLeftStartOfDay = this.createDate(
+      this.getYear(dateLeft),
+      this.getMonth(dateLeft),
+      this.getDate(dateLeft)
+    );
+
+    const dateRightStartOfDay = this.createDate(
+      this.getYear(dateRight),
+      this.getMonth(dateRight),
+      this.getDate(dateRight)
+    );
+
+    const timeStampLeft = (
+      this.getTime(dateLeftStartOfDay) -
+      dateLeftStartOfDay.getTimezoneOffset() * this.milliseondsInMinute
+    );
+
+    const timeStampRight = (
+      this.getTime(dateRightStartOfDay) -
+      dateRightStartOfDay.getTimezoneOffset() * this.milliseondsInMinute
+    );
+
+    return Math.round((timeStampLeft - timeStampRight) / this.millisecondsInDay);
   }
 
   public getYearName(date: Date): string {
