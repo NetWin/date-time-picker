@@ -12,9 +12,9 @@ import {
  * (https://tools.ietf.org/html/rfc3339). Note that the string may not actually be a valid date
  * because the regex will match strings an with out of bounds month, date, etc.
  */
-const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+\-]\d{2}:\d{2}))?)?$/;
+const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+-]\d{2}:\d{2}))?)?$/;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
 
   readonly #owlDateTimeLocale = inject<string>(OWL_DATE_TIME_LOCALE, { optional: true });
@@ -30,7 +30,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
    * will produce `'8/13/1800'`.
    */
-  useUtcForDisplay: boolean;
+  protected readonly useUtcForDisplay: boolean;
 
   constructor() {
     super();
@@ -173,7 +173,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date(NaN);
   }
 
-  public isDateInstance(obj: any): boolean {
+  public isDateInstance(obj: unknown): obj is Date {
     return obj instanceof Date;
   }
 
@@ -226,9 +226,9 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     year: number,
     month: number,
     date: number,
-    hours: number = 0,
-    minutes: number = 0,
-    seconds: number = 0
+    hours = 0,
+    minutes = 0,
+    seconds = 0
   ): Date {
     return createDate(year, month, date, hours, minutes, seconds);
   }
@@ -248,7 +248,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date();
   }
 
-  public format(date: Date, displayFormat: any): string {
+  public format(date: Date, displayFormat: Partial<Intl.DateTimeFormatOptions>): string {
     if (!this.isValid(date)) {
       throw Error('JSNativeDate: Cannot format invalid date.');
     }
@@ -265,12 +265,14 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return this.stripDirectionalityCharacters(this._format(dtf, date));
   }
 
-  public parse(value: any, parseFormat: any): Date | null {
-    // There is no way using the native JS Date to set the parse format or locale
+  public parse(value: unknown): Date | null {
     if (typeof value === 'number') {
       return new Date(value);
     }
-    return value ? new Date(Date.parse(value)) : null;
+    if (!value) {
+      return null;
+    }
+    return new Date(Date.parse(String(value)));
   }
 
   /**
@@ -278,7 +280,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * (https://www.ietf.org/rfc/rfc3339.txt) into valid Dates and empty string into null. Returns an
    * invalid date for all other values.
    */
-  public override deserialize(value: any): Date | null {
+  public override deserialize(value: unknown): Date | null {
     if (typeof value === 'string') {
       if (!value) {
         return null;
@@ -300,7 +302,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * other browsers do not. We remove them to make output consistent and because they interfere with
    * date parsing.
    */
-  private stripDirectionalityCharacters(str: string) {
+  private stripDirectionalityCharacters(str: string): string {
     return str.replace(/[\u200e\u200f]/g, '');
   }
 
@@ -311,7 +313,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * We work around this problem building a new Date object which has its internal UTC
    * representation with the local date and time.
    */
-  private _format(dtf: Intl.DateTimeFormat, date: Date) {
+  private _format(dtf: Intl.DateTimeFormat, date: Date): string {
     const d = new Date(
       Date.UTC(
         date.getFullYear(),

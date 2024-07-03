@@ -11,8 +11,8 @@ import { OWL_NATIVE_DATE_TIME_FORMATS } from './native-date-time-format';
     {
       provide: DateTimeAdapter,
       useClass: NativeDateTimeAdapter
-    },
-  ],
+    }
+  ]
 })
 export class NativeDateTimeModule { }
 
@@ -23,6 +23,6 @@ export class NativeDateTimeModule { }
       provide: OWL_DATE_TIME_FORMATS,
       useValue: OWL_NATIVE_DATE_TIME_FORMATS
     }
-  ],
+  ]
 })
 export class OwlNativeDateTimeModule { }

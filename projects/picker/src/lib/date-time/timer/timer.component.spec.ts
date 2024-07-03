@@ -13,15 +13,13 @@ import { OwlDateTimeModule } from '../date-time.module';
 import { OwlTimerComponent } from './timer.component';
 
 describe('OwlTimerComponent', () => {
-  let zone: MockNgZone;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardTimerComponent],
+      imports: [OwlNativeDateTimeModule, OwlDateTimeModule, StandardTimerComponent],
       providers: [
         OwlDateTimeIntl,
-        { provide: NgZone, useFactory: () => (zone = new MockNgZone()) }
+        { provide: NgZone, useFactory: () => new MockNgZone() }
       ]
     }).compileComponents();
   });
@@ -95,8 +93,8 @@ describe('OwlTimerComponent', () => {
       );
       expect(arrowBtns.length).toBe(6);
 
-      for (let i = 0; i < arrowBtns.length; i++) {
-        arrowBtns[i].click();
+      for (const btn of Array.from(arrowBtns)) {
+        btn.click();
         fixture.detectChanges();
         flush();
       }
@@ -312,11 +310,11 @@ describe('OwlTimerComponent', () => {
       dispatchFakeEvent(timeCells[0], 'focusin');
       timeCells[0].value = '5';
       dispatchFakeEvent(timeCells[0], 'input');
-      setTimeout(() => { }, 1000);
+      setTimeout(() => { /** noop */ }, 1000);
 
       timeCells[1].value = '8';
       dispatchFakeEvent(timeCells[1], 'input');
-      setTimeout(() => { }, 1000);
+      setTimeout(() => { /** noop */ }, 1000);
 
       fixture.detectChanges();
 
@@ -330,31 +328,33 @@ describe('OwlTimerComponent', () => {
 });
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-timer
       [hour12Timer]="hour12Timer"
-      [showSecondsTimer]="showSecondsTimer"
+      [maxDateTime]="maxDateTime"
+      [minDateTime]="minDateTime"
       [pickerMoment]="pickerMoment"
+      [showSecondsTimer]="showSecondsTimer"
       [stepHour]="stepHour"
       [stepMinute]="stepMinute"
       [stepSecond]="stepSecond"
-      [minDateTime]="minDateTime"
-      [maxDateTime]="maxDateTime"
       (selectedChange)="handleSelectedChange($event)">
     </owl-date-time-timer>
-  `
+  `,
+  imports: [OwlTimerComponent]
 })
 class StandardTimerComponent {
-  stepHour = 1;
-  stepMinute = 1;
-  stepSecond = 1;
-  hour12Timer = false;
-  showSecondsTimer = false;
-  pickerMoment = new Date(2018, MONTHS.JAN, 31, 12, 30, 30);
-  minDateTime = new Date(2018, MONTHS.JAN, 29, 12, 30, 30);
-  maxDateTime = new Date(2018, MONTHS.FEB, 1, 12, 30, 30);
+  public stepHour = 1;
+  public stepMinute = 1;
+  public stepSecond = 1;
+  public hour12Timer = false;
+  public showSecondsTimer = false;
+  public pickerMoment = new Date(2018, MONTHS.JAN, 31, 12, 30, 30);
+  public minDateTime = new Date(2018, MONTHS.JAN, 29, 12, 30, 30);
+  public maxDateTime = new Date(2018, MONTHS.FEB, 1, 12, 30, 30);
 
-  handleSelectedChange(val: Date) {
+  public handleSelectedChange(val: Date): void {
     this.pickerMoment = val;
   }
 }

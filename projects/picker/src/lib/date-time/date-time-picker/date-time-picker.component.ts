@@ -38,8 +38,8 @@ import {
   PickerType,
   SelectMode
 } from '../date-time';
+import { OwlDateTimeInputDirective } from '../date-time-input/date-time-input.directive';
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
-import { OwlDateTimeInputDirective } from '../date-time-picker-input/date-time-picker-input.directive';
 
 /** Injection token that determines the scroll handling while the dtPicker is open. */
 export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<
@@ -50,8 +50,7 @@ export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<
 export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(
   overlay: Overlay
 ): () => BlockScrollStrategy {
-  const fn = () => overlay.scrollStrategies.block();
-  return fn;
+  return () => overlay.scrollStrategies.block();
 }
 
 /** @internal */
@@ -62,10 +61,11 @@ export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
 };
 
 @Component({
+  standalone: true,
   selector: 'owl-date-time',
   exportAs: 'owlDateTime',
   templateUrl: './date-time-picker.component.html',
-  styleUrls: ['./date-time-picker.component.scss'],
+  styleUrl: './date-time-picker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy {
@@ -99,7 +99,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** The date to open the calendar to initially. */
   private _startAt: T | null;
   @Input()
-  get startAt(): T | null {
+  public get startAt(): T | null {
     // If an explicit startAt is set we start there, otherwise we start at whatever the currently
     // selected value is.
     if (this._startAt) {
@@ -122,7 +122,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     return null;
   }
 
-  set startAt(date: T | null) {
+  public set startAt(date: T | null) {
     this._startAt = this.getValidDate(
       this.dateTimeAdapter.deserialize(date)
     );
@@ -131,7 +131,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** The end date to set for range calendar. */
   private _endAt: T | null;
   @Input()
-  get endAt(): T | null {
+  public get endAt(): T | null {
     if (this._endAt) {
       return this._endAt;
     }
@@ -150,7 +150,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     return null;
   }
 
-  set endAt(date: T | null) {
+  public set endAt(date: T | null) {
     this._endAt = this.getValidDate(
       this.dateTimeAdapter.deserialize(date)
     );
@@ -164,11 +164,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
    */
   private _pickerType: PickerType = 'both';
   @Input()
-  get pickerType(): PickerType {
+  public get pickerType(): PickerType {
     return this._pickerType;
   }
 
-  set pickerType(val: PickerType) {
+  public set pickerType(val: PickerType) {
     if (val !== this._pickerType) {
       this._pickerType = val;
       if (this._dtInput) {
@@ -180,13 +180,13 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * Whether the picker open as a dialog
    */
-  _pickerMode: PickerMode = 'popup';
+  private _pickerMode: PickerMode = 'popup';
   @Input()
-  get pickerMode() {
+  public get pickerMode(): PickerMode {
     return this._pickerMode;
   }
 
-  set pickerMode(mode: PickerMode) {
+  public set pickerMode(mode: PickerMode) {
     if (mode === 'popup') {
       this._pickerMode = mode;
     } else {
@@ -197,13 +197,13 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** Whether the date time picker should be disabled. */
   private _disabled: boolean;
   @Input()
-  override get disabled(): boolean {
+  public override get disabled(): boolean {
     return this._disabled === undefined && this._dtInput
       ? this._dtInput.disabled
       : !!this._disabled;
   }
 
-  override set disabled(value: boolean) {
+  public override set disabled(value: boolean) {
     value = coerceBooleanProperty(value);
     if (value !== this._disabled) {
       this._disabled = value;
@@ -214,12 +214,16 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** Whether the calendar is open. */
   private _opened = false;
   @Input()
-  get opened(): boolean {
+  public get opened(): boolean {
     return this._opened;
   }
 
-  set opened(val: boolean) {
-    val ? this.open() : this.close();
+  public set opened(val: boolean) {
+    if (val) {
+      this.open();
+    } else {
+      this.close();
+    }
   }
 
   /**
@@ -233,39 +237,39 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
    * Callback when the picker is closed
    */
   @Output()
-  afterPickerClosed = new EventEmitter<any>();
+  public readonly afterPickerClosed = new EventEmitter<T | Array<T>>();
 
   /**
    * Callback before the picker is open
    */
   @Output()
-  beforePickerOpen = new EventEmitter<any>();
+  public readonly beforePickerOpen = new EventEmitter<void>();
 
   /**
    * Callback when the picker is open
    */
   @Output()
-  afterPickerOpen = new EventEmitter<any>();
+  public readonly afterPickerOpen = new EventEmitter<void>();
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
    */
   @Output()
-  yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
    */
   @Output()
-  monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
    */
   @Output()
-  dateSelected = new EventEmitter<T>();
+  public readonly dateSelected = new EventEmitter<T>();
 
   /**
    * Emit when the selected value has been confirmed
@@ -293,53 +297,53 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   private focusedElementBeforeOpen: Element | null = null;
 
   private _dtInput: OwlDateTimeInputDirective<T>;
-  get dtInput() {
+  public get dtInput(): OwlDateTimeInputDirective<T> {
     return this._dtInput;
   }
 
   private _selected: T | null;
-  get selected() {
+  public get selected(): T | null {
     return this._selected;
   }
 
-  set selected(value: T | null) {
+  public set selected(value: T | null) {
     this._selected = value;
     this.#changeDetector.markForCheck();
   }
 
   private _selecteds: Array<T> = [];
-  get selecteds() {
+  public get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: Array<T>) {
+  public set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.#changeDetector.markForCheck();
   }
 
   /** The minimum selectable date. */
-  get minDateTime(): T | null {
+  public get minDateTime(): T | null {
     return this._dtInput && this._dtInput.min;
   }
 
   /** The maximum selectable date. */
-  get maxDateTime(): T | null {
+  public get maxDateTime(): T | null {
     return this._dtInput && this._dtInput.max;
   }
 
-  get dateTimeFilter(): (date: T | null) => boolean {
-    return this._dtInput && this._dtInput.dateTimeFilter;
+  public get dateTimeFilter(): (date: T | null) => boolean {
+    return this._dtInput?.dateTimeFilter;
   }
 
-  get selectMode(): SelectMode {
+  public get selectMode(): SelectMode {
     return this._dtInput.selectMode;
   }
 
-  get isInSingleMode(): boolean {
+  public get isInSingleMode(): boolean {
     return this._dtInput.isInSingleMode;
   }
 
-  get isInRangeMode(): boolean {
+  public get isInRangeMode(): boolean {
     return this._dtInput.isInRangeMode;
   }
 
@@ -407,7 +411,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       );
     }
 
-    this.pickerMode === 'dialog' ? this.openAsDialog() : this.openAsPopup();
+    if (this.pickerMode === 'dialog') {
+      this.openAsDialog();
+    } else {
+      this.openAsPopup();
+    }
 
     this.pickerContainer.picker = this;
 
@@ -419,11 +427,9 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     );
 
     // Listen to picker container's confirmSelectedStream
-    this.confirmSelectedStreamSub = this.pickerContainer.confirmSelectedStream.subscribe(
-      (event: any) => {
-        this.confirmSelect(event);
-      }
-    );
+    this.confirmSelectedStreamSub = this.pickerContainer.confirmSelectedStream.subscribe((event: Event) => {
+      this.confirmSelect(event);
+    });
   }
 
   /**
@@ -488,14 +494,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       return;
     }
 
-    if (this.popupRef && this.popupRef.hasAttached()) {
+    if (this.popupRef?.hasAttached()) {
       this.popupRef.detach();
     }
 
-    if (
-      this.pickerContainerPortal &&
-      this.pickerContainerPortal.isAttached
-    ) {
+    if (this.pickerContainerPortal?.isAttached) {
       this.pickerContainerPortal.detach();
     }
 
@@ -524,7 +527,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.dialogRef = null;
     }
 
-    const completeClose = () => {
+    const completeClose = (): void => {
       if (this._opened) {
         this._opened = false;
         const selected = this.selected || this.selecteds;
@@ -553,7 +556,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * Confirm the selected value
    */
-  public confirmSelect(event?: any): void {
+  public confirmSelect(_event?: Event): void {
     if (this.isInSingleMode) {
       const selected =
         this.selected || this.startAt || this.dateTimeAdapter.now();
@@ -571,7 +574,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
    */
   private openAsDialog(): void {
     this.dialogRef = this.#dialogService.open(
-      OwlDateTimeContainerComponent,
+      OwlDateTimeContainerComponent<T>,
       {
         autoFocus: false,
         backdropClass: [
@@ -587,10 +590,10 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     this.pickerContainer = this.dialogRef.componentInstance;
 
     this.dialogRef.beforeOpen().subscribe(() => {
-      this.beforePickerOpen.emit(null);
+      this.beforePickerOpen.emit();
     });
     this.dialogRef.afterOpen().subscribe(() => {
-      this.afterPickerOpen.emit(null);
+      this.afterPickerOpen.emit();
       this._opened = true;
     });
     this.dialogRef.afterClosed().subscribe(() => this.close());
@@ -610,7 +613,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.createPopup();
     }
 
-    if (!this.popupRef.hasAttached()) {
+    if (!this.popupRef?.hasAttached()) {
       const componentRef: ComponentRef<
         OwlDateTimeContainerComponent<T>
       > = this.popupRef.attach(this.pickerContainerPortal);
@@ -627,14 +630,14 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.pickerBeforeOpenedStreamSub = this.pickerContainer.beforePickerOpenedStream
         .pipe(take(1))
         .subscribe(() => {
-          this.beforePickerOpen.emit(null);
+          this.beforePickerOpen.emit();
         });
 
       // emit open stream
       this.pickerOpenedStreamSub = this.pickerContainer.pickerOpenedStream
         .pipe(take(1))
         .subscribe(() => {
-          this.afterPickerOpen.emit(null);
+          this.afterPickerOpen.emit();
           this._opened = true;
         });
     }

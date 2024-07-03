@@ -7,8 +7,8 @@ const api: NgDocApi = {
       name: 'DateTimePicker',
       route: '',
       include: 'projects/picker/src/public_api.ts'
-    },
-  ],
+    }
+  ]
 };
 
 export default api;

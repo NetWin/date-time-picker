@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -13,13 +14,16 @@ import {
 import { take } from 'rxjs';
 import { DateTimeAdapter } from '../adapter';
 import { OwlDateTimeIntl } from '../date-time-intl.service';
+import { OwlTimerBoxComponent } from '../timer-box';
 
 @Component({
+  standalone: true,
   exportAs: 'owlDateTimeTimer',
   selector: 'owl-date-time-timer',
   templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './timer.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [OwlTimerBoxComponent, NgIf]
 })
 export class OwlTimerComponent<T> {
 
@@ -36,10 +40,10 @@ export class OwlTimerComponent<T> {
   /** The current picker moment */
   private _pickerMoment: T;
   @Input()
-  get pickerMoment() {
+  public get pickerMoment(): T {
     return this._pickerMoment;
   }
-  set pickerMoment(value: T) {
+  public set pickerMoment(value: T) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._pickerMoment = this.getValidDate(deserialized) || this.#dateTimeAdapter.now();
   }
@@ -47,10 +51,10 @@ export class OwlTimerComponent<T> {
   /** The minimum selectable date time. */
   private _minDateTime: T | null;
   @Input()
-  get minDateTime(): T | null {
+  public get minDateTime(): T | null {
     return this._minDateTime;
   }
-  set minDateTime(value: T | null) {
+  public set minDateTime(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._minDateTime = this.getValidDate(deserialized);
   }
@@ -58,10 +62,10 @@ export class OwlTimerComponent<T> {
   /** The maximum selectable date time. */
   private _maxDateTime: T | null;
   @Input()
-  get maxDateTime(): T | null {
+  public get maxDateTime(): T | null {
     return this._maxDateTime;
   }
-  set maxDateTime(value: T | null) {
+  public set maxDateTime(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._maxDateTime = this.getValidDate(deserialized);
   }
@@ -94,16 +98,12 @@ export class OwlTimerComponent<T> {
   @Output() public readonly selectedChange = new EventEmitter<T>();
 
   @HostBinding('class.owl-dt-timer')
-  get owlDTTimerClass(): boolean {
-    return true;
-  }
+  public readonly owlDTTimerClass = true;
 
   @HostBinding('attr.tabindex')
-  get owlDTTimeTabIndex(): number {
-    return -1;
-  }
+  public readonly owlDTTimeTabIndex = -1;
 
-  get hourValue(): number {
+  public get hourValue(): number {
     return this.#dateTimeAdapter.getHours(this.pickerMoment);
   }
 
@@ -112,8 +112,8 @@ export class OwlTimerComponent<T> {
    * We need this because the value displayed in hourBox it not
    * the same as the hourValue when the timer is in hour12Timer mode.
    */
-  get hourBoxValue(): number {
-    let hours = this.hourValue;
+  public get hourBoxValue(): number {
+    const hours = this.hourValue;
 
     if (!this.hour12Timer) {
       return hours;
@@ -136,45 +136,45 @@ export class OwlTimerComponent<T> {
 
     if (hours > 12 && hours < 24) {
       this.isPM = true;
-      return hours - 12
+      return hours - 12;
     }
 
     return hours;
   }
 
-  get minuteValue(): number {
+  public get minuteValue(): number {
     return this.#dateTimeAdapter.getMinutes(this.pickerMoment);
   }
 
-  get secondValue(): number {
+  public get secondValue(): number {
     return this.#dateTimeAdapter.getSeconds(this.pickerMoment);
   }
 
-  get upHourButtonLabel(): string {
+  public get upHourButtonLabel(): string {
     return this.#pickerIntl.upHourLabel;
   }
 
-  get downHourButtonLabel(): string {
+  public get downHourButtonLabel(): string {
     return this.#pickerIntl.downHourLabel;
   }
 
-  get upMinuteButtonLabel(): string {
+  public get upMinuteButtonLabel(): string {
     return this.#pickerIntl.upMinuteLabel;
   }
 
-  get downMinuteButtonLabel(): string {
+  public get downMinuteButtonLabel(): string {
     return this.#pickerIntl.downMinuteLabel;
   }
 
-  get upSecondButtonLabel(): string {
+  public get upSecondButtonLabel(): string {
     return this.#pickerIntl.upSecondLabel;
   }
 
-  get downSecondButtonLabel(): string {
+  public get downSecondButtonLabel(): string {
     return this.#pickerIntl.downSecondLabel;
   }
 
-  get hour12ButtonLabel(): string {
+  public get hour12ButtonLabel(): string {
     return this.isPM
       ? this.#pickerIntl.hour12PMLabel
       : this.#pickerIntl.hour12AMLabel;
@@ -185,7 +185,7 @@ export class OwlTimerComponent<T> {
   /**
    * Focus to the host element
    */
-  public focus() {
+  public focus(): void {
     this.#ngZone.runOutsideAngular(() => {
       this.#ngZone.onStable
         .asObservable()
@@ -228,7 +228,7 @@ export class OwlTimerComponent<T> {
     this.#cdRef.markForCheck();
   }
 
-  public setMeridiem(event: any): void {
+  public setMeridiem(event: Event): void {
     this.isPM = !this.isPM;
 
     let hours = this.hourValue;
@@ -353,7 +353,7 @@ export class OwlTimerComponent<T> {
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: any): T | null {
+  private getValidDate(obj: unknown): T | null {
     if (!this.#dateTimeAdapter.isDateInstance(obj)) return null;
     if (!this.#dateTimeAdapter.isValid(obj)) return null;
     return obj;

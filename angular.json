@@ -41,6 +41,16 @@
             ],
             "karmaConfig": "projects/picker/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/picker/**/*.ts",
+              "projects/picker/**/*.html"
+            ],
+            "eslintConfig": "projects/picker/eslint.config.js"
+          }
         }
       }
     },
@@ -144,6 +154,16 @@
               "projects/docs/src/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/docs/**/*.ts",
+              "projects/docs/**/*.html"
+            ],
+            "eslintConfig": "projects/docs/eslint.config.js"
           }
         }
       }

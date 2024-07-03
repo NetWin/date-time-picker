@@ -3,6 +3,7 @@ import {
   coerceNumberProperty
 } from '@angular/cdk/coercion';
 import { Directive, EventEmitter, Input, inject } from '@angular/core';
+import { DateFilter } from '../types/date-filter';
 import {
   DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
@@ -37,11 +38,11 @@ export abstract class OwlDateTime<T> {
    */
   private _showSecondsTimer = false;
   @Input()
-  get showSecondsTimer(): boolean {
+  public get showSecondsTimer(): boolean {
     return this._showSecondsTimer;
   }
 
-  set showSecondsTimer(val: boolean) {
+  public set showSecondsTimer(val: boolean) {
     this._showSecondsTimer = coerceBooleanProperty(val);
   }
 
@@ -50,11 +51,11 @@ export abstract class OwlDateTime<T> {
    */
   private _hour12Timer = false;
   @Input()
-  get hour12Timer(): boolean {
+  public get hour12Timer(): boolean {
     return this._hour12Timer;
   }
 
-  set hour12Timer(val: boolean) {
+  public set hour12Timer(val: boolean) {
     this._hour12Timer = coerceBooleanProperty(val);
   }
 
@@ -62,31 +63,30 @@ export abstract class OwlDateTime<T> {
    * The view that the calendar should start in.
    */
   @Input()
-  startView: DateViewType = DateView.MONTH;
-
+  public startView: DateViewType = DateView.MONTH;
 
   /**
    * Whether to should only the year and multi-year views.
    */
   @Input()
-  yearOnly = false;
+  public yearOnly = false;
 
   /**
    * Whether to should only the multi-year view.
    */
   @Input()
-  multiyearOnly = false;
+  public multiyearOnly = false;
 
   /**
    * Hours to change per step
    */
   private _stepHour = 1;
   @Input()
-  get stepHour(): number {
+  public get stepHour(): number {
     return this._stepHour;
   }
 
-  set stepHour(val: number) {
+  public set stepHour(val: number) {
     this._stepHour = coerceNumberProperty(val, 1);
   }
 
@@ -95,11 +95,11 @@ export abstract class OwlDateTime<T> {
    */
   private _stepMinute = 1;
   @Input()
-  get stepMinute(): number {
+  public get stepMinute(): number {
     return this._stepMinute;
   }
 
-  set stepMinute(val: number) {
+  public set stepMinute(val: number) {
     this._stepMinute = coerceNumberProperty(val, 1);
   }
 
@@ -108,11 +108,11 @@ export abstract class OwlDateTime<T> {
    */
   private _stepSecond = 1;
   @Input()
-  get stepSecond(): number {
+  public get stepSecond(): number {
     return this._stepSecond;
   }
 
-  set stepSecond(val: number) {
+  public set stepSecond(val: number) {
     this._stepSecond = coerceNumberProperty(val, 1);
   }
 
@@ -121,11 +121,11 @@ export abstract class OwlDateTime<T> {
    */
   private _firstDayOfWeek: number;
   @Input()
-  get firstDayOfWeek() {
+  public get firstDayOfWeek(): number {
     return this._firstDayOfWeek;
   }
 
-  set firstDayOfWeek(value: number) {
+  public set firstDayOfWeek(value: number) {
     value = coerceNumberProperty(value);
     if (value > 6 || value < 0) {
       this._firstDayOfWeek = undefined;
@@ -139,71 +139,73 @@ export abstract class OwlDateTime<T> {
    */
   private _hideOtherMonths = false;
   @Input()
-  get hideOtherMonths(): boolean {
+  public get hideOtherMonths(): boolean {
     return this._hideOtherMonths;
   }
 
-  set hideOtherMonths(val: boolean) {
+  public set hideOtherMonths(val: boolean) {
     this._hideOtherMonths = coerceBooleanProperty(val);
   }
 
   private readonly _id: string;
-  get id(): string {
+  public get id(): string {
     return this._id;
   }
 
-  abstract get selected(): T | null;
+  public abstract get selected(): T | null;
 
-  abstract get selecteds(): Array<T> | null;
+  public abstract get selecteds(): Array<T> | null;
 
-  abstract get dateTimeFilter(): (date: T | null) => boolean;
+  public abstract get dateTimeFilter(): DateFilter<T> | null;
 
-  abstract get maxDateTime(): T | null;
+  public abstract get maxDateTime(): T | null;
 
-  abstract get minDateTime(): T | null;
+  public abstract get minDateTime(): T | null;
 
-  abstract get selectMode(): SelectMode;
+  public abstract get selectMode(): SelectMode;
 
-  abstract get startAt(): T | null;
+  public abstract get startAt(): T | null;
 
-  abstract get endAt(): T | null;
+  public abstract get endAt(): T | null;
 
-  abstract get opened(): boolean;
+  public abstract get opened(): boolean;
 
-  abstract get pickerMode(): PickerMode;
+  public abstract get pickerMode(): PickerMode;
 
-  abstract get pickerType(): PickerType;
+  public abstract get pickerType(): PickerType;
 
-  abstract get isInSingleMode(): boolean;
+  public abstract get isInSingleMode(): boolean;
 
-  abstract get isInRangeMode(): boolean;
+  public abstract get isInRangeMode(): boolean;
 
-  abstract select(date: T | Array<T>): void;
+  public abstract select(date: T | Array<T>): void;
 
-  abstract yearSelected: EventEmitter<T>;
+  public abstract yearSelected: EventEmitter<T>;
 
-  abstract monthSelected: EventEmitter<T>;
+  public abstract monthSelected: EventEmitter<T>;
 
-  abstract dateSelected: EventEmitter<T>;
+  public abstract dateSelected: EventEmitter<T>;
 
-  abstract selectYear(normalizedYear: T): void;
+  public abstract selectYear(normalizedYear: T): void;
 
-  abstract selectMonth(normalizedMonth: T): void;
+  public abstract selectMonth(normalizedMonth: T): void;
 
-  abstract selectDate(normalizedDate: T): void;
+  public abstract selectDate(normalizedDate: T): void;
 
-  get formatString(): string {
-    return this.pickerType === 'both'
-      ? this.dateTimeFormats.fullPickerInput
-      : this.pickerType === 'calendar'
-        ? this.dateTimeFormats.datePickerInput
-        : this.dateTimeFormats.timePickerInput;
+  public get formatString(): unknown {
+    if (this.pickerType === 'both') {
+      return this.dateTimeFormats.fullPickerInput;
+    }
+    if (this.pickerType === 'calendar') {
+      return this.dateTimeFormats.datePickerInput;
+    }
+    return this.dateTimeFormats.timePickerInput;
   }
 
   /**
    * Date Time Checker to check if the give dateTime is selectable
    */
-  public dateTimeChecker = (dateTime: T) => {
+  public dateTimeChecker = (dateTime: T): boolean => {
     return (
       !!dateTime &&
       (!this.dateTimeFilter || this.dateTimeFilter(dateTime)) &&
@@ -215,9 +217,9 @@ export abstract class OwlDateTime<T> {
     );
   };
 
-  get disabled(): boolean {
+  public get disabled(): boolean {
     return false;
-  }
+  };
 
   constructor() {
     if (!this.dateTimeAdapter) {
@@ -239,10 +241,9 @@ export abstract class OwlDateTime<T> {
     this._id = `owl-dt-picker-${nextUniqueId++}`;
   }
 
-  protected getValidDate(obj: any): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) &&
-      this.dateTimeAdapter.isValid(obj)
-      ? obj
-      : null;
+  protected getValidDate(obj: unknown): T | null {
+    if (!this.dateTimeAdapter.isDateInstance(obj)) return null;
+    if (!this.dateTimeAdapter.isValid(obj)) return null;
+    return obj;
   }
 }

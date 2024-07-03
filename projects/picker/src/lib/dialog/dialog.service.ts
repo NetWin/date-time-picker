@@ -25,7 +25,7 @@ import { OwlDialogConfig, OwlDialogConfigInterface } from './dialog-config';
 import { OwlDialogContainerComponent } from './dialog-container.component';
 import { OwlDialogRef } from './dialog-ref.class';
 
-export const OWL_DIALOG_DATA = new InjectionToken<any>('OwlDialogData');
+export const OWL_DIALOG_DATA = new InjectionToken<unknown>('OwlDialogData');
 
 /**
  * Injection token that determines the scroll handling while the dialog is open.
@@ -37,8 +37,7 @@ export const OWL_DIALOG_SCROLL_STRATEGY = new InjectionToken<
 export function OWL_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(
   overlay: Overlay
 ): () => ScrollStrategy {
-  const fn = () => overlay.scrollStrategies.block();
-  return fn;
+  return () => overlay.scrollStrategies.block();
 }
 
 /** @internal */
@@ -53,7 +52,7 @@ export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
  */
 export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>('owl-dialog-default-options');
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class OwlDialogService {
 
   readonly #overlay = inject(Overlay);
@@ -72,33 +71,33 @@ export class OwlDialogService {
 
   private ariaHiddenElements = new Map<Element, string | null>();
 
-  private _openDialogsAtThisLevel: OwlDialogRef<any>[] = [];
-  private _beforeOpenAtThisLevel = new Subject<OwlDialogRef<any>>();
-  private _afterOpenAtThisLevel = new Subject<OwlDialogRef<any>>();
+  private _openDialogsAtThisLevel: Array<OwlDialogRef<unknown>> = [];
+  private _beforeOpenAtThisLevel = new Subject<OwlDialogRef<unknown>>();
+  private _afterOpenAtThisLevel = new Subject<OwlDialogRef<unknown>>();
   private _afterAllClosedAtThisLevel = new Subject<void>();
 
   /** Keeps track of the currently-open dialogs. */
-  get openDialogs(): OwlDialogRef<any>[] {
+  public get openDialogs(): Array<OwlDialogRef<unknown>> {
     return this.#parentDialog
       ? this.#parentDialog.openDialogs
       : this._openDialogsAtThisLevel;
   }
 
   /** Stream that emits when a dialog has been opened. */
-  get beforeOpen(): Subject<OwlDialogRef<any>> {
+  public get beforeOpen(): Subject<OwlDialogRef<unknown>> {
     return this.#parentDialog
       ? this.#parentDialog.beforeOpen
       : this._beforeOpenAtThisLevel;
   }
 
   /** Stream that emits when a dialog has been opened. */
-  get afterOpen(): Subject<OwlDialogRef<any>> {
+  public get afterOpen(): Subject<OwlDialogRef<unknown>> {
     return this.#parentDialog
       ? this.#parentDialog.afterOpen
       : this._afterOpenAtThisLevel;
   }
 
-  get _afterAllClosed(): any {
+  public get _afterAllClosed(): Subject<void> {
     const parent = this.#parentDialog;
     return parent
       ? parent._afterAllClosed
@@ -110,7 +109,7 @@ export class OwlDialogService {
    * Will emit on subscribe if there are no open dialogs to begin with.
    */
 
-  afterAllClosed: Observable<{}> = defer(
+  public afterAllClosed: Observable<void> = defer(
     () =>
       this._openDialogsAtThisLevel.length
         ? this._afterAllClosed
@@ -126,7 +125,7 @@ export class OwlDialogService {
   public open<T>(
     componentOrTemplateRef: ComponentType<T> | TemplateRef<T>,
     config?: OwlDialogConfigInterface
-  ): OwlDialogRef<any> {
+  ): OwlDialogRef<T> {
     config = extendObject(new OwlDialogConfig(), config, this.#defaultOptions);
 
     if (config.id && this.getDialogById(config.id)) {
@@ -173,7 +172,7 @@ export class OwlDialogService {
    * Finds an open dialog by its id.
    * @param id ID to use when looking up the dialog.
    */
-  public getDialogById(id: string): OwlDialogRef<any> | undefined {
+  public getDialogById(id: string): OwlDialogRef<unknown> | undefined {
     return this.openDialogs.find(dialog => dialog.id === id);
   }
 
@@ -182,7 +181,7 @@ export class OwlDialogService {
     dialogContainer: OwlDialogContainerComponent,
     overlayRef: OverlayRef,
     config: OwlDialogConfigInterface
-  ) {
+  ): OwlDialogRef<T> {
     const dialogRef = new OwlDialogRef<T>(
       overlayRef,
       dialogContainer,
@@ -199,6 +198,8 @@ export class OwlDialogService {
     }
 
     if (componentOrTemplateRef instanceof TemplateRef) {
+      // create a portal from a template is not supported
+      console.warn('Creating a dialog from a TemplateRef is not supported.');
     } else {
       const injector = this.createInjector<T>(
         config,
@@ -222,7 +223,7 @@ export class OwlDialogService {
     config: OwlDialogConfigInterface,
     dialogRef: OwlDialogRef<T>,
     dialogContainer: OwlDialogContainerComponent
-  ) {
+  ): Injector {
     const userInjector = config?.viewContainerRef?.injector;
     const parentInjector = userInjector || this.#injector;
     const providers: Array<StaticProvider> = [
@@ -275,7 +276,7 @@ export class OwlDialogService {
     return state;
   }
 
-  private removeOpenDialog(dialogRef: OwlDialogRef<any>): void {
+  private removeOpenDialog(dialogRef: OwlDialogRef<unknown>): void {
     const index = this._openDialogsAtThisLevel.indexOf(dialogRef);
 
     if (index > -1) {
@@ -300,7 +301,7 @@ export class OwlDialogService {
   /**
    * Hides all of the content that isn't an overlay from assistive technology.
    */
-  private hideNonDialogContentFromAssistiveTechnology() {
+  private hideNonDialogContentFromAssistiveTechnology(): void {
     const overlayContainer = this.#overlayContainer.getContainerElement();
 
     // Ensure that the overlay container is attached to the DOM.

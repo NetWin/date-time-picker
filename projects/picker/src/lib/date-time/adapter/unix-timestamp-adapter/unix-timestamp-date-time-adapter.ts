@@ -4,20 +4,12 @@ import { range } from '../../../utils/array.utils';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
+
   readonly #owlDateTimeLocale = inject<string>(OWL_DATE_TIME_LOCALE, { optional: true });
 
   readonly #platform = inject(Platform);
-
-  constructor() {
-    super();
-    super.setLocale(this.#owlDateTimeLocale);
-
-    // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !this.#platform.TRIDENT;
-    this._clampDate = this.#platform.TRIDENT || this.#platform.EDGE;
-  }
 
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
@@ -28,7 +20,16 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
    * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
    * will produce `'8/13/1800'`.
    */
-  useUtcForDisplay: boolean;
+  protected readonly useUtcForDisplay: boolean;
+
+  constructor() {
+    super();
+    super.setLocale(this.#owlDateTimeLocale);
+
+    // IE does its own time zone correction, so we disable this on IE.
+    this.useUtcForDisplay = !this.#platform.TRIDENT;
+    this._clampDate = this.#platform.TRIDENT || this.#platform.EDGE;
+  }
 
   /**
    * Strip out unicode LTR and RTL characters. Edge and IE insert these into formatted dates while
@@ -36,7 +37,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
    * date parsing.
    */
   private static search_ltr_rtl_pattern = '/[\u200e\u200f]/g';
-  private static stripDirectionalityCharacters(str: string) {
+  private static stripDirectionalityCharacters(str: string): string {
     return str.replace(UnixTimestampDateTimeAdapter.search_ltr_rtl_pattern, '');
   }
 
@@ -47,7 +48,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
    * We work around this problem building a new Date object which has its internal UTC
    * representation with the local date and time.
    */
-  private static _format(dtf: Intl.DateTimeFormat, date: Date) {
+  private static _format(dtf: Intl.DateTimeFormat, date: Date): string {
     const d = new Date(
       Date.UTC(
         date.getFullYear(),
@@ -62,14 +63,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return dtf.format(d);
   }
 
-  addCalendarDays(date: number, amount: number): number {
+  public addCalendarDays(date: number, amount: number): number {
     const result = new Date(date);
     amount = Number(amount);
     result.setDate(result.getDate() + amount);
     return result.getTime();
   }
 
-  addCalendarMonths(date: number, amount: number): number {
+  public addCalendarMonths(date: number, amount: number): number {
     const result = new Date(date);
     amount = Number(amount);
 
@@ -85,11 +86,11 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return result.getTime();
   }
 
-  addCalendarYears(date: number, amount: number): number {
+  public addCalendarYears(date: number, amount: number): number {
     return this.addCalendarMonths(date, amount * 12);
   }
 
-  clone(date: number): number {
+  public clone(date: number): number {
     return date;
   }
 
@@ -97,14 +98,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     year: number,
     month: number,
     date: number,
-    hours: number = 0,
-    minutes: number = 0,
-    seconds: number = 0
+    hours = 0,
+    minutes = 0,
+    seconds = 0
   ): number {
     return createDate(year, month, date, hours, minutes, seconds).getTime();
   }
 
-  differenceInCalendarDays(dateLeft: number, dateRight: number): number {
+  public differenceInCalendarDays(dateLeft: number, dateRight: number): number {
     if (this.isValid(dateLeft) && this.isValid(dateRight)) {
       const dateLeftStartOfDay = this.createDate(
         this.getYear(dateLeft),
@@ -133,7 +134,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     }
   }
 
-  format(date: number, displayFormat: any): string {
+  public format(date: number, displayFormat: Partial<Intl.DateTimeFormatOptions>): string {
     if (!this.isValid(date)) {
       throw Error('JSNativeDate: Cannot format invalid date.');
     }
@@ -154,11 +155,11 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     );
   }
 
-  getDate(date: number): number {
+  public getDate(date: number): number {
     return new Date(date).getDate();
   }
 
-  getDateNames(): Array<string> {
+  public getDateNames(): Array<string> {
     const dtf = new Intl.DateTimeFormat(this.locale, { day: 'numeric', timeZone: 'utc' });
     return range(31, i =>
       UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
@@ -167,11 +168,11 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     );
   }
 
-  getDay(date: number): number {
+  public getDay(date: number): number {
     return new Date(date).getDay();
   }
 
-  getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     const dtf = new Intl.DateTimeFormat(this.locale, { weekday: style, timeZone: 'utc' });
     return range(7, i =>
       UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
@@ -180,19 +181,19 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     );
   }
 
-  getHours(date: number): number {
+  public getHours(date: number): number {
     return new Date(date).getHours();
   }
 
-  getMinutes(date: number): number {
+  public getMinutes(date: number): number {
     return new Date(date).getMinutes();
   }
 
-  getMonth(date: number): number {
+  public getMonth(date: number): number {
     return new Date(date).getMonth();
   }
 
-  getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     const dtf = new Intl.DateTimeFormat(this.locale, { month: style, timeZone: 'utc' });
     return range(12, i =>
       UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
@@ -201,38 +202,38 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     );
   }
 
-  getNumDaysInMonth(date: number): number {
+  public getNumDaysInMonth(date: number): number {
     return getNumDaysInMonth(new Date(date));
   }
 
-  getSeconds(date: number): number {
+  public getSeconds(date: number): number {
     return new Date(date).getSeconds();
   }
 
-  getTime(date: number): number {
+  public getTime(date: number): number {
     return date;
   }
 
-  getYear(date: number): number {
+  public getYear(date: number): number {
     return new Date(date).getFullYear();
   }
 
-  getYearName(date: number): string {
+  public getYearName(date: number): string {
     const dtf = new Intl.DateTimeFormat(this.locale, { year: 'numeric', timeZone: 'utc' });
     return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
       UnixTimestampDateTimeAdapter._format(dtf, new Date(date))
     );
   }
 
-  invalid(): number {
+  public invalid(): typeof NaN {
     return NaN;
   }
 
-  isDateInstance(obj: any): boolean {
+  public isDateInstance(obj: unknown): obj is number {
     return typeof obj === 'number';
   }
 
-  isEqual(dateLeft: number, dateRight: number): boolean {
+  public isEqual(dateLeft: number, dateRight: number): boolean {
     if (this.isValid(dateLeft) && this.isValid(dateRight)) {
       return dateLeft === dateRight;
     } else {
@@ -240,7 +241,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     }
   }
 
-  isSameDay(dateLeft: number, dateRight: number): boolean {
+  public isSameDay(dateLeft: number, dateRight: number): boolean {
     if (this.isValid(dateLeft) && this.isValid(dateRight)) {
       const dateLeftStartOfDay = new Date(dateLeft);
       const dateRightStartOfDay = new Date(dateRight);
@@ -252,41 +253,40 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     }
   }
 
-  isValid(date: number): boolean {
+  public isValid(date: number): boolean {
     return (date || date === 0) && !isNaN(date);
   }
 
-  now(): number {
+  public now(): number {
     return new Date().getTime();
   }
 
-  parse(value: any, parseFormat: any): number | null {
-    // There is no way using the native JS Date to set the parse format or locale
+  public parse(value: unknown): number | null {
     if (typeof value === 'number') {
       return value;
     }
-    return value ? new Date(Date.parse(value)).getTime() : null;
+    return value ? Date.parse(String(value)) : null;
   }
 
-  setHours(date: number, amount: number): number {
+  public setHours(date: number, amount: number): number {
     const result = new Date(date);
     result.setHours(amount);
     return result.getTime();
   }
 
-  setMinutes(date: number, amount: number): number {
+  public setMinutes(date: number, amount: number): number {
     const result = new Date(date);
     result.setMinutes(amount);
     return result.getTime();
   }
 
-  setSeconds(date: number, amount: number): number {
+  public setSeconds(date: number, amount: number): number {
     const result = new Date(date);
     result.setSeconds(amount);
     return result.getTime();
   }
 
-  toIso8601(date: number): string {
+  public toIso8601(date: number): string {
     return new Date(date).toISOString();
   }
 }

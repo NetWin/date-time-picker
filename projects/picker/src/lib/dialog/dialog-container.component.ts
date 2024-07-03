@@ -30,13 +30,13 @@ import {
 import { OwlDialogConfigInterface } from './dialog-config';
 
 type AnimationState = 'void' | 'enter' | 'exit';
-type AnimationParams = {
+interface AnimationParams {
   x: string;
   y: string;
   ox: string;
   oy: string;
   scale: number;
-};
+}
 
 const zoomFadeIn = {
   opacity: 0,
@@ -49,6 +49,7 @@ const zoomFadeInFrom = {
 };
 
 @Component({
+  standalone: true,
   selector: 'owl-dialog-container',
   templateUrl: './dialog-container.component.html',
   animations: [
@@ -85,7 +86,8 @@ const zoomFadeInFrom = {
         { params: { x: '0px', y: '0px', ox: '50%', oy: '50%' } }
       )
     ])
-  ]
+  ],
+  imports: [CdkPortalOutlet]
 })
 export class OwlDialogContainerComponent extends BasePortalOutlet {
 
@@ -98,7 +100,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
   readonly #document = inject(DOCUMENT, { optional: true });
 
   @ViewChild(CdkPortalOutlet, { static: true })
-  portalOutlet: CdkPortalOutlet | null = null;
+  public portalOutlet!: CdkPortalOutlet;
 
   /** The class that traps and manages focus within the dialog. */
   private focusTrap: FocusTrap;
@@ -112,7 +114,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
   public isAnimating = false;
 
   private _config: OwlDialogConfigInterface;
-  get config(): OwlDialogConfigInterface {
+  public get config(): OwlDialogConfigInterface {
     return this._config;
   }
 
@@ -132,37 +134,33 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
   private elementFocusedBeforeDialogWasOpened: HTMLElement | null = null;
 
   @HostBinding('class.owl-dialog-container')
-  get owlDialogContainerClass(): boolean {
-    return true;
-  }
+  public readonly owlDialogContainerClass = true;
 
   @HostBinding('attr.tabindex')
-  get owlDialogContainerTabIndex(): number {
-    return -1;
-  }
+  public readonly owlDialogContainerTabIndex = -1;
 
   @HostBinding('attr.id')
-  get owlDialogContainerId(): string {
+  public get owlDialogContainerId(): string {
     return this._config.id;
   }
 
   @HostBinding('attr.role')
-  get owlDialogContainerRole(): string {
+  public get owlDialogContainerRole(): string {
     return this._config.role || null;
   }
 
   @HostBinding('attr.aria-labelledby')
-  get owlDialogContainerAriaLabelledby(): string {
+  public get owlDialogContainerAriaLabelledby(): string {
     return this.ariaLabelledBy;
   }
 
   @HostBinding('attr.aria-describedby')
-  get owlDialogContainerAriaDescribedby(): string {
+  public get owlDialogContainerAriaDescribedby(): string {
     return this._config.ariaDescribedBy || null;
   }
 
   @HostBinding('@slideModal')
-  get owlDialogContainerAnimation(): { value: AnimationState, params: AnimationParams } {
+  public get owlDialogContainerAnimation(): { value: AnimationState, params: AnimationParams } {
     return { value: this.state, params: this.params };
   }
 
@@ -183,7 +181,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
   }
 
   public attachTemplatePortal<C>(
-    portal: TemplatePortal<C>
+    _portal: TemplatePortal<C>
   ): EmbeddedViewRef<C> {
     throw new Error('Method not implemented.');
   }
@@ -192,7 +190,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
     this._config = config;
 
     if (config.event) {
-      this.calculateZoomOrigin(event);
+      this.calculateZoomOrigin(config.event);
     }
   }
 
@@ -214,7 +212,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
     this.isAnimating = false;
   }
 
-  public startExitAnimation() {
+  public startExitAnimation(): void {
     this.state = 'exit';
     this.#changeDetector.markForCheck();
   }
@@ -223,7 +221,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet {
    * Calculate origin used in the `zoomFadeInFrom()`
    * for animation purpose
    */
-  private calculateZoomOrigin(event: any): void {
+  private calculateZoomOrigin(event: MouseEvent): void {
     if (!event) {
       return;
     }

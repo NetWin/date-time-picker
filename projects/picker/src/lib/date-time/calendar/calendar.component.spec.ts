@@ -27,8 +27,9 @@ describe('OwlCalendarComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
         StandardCalendarComponent,
         CalendarWithMinMaxComponent,
         CalendarWithDateFilterComponent
@@ -230,7 +231,6 @@ describe('OwlCalendarComponent', () => {
     let fixture: ComponentFixture<CalendarWithMinMaxComponent>;
     let testComponent: CalendarWithMinMaxComponent;
     let calendarElement: HTMLElement;
-    let calendarInstance: OwlCalendarComponent<Date>;
 
     beforeEach(() => {
       fixture = TestBed.createComponent(CalendarWithMinMaxComponent);
@@ -239,7 +239,6 @@ describe('OwlCalendarComponent', () => {
       const calendarDebugElement = fixture.debugElement.query(By.directive(OwlCalendarComponent));
       calendarElement = calendarDebugElement.nativeElement;
 
-      calendarInstance = calendarDebugElement.componentInstance;
       testComponent = fixture.componentInstance;
     });
 
@@ -348,7 +347,6 @@ describe('OwlCalendarComponent', () => {
     let fixture: ComponentFixture<CalendarWithDateFilterComponent>;
     let testComponent: CalendarWithDateFilterComponent;
     let calendarElement: HTMLElement;
-    let calendarInstance: OwlCalendarComponent<Date>;
 
     beforeEach(() => {
       fixture = TestBed.createComponent(CalendarWithDateFilterComponent);
@@ -356,7 +354,6 @@ describe('OwlCalendarComponent', () => {
 
       const calendarDebugElement = fixture.debugElement.query(By.directive(OwlCalendarComponent));
       calendarElement = calendarDebugElement.nativeElement;
-      calendarInstance = calendarDebugElement.componentInstance;
       testComponent = fixture.componentInstance;
     });
 
@@ -373,58 +370,64 @@ describe('OwlCalendarComponent', () => {
 });
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-calendar
-      [(selected)]="selected"
-      [selectMode]="selectMode"
       [pickerMoment]="pickerMoment"
+      [selectMode]="selectMode"
+      [(selected)]="selected"
       (monthSelected)="selectedMonth=$event"
       (yearSelected)="selectedYear=$event">
     </owl-date-time-calendar>
-  `
+  `,
+  imports: [OwlCalendarComponent]
 })
 class StandardCalendarComponent {
-  selectMode = 'single';
-  selected?: Date;
-  selectedYear?: Date;
-  selectedMonth?: Date;
-  pickerMoment = new Date(2018, MONTHS.JAN, 31);
+  public selectMode = 'single';
+  public selected?: Date;
+  public selectedYear?: Date;
+  public selectedMonth?: Date;
+  public pickerMoment = new Date(2018, MONTHS.JAN, 31);
 }
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-calendar
-      [selectMode]="selectMode"
-      [pickerMoment]="pickerMoment"
+      [maxDate]="maxDate"
       [minDate]="minDate"
-      [maxDate]="maxDate">
+      [pickerMoment]="pickerMoment"
+      [selectMode]="selectMode">
     </owl-date-time-calendar>
-  `
+  `,
+  imports: [OwlCalendarComponent]
 })
 class CalendarWithMinMaxComponent {
-  selectMode = 'single';
-  startAt?: Date;
-  minDate = new Date(2016, MONTHS.JAN, 1);
-  maxDate = new Date(2019, MONTHS.JAN, 1);
-  pickerMoment = new Date(2018, MONTHS.JAN, 31);
+  public selectMode = 'single';
+  public startAt?: Date;
+  public minDate = new Date(2016, MONTHS.JAN, 1);
+  public maxDate = new Date(2019, MONTHS.JAN, 1);
+  public pickerMoment = new Date(2018, MONTHS.JAN, 31);
 }
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-calendar
-      [(selected)]="selected"
-      [selectMode]="selectMode"
+      [dateFilter]="dateFilter"
       [pickerMoment]="pickerMoment"
-      [dateFilter]="dateFilter">
+      [selectMode]="selectMode"
+      [(selected)]="selected">
     </owl-date-time-calendar>
-  `
+  `,
+  imports: [OwlCalendarComponent]
 })
 class CalendarWithDateFilterComponent {
-  selectMode = 'single';
-  selected?: Date;
-  pickerMoment = new Date(2018, MONTHS.JAN, 31);
+  public selectMode = 'single';
+  public selected?: Date;
+  public pickerMoment = new Date(2018, MONTHS.JAN, 31);
 
-  dateFilter(date: Date) {
+  public dateFilter(date: Date): boolean {
     return !(date.getDate() % 2) && date.getMonth() !== MONTHS.NOV;
   }
 }

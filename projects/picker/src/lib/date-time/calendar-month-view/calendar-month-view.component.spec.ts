@@ -23,8 +23,9 @@ import { OwlMonthViewComponent } from './calendar-month-view.component';
 describe('OwlMonthViewComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
         StandardMonthViewComponent,
         MonthViewWithDateFilterComponent
       ],
@@ -248,7 +249,6 @@ describe('OwlMonthViewComponent', () => {
     let adapter: DateTimeAdapter<unknown>;
     let monthViewDebugElement: DebugElement;
     let monthViewElement: HTMLElement;
-    let monthViewInstance: OwlMonthViewComponent<Date>;
 
     beforeAll(() => {
       registerLocaleData(localeDutch);
@@ -260,7 +260,6 @@ describe('OwlMonthViewComponent', () => {
       adapter = TestBed.inject(DateTimeAdapter);
       monthViewDebugElement = fixture.debugElement.query(By.directive(OwlMonthViewComponent));
       monthViewElement = monthViewDebugElement.nativeElement;
-      monthViewInstance = monthViewDebugElement.componentInstance;
     });
 
     it('should derive the first day of the week based on the active locale', () => {
@@ -296,29 +295,33 @@ describe('OwlMonthViewComponent', () => {
 });
 
 @Component({
-  template: `
-    <owl-date-time-month-view
-      [(selected)]="selected"
-      [(pickerMoment)]="pickerMoment">
-    </owl-date-time-month-view>
-  `
-})
-class StandardMonthViewComponent {
-  selected = new Date(2018, MONTHS.JAN, 10);
-  pickerMoment = new Date(2018, MONTHS.JAN, 5);
-}
-
-@Component({
+  standalone: true,
   template: `
     <owl-date-time-month-view
       [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter">
+      [(selected)]="selected">
     </owl-date-time-month-view>
-  `
+  `,
+  imports: [OwlMonthViewComponent]
+})
+class StandardMonthViewComponent {
+  public selected = new Date(2018, MONTHS.JAN, 10);
+  public pickerMoment = new Date(2018, MONTHS.JAN, 5);
+}
+
+@Component({
+  standalone: true,
+  template: `
+    <owl-date-time-month-view
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment">
+    </owl-date-time-month-view>
+  `,
+  imports: [OwlMonthViewComponent]
 })
 class MonthViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, MONTHS.JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, MONTHS.JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getDate() % 2 === 0;
   }
 }

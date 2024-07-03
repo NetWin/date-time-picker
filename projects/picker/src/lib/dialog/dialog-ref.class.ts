@@ -6,17 +6,17 @@ import { Observable, Subject, Subscription, SubscriptionLike, filter, take } fro
 import { DialogPosition } from './dialog-config';
 import { OwlDialogContainerComponent } from './dialog-container.component';
 
-export class OwlDialogRef<T> {
+export class OwlDialogRef<T, TResult = unknown> {
 
-  private result: any;
+  private result: TResult;
 
-  private _beforeClose$ = new Subject<any>();
+  private _beforeClose$ = new Subject<TResult>();
 
-  private _beforeOpen$ = new Subject<any>();
+  private _beforeOpen$ = new Subject<void>();
 
-  private _afterOpen$ = new Subject<any>();
+  private _afterOpen$ = new Subject<void>();
 
-  private _afterClosed$ = new Subject<any>();
+  private _afterClosed$ = new Subject<TResult>();
 
   /** Subscription to changes in the user's location. */
   private locationChanged: SubscriptionLike = Subscription.EMPTY;
@@ -33,7 +33,7 @@ export class OwlDialogRef<T> {
     private readonly overlayRef: OverlayRef,
     private readonly container: OwlDialogContainerComponent,
     public readonly id: string,
-    readonly location?: Location
+    public readonly location?: Location
   ) {
     this.disableClose = this.container.config.disableClose;
 
@@ -83,7 +83,7 @@ export class OwlDialogRef<T> {
     }
   }
 
-  public close(dialogResult?: any) {
+  public close(dialogResult?: TResult):void {
     this.result = dialogResult;
 
     this.container.animationStateChanged
@@ -103,7 +103,7 @@ export class OwlDialogRef<T> {
   /**
    * Gets an observable that emits when the overlay's backdrop has been clicked.
    */
-  public backdropClick(): Observable<any> {
+  public backdropClick(): Observable<MouseEvent> {
     return this.overlayRef.backdropClick();
   }
 
@@ -122,13 +122,21 @@ export class OwlDialogRef<T> {
     const strategy = this.getPositionStrategy();
 
     if (position && (position.left || position.right)) {
-      position.left ? strategy.left(position.left) : strategy.right(position.right);
+      if(position.left) {
+        strategy.left(position.left);
+      } else {
+        strategy.right(position.right);
+      }
     } else {
       strategy.centerHorizontally();
     }
 
     if (position && (position.top || position.bottom)) {
-      position.top ? strategy.top(position.top) : strategy.bottom(position.bottom);
+      if(position.top) {
+        strategy.top(position.top);
+      } else {
+        strategy.bottom(position.bottom);
+      }
     } else {
       strategy.centerVertically();
     }
@@ -143,7 +151,7 @@ export class OwlDialogRef<T> {
    * @param width New width of the dialog.
    * @param height New height of the dialog.
    */
-  updateSize(width: string = 'auto', height: string = 'auto'): this {
+  public updateSize(width = 'auto', height = 'auto'): this {
     this.getPositionStrategy().width(width).height(height);
     this.overlayRef.updatePosition();
     return this;
@@ -153,19 +161,19 @@ export class OwlDialogRef<T> {
     return this.container.isAnimating;
   }
 
-  public beforeOpen(): Observable<any> {
+  public beforeOpen(): Observable<void> {
     return this._beforeOpen$.asObservable();
   }
 
-  public afterOpen(): Observable<any> {
+  public afterOpen(): Observable<void> {
     return this._afterOpen$.asObservable();
   }
 
-  public beforeClose(): Observable<any> {
+  public beforeClose(): Observable<TResult> {
     return this._beforeClose$.asObservable();
   }
 
-  public afterClosed(): Observable<any> {
+  public afterClosed(): Observable<TResult> {
     return this._afterClosed$.asObservable();
   }
 

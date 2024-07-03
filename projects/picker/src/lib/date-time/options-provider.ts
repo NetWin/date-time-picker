@@ -1,19 +1,20 @@
 import { InjectionToken, Provider } from '@angular/core';
 
-export function defaultOptionsFactory() {
-  return DefaultOptions.create();
-
-}
-export function multiYearOptionsFactory(options: Options) {
-  return options.multiYear;
-}
-
 export interface Options {
   multiYear: {
     yearsPerRow: number,
     yearRows: number
   };
 }
+
+export function defaultOptionsFactory(): Options {
+  return DefaultOptions.create();
+}
+
+export function multiYearOptionsFactory(options: Options): Options['multiYear'] {
+  return options.multiYear;
+}
+
 export class DefaultOptions {
   public static create(): Options {
     // Always return new instance
@@ -31,14 +32,14 @@ export abstract class OptionsTokens {
   public static multiYear = new InjectionToken<Options['multiYear']>('Grid view options token');
 }
 
-export const optionsProviders: Provider[] = [
+export const optionsProviders: Array<Provider> = [
   {
     provide: OptionsTokens.all,
-    useFactory: defaultOptionsFactory,
+    useFactory: defaultOptionsFactory
   },
   {
     provide: OptionsTokens.multiYear,
     useFactory: multiYearOptionsFactory,
-    deps: [OptionsTokens.all],
-  },
+    deps: [OptionsTokens.all]
+  }
 ];

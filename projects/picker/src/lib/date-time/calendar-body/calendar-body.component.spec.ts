@@ -6,10 +6,10 @@ import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.componen
 describe('OwlCalendarBodyComponent', () => {
   beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [
+      imports: [
         OwlCalendarBodyComponent,
-        StandardCalendarBodyComponent,
-      ],
+        StandardCalendarBodyComponent
+      ]
     }).compileComponents();
   }));
 
@@ -20,7 +20,7 @@ describe('OwlCalendarBodyComponent', () => {
     let rowEls: NodeListOf<HTMLElement>;
     let cellEls: NodeListOf<HTMLElement>;
 
-    const refreshElementLists = () => {
+    const refreshElementLists = (): void => {
       rowEls = calendarBodyNativeElement.querySelectorAll('tr');
       cellEls = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell');
     };
@@ -88,27 +88,31 @@ describe('OwlCalendarBodyComponent', () => {
 });
 
 @Component({
+  standalone: true,
   template: `
     <table
-      owl-date-time-calendar-body
-      [rows]="rows"
-      [todayValue]="todayValue"
-      [selectedValues]="selectedValues"
-      [selectMode]="'single'"
       [activeCell]="activeCell"
-      (select)="handleSelect()">
+      [rows]="rows"
+      [selectMode]="'single'"
+      [selectedValues]="selectedValues"
+      [todayValue]="todayValue"
+      (cellSelected)="handleSelect()"
+      owl-date-time-calendar-body>
     </table>
   `,
+  imports: [OwlCalendarBodyComponent]
 })
 class StandardCalendarBodyComponent {
-  rows = [[1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14]].map(r => r.map(createCell));
-  todayValue = 3;
-  selectedValues = [4];
-  activeCell = 10;
+  public rows = [[1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14]].map(r => r.map(createCell));
+  public todayValue = 3;
+  public selectedValues = [4];
+  public activeCell = 10;
 
-  handleSelect() { }
+  public handleSelect(): void {
+    //
+  }
 }
 
-function createCell(value: number) {
+function createCell(value: number): CalendarCell {
   return new CalendarCell(value, `${value}`, `${value}-label`, true);
 }

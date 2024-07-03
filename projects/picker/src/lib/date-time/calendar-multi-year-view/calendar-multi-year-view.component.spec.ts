@@ -28,8 +28,9 @@ const YEARS_PER_ROW = 3;
 describe('OwlMultiYearViewComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
         StandardMultiYearViewComponent,
         MultiYearViewWithDateFilterComponent
       ],
@@ -40,8 +41,8 @@ describe('OwlMultiYearViewComponent', () => {
           useFactory: () => {
             return {
               yearRows: YEAR_ROWS,
-              yearsPerRow: YEARS_PER_ROW,
-            } satisfies Options['multiYear']
+              yearsPerRow: YEARS_PER_ROW
+            } satisfies Options['multiYear'];
           }
         }
       ]
@@ -228,13 +229,15 @@ describe('OwlMultiYearViewComponent', () => {
 });
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-multi-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)">
+      (yearSelected)="handleChange($event)">
     </owl-date-time-multi-year-view>
-  `
+  `,
+  imports: [OwlMultiYearViewComponent]
 })
 class StandardMultiYearViewComponent {
   public selected = new Date(2020, MONTHS.JAN, 10);
@@ -245,16 +248,18 @@ class StandardMultiYearViewComponent {
 }
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-multi-year-view
-      [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter">
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment">
     </owl-date-time-multi-year-view>
-  `
+  `,
+  imports: [OwlMultiYearViewComponent]
 })
 class MultiYearViewWithDateFilterComponent {
   public pickerMoment = new Date(2018, MONTHS.JAN, 1);
-  public dateFilter(date: Date) {
+  public dateFilter(date: Date): boolean {
     return date.getFullYear() !== 2018;
   }
 }

@@ -7,5 +7,5 @@ export const OWL_NATIVE_DATE_TIME_FORMATS: OwlDateTimeFormats = {
   timePickerInput: { hour: 'numeric', minute: 'numeric' },
   monthYearLabel: { year: 'numeric', month: 'short' },
   dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
-  monthYearA11yLabel: { year: 'numeric', month: 'long' },
+  monthYearA11yLabel: { year: 'numeric', month: 'long' }
 };

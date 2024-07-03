@@ -14,36 +14,39 @@ import {
 import { Subscription, merge } from 'rxjs';
 import { OwlDateTimeComponent } from '../date-time-picker/date-time-picker.component';
 
-@Directive({ selector: '[owlDateTimeTrigger]', })
+@Directive({
+  standalone: true,
+  selector: '[owlDateTimeTrigger]'
+})
 export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentInit, OnDestroy {
 
   protected readonly changeDetector = inject(ChangeDetectorRef);
 
-  @Input() owlDateTimeTrigger: OwlDateTimeComponent<T>;
+  @Input() public owlDateTimeTrigger: OwlDateTimeComponent<T>;
 
   private _disabled: boolean;
   @Input()
-  get disabled(): boolean {
+  public get disabled(): boolean {
     return this._disabled === undefined ? this.owlDateTimeTrigger.disabled : !!this._disabled;
   }
-  set disabled(value: boolean) {
+  public set disabled(value: boolean) {
     this._disabled = value;
   }
 
   @HostBinding('class.owl-dt-trigger-disabled')
-  get owlDTTriggerDisabledClass(): boolean {
+  public get owlDTTriggerDisabledClass(): boolean {
     return this.disabled;
   }
 
   private stateChanges: Subscription | undefined;
 
-  public ngOnChanges(changes: SimpleChanges) {
+  public ngOnChanges(changes: SimpleChanges): void {
     if ('owlDateTimeTrigger' in changes) {
       this.watchStateChanges();
     }
   }
 
-  public ngAfterContentInit() {
+  public ngAfterContentInit(): void {
     this.watchStateChanges();
   }
 
@@ -60,7 +63,7 @@ export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentIn
   }
 
   private watchStateChanges(): void {
-    const observables: Array<EventEmitter<boolean>> = []
+    const observables: Array<EventEmitter<boolean>> = [];
 
     if (this.owlDateTimeTrigger?.dtInput) {
       observables.push(this.owlDateTimeTrigger.dtInput.disabledChange);

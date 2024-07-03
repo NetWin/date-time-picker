@@ -10,10 +10,10 @@ import { OwlMultiYearViewComponent } from './calendar-multi-year-view';
 import { OwlYearViewComponent } from './calendar-year-view';
 import { OwlDateTimeInlineComponent } from './date-time-inline';
 import { OwlDateTimeTriggerDirective } from './date-time-inline-trigger/date-time-trigger.directive';
+import { OwlDateTimeInputDirective } from './date-time-input';
 import { OwlDateTimeIntl } from './date-time-intl.service';
 import { OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER, OwlDateTimeComponent } from './date-time-picker';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container';
-import { OwlDateTimeInputDirective } from './date-time-picker-input';
 import { optionsProviders } from './options-provider';
 import { OwlTimerComponent } from './timer';
 import { OwlTimerBoxComponent } from './timer-box';
@@ -23,20 +23,7 @@ import { OwlTimerBoxComponent } from './timer-box';
     CommonModule,
     OverlayModule,
     OwlDialogModule,
-    A11yModule
-  ],
-  exports: [
-    OwlCalendarComponent,
-    OwlTimerComponent,
-    OwlDateTimeTriggerDirective,
-    OwlDateTimeInputDirective,
-    OwlDateTimeComponent,
-    OwlDateTimeInlineComponent,
-    OwlMultiYearViewComponent,
-    OwlYearViewComponent,
-    OwlMonthViewComponent,
-  ],
-  declarations: [
+    A11yModule,
     OwlDateTimeTriggerDirective,
     OwlDateTimeInputDirective,
     OwlDateTimeComponent,
@@ -48,12 +35,23 @@ import { OwlTimerBoxComponent } from './timer-box';
     OwlTimerBoxComponent,
     OwlCalendarComponent,
     OwlCalendarBodyComponent,
+    OwlDateTimeInlineComponent
+  ],
+  exports: [
+    OwlCalendarComponent,
+    OwlTimerComponent,
+    OwlDateTimeTriggerDirective,
+    OwlDateTimeInputDirective,
+    OwlDateTimeComponent,
     OwlDateTimeInlineComponent,
+    OwlMultiYearViewComponent,
+    OwlYearViewComponent,
+    OwlMonthViewComponent
   ],
   providers: [
     OwlDateTimeIntl,
     OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER,
-    ...optionsProviders,
+    ...optionsProviders
   ]
 })
 export class OwlDateTimeModule {

@@ -27,7 +27,7 @@ const transformPicker = trigger('transformPicker', [
 const fadeInPicker = trigger('fadeInPicker', [
   state('enter', style({ opacity: 1 })),
   state('void', style({ opacity: 0 })),
-  transition('void => enter', animate('400ms 100ms cubic-bezier(0.55, 0, 0.55, 0.2)')),
+  transition('void => enter', animate('400ms 100ms cubic-bezier(0.55, 0, 0.55, 0.2)'))
 ]);
 
 export const owlDateTimePickerAnimations: DateTimePickerAnimations = {

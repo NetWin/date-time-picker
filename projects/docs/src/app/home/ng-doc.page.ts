@@ -5,6 +5,6 @@ const HOME_PAGE: NgDocPage = {
   mdFile: './index.md',
   title: 'Home',
   order: 0
-}
+};
 
 export default HOME_PAGE;

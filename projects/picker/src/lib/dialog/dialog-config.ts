@@ -35,10 +35,10 @@ export interface OwlDialogConfigInterface {
   /**
    * Custom style for the backdrop
    */
-  backdropStyle?: any;
+  backdropStyle?: object;
 
   /** Data being injected into the child component. */
-  data?: any;
+  data?: unknown;
 
   /** Whether the user can use escape or clicking outside to close a modal. */
   disableClose?: boolean;
@@ -132,10 +132,10 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
   /**
    * Custom style for the backdrop
    */
-  public backdropStyle: any;
+  public backdropStyle: object;
 
   /** Data being injected into the child component. */
-  public data: any = null;
+  public data: unknown = null;
 
   /** Whether the user can use escape or clicking outside to close a modal. */
   public disableClose = false;
@@ -143,7 +143,7 @@ export class OwlDialogConfig implements OwlDialogConfigInterface {
   /**
    * ID for the modal. If omitted, a unique one will be generated.
    */
-  public id: string = `owl-dialog-${uniqueId++}`;
+  public id = `owl-dialog-${uniqueId++}`;
 
   /**
    * The ARIA role of the dialog element.

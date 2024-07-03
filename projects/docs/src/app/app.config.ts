@@ -12,7 +12,7 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full'
   }
-]
+];
 
 export const appConfig: ApplicationConfig = {
   providers: [

@@ -24,6 +24,7 @@ import {
   inject
 } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { DateFilter } from '../../types/date-filter';
 import {
   DateTimeAdapter,
   OWL_DATE_TIME_FORMATS,
@@ -39,11 +40,13 @@ const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
 
 @Component({
+  standalone: true,
   selector: 'owl-date-time-year-view',
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',
-  styleUrls: ['./calendar-year-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './calendar-year-view.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [OwlCalendarBodyComponent]
 })
 export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
 
@@ -59,11 +62,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
    */
   private _selectMode: SelectMode = 'single';
   @Input()
-  get selectMode(): SelectMode {
+  public get selectMode(): SelectMode {
     return this._selectMode;
   }
 
-  set selectMode(val: SelectMode) {
+  public set selectMode(val: SelectMode) {
     this._selectMode = val;
     if (this.initiated) {
       this.generateMonthList();
@@ -74,11 +77,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /** The currently selected date. */
   private _selected: T | null;
   @Input()
-  get selected(): T | null {
+  public get selected(): T | null {
     return this._selected;
   }
 
-  set selected(value: T | null) {
+  public set selected(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._selected = this.getValidDate(deserialized);
     this.setSelectedMonths();
@@ -86,14 +89,14 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
 
   private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): Array<T> {
+  public get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: Array<T>) {
+  public set selecteds(values: Array<T>) {
     this._selecteds = [];
-    for (let i = 0; i < values.length; i++) {
-      const deserialized = this.#dateTimeAdapter.deserialize(values[i]);
+    for (const value of values) {
+      const deserialized = this.#dateTimeAdapter.deserialize(value);
       this._selecteds.push(this.getValidDate(deserialized));
     }
 
@@ -102,11 +105,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
 
   private _pickerMoment: T | null;
   @Input()
-  get pickerMoment() {
+  public get pickerMoment(): T | null {
     return this._pickerMoment;
   }
 
-  set pickerMoment(value: T) {
+  public set pickerMoment(value: T) {
     const oldMoment = this._pickerMoment;
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._pickerMoment = this.getValidDate(deserialized) || this.#dateTimeAdapter.now();
@@ -122,13 +125,13 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /**
    * A function used to filter which dates are selectable
    */
-  private _dateFilter: (date: T) => boolean;
+  private _dateFilter: DateFilter<T>;
   @Input()
-  get dateFilter() {
+  public get dateFilter(): DateFilter<T> {
     return this._dateFilter;
   }
 
-  set dateFilter(filter: (date: T) => boolean) {
+  public set dateFilter(filter: DateFilter<T>) {
     this._dateFilter = filter;
     if (this.initiated) {
       this.generateMonthList();
@@ -138,11 +141,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /** The minimum selectable date. */
   private _minDate: T | null;
   @Input()
-  get minDate(): T | null {
+  public get minDate(): T | null {
     return this._minDate;
   }
 
-  set minDate(value: T | null) {
+  public set minDate(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._minDate = this.getValidDate(deserialized);
     if (this.initiated) {
@@ -153,11 +156,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /** The maximum selectable date. */
   private _maxDate: T | null;
   @Input()
-  get maxDate(): T | null {
+  public get maxDate(): T | null {
     return this._maxDate;
   }
 
-  set maxDate(value: T | null) {
+  public set maxDate(value: T | null) {
     const deserialized = this.#dateTimeAdapter.deserialize(value);
     this._maxDate = this.getValidDate(deserialized);
     if (this.initiated) {
@@ -167,23 +170,23 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
 
   private readonly monthNames = this.#dateTimeAdapter.getMonthNames('short');
 
-  private _months: CalendarCell[][];
-  get months() {
+  private _months: Array<Array<CalendarCell>>;
+  public get months(): Array<Array<CalendarCell>> {
     return this._months;
   }
 
-  get activeCell(): number | undefined {
+  public get activeCell(): number | undefined {
     if (!this._pickerMoment) {
       return undefined;
     }
     return this.#dateTimeAdapter.getMonth(this._pickerMoment);
   }
 
-  get isInSingleMode(): boolean {
+  public get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  public get isInRangeMode(): boolean {
     return (
       this.selectMode === 'range' ||
       this.selectMode === 'rangeFrom' ||
@@ -201,38 +204,36 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
    * An array to hold all selectedDates' month value
    * the value is the month number in current year
    */
-  public selectedMonths: number[] = [];
+  public selectedMonths: Array<number> = [];
 
   /**
-   * Callback to invoke when a new month is selected
+   * Callback to invoke when a new year is selected
    */
   @Output()
-  readonly change = new EventEmitter<T>();
+  public readonly yearSelected = new EventEmitter<T>();
 
   /**
    * Emits the selected year. This doesn't imply a change on the selected date
    */
   @Output()
-  readonly monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = new EventEmitter<T>();
 
   /** Emits when any date is activated. */
   @Output()
-  readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
+  public readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
 
   /** Emits when use keyboard enter to select a calendar cell */
   @Output()
-  readonly keyboardEnter: EventEmitter<any> = new EventEmitter<any>();
+  public readonly keyboardEnter = new EventEmitter<KeyboardEvent>();
 
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
-  calendarBodyElm: OwlCalendarBodyComponent;
+  public calendarBodyElm: OwlCalendarBodyComponent;
 
   @HostBinding('class.owl-dt-calendar-view')
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
+  public owlDTCalendarView = true;
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.localeSub = this.#dateTimeAdapter.localeChanges.subscribe(() => {
       this.generateMonthList();
       this.#cdRef.markForCheck();
@@ -282,7 +283,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
       this.#dateTimeAdapter.getSeconds(this.pickerMoment)
     );
 
-    this.change.emit(result);
+    this.yearSelected.emit(result);
   }
 
   /**
@@ -420,7 +421,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
       startDateOfMonth,
       this.#dateTimeFormats.monthYearA11yLabel
     );
-    const cellClass = 'owl-dt-month-' + month;
+    const cellClass = `owl-dt-month-${month}`;
     return new CalendarCell(
       month,
       this.monthNames[month],
@@ -513,7 +514,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /**
    * Check the given dates are in the same year
    */
-  private hasSameYear(dateLeft: T, dateRight: T) {
+  private hasSameYear(dateLeft: T, dateRight: T): boolean {
     return !!(
       dateLeft &&
       dateRight &&
@@ -525,13 +526,13 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: any): T | null {
+  private getValidDate(obj: unknown): T | null {
     if (!this.#dateTimeAdapter.isDateInstance(obj)) return null;
     if (!this.#dateTimeAdapter.isValid(obj)) return null;
     return obj;
   }
 
-  private focusActiveCell() {
+  private focusActiveCell(): void {
     this.calendarBodyElm.focusActiveCell();
   }
 }

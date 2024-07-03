@@ -1,9 +1,9 @@
 <ng-doc-root>
 
   <ng-doc-navbar
+    [glassEffect]="false"
     [leftContent]="leftContent"
-    [rightContent]="rightContent"
-    [glassEffect]="false">
+    [rightContent]="rightContent">
     <ng-template #leftContent>
       <a routerLink="home">
         <h3>DateTimePicker</h3>
@@ -12,11 +12,15 @@
 
     <ng-template #rightContent>
       <a
+        class="github-icon"
         href="https://github.com/NetWin/date-time-picker"
-        target="_blank"
         rel="noopener noreferrer"
-        class="github-icon">
-        <img src="github-mark-white.png" width="24px" height="24px">
+        target="_blank">
+        <img
+          alt="GitHub Repository"
+          height="24px"
+          src="github-mark-white.png"
+          width="24px">
       </a>
     </ng-template>
   </ng-doc-navbar>

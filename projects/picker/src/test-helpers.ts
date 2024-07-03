@@ -20,8 +20,8 @@ export function createFakeEvent(
   type: string,
   canBubble = false,
   cancelable = true
-) {
-  return new Event(type, { bubbles: canBubble, cancelable: cancelable });
+): Event {
+  return new Event(type, { bubbles: canBubble, cancelable });
 }
 
 export function dispatchKeyboardEvent(
@@ -36,14 +36,14 @@ export function createKeyboardEvent(
   type: KeyDownEventType,
   keyCode: number,
   key?: string
-) {
+): KeyboardEvent {
   return new KeyboardEvent(type, {
     key,
     bubbles: true,
     cancelable: true,
     keyCode,
     code: key,
-    which: keyCode,
+    which: keyCode
   });
 }
 
@@ -58,7 +58,12 @@ export function dispatchMouseEvent(
 }
 
 /** Creates a browser MouseEvent with the specified options. */
-export function createMouseEvent(type: string, x = 0, y = 0, button = 0) {
+export function createMouseEvent(
+  type: string,
+  x = 0,
+  y = 0,
+  button = 0
+): MouseEvent {
   return new MouseEvent(type, {
     bubbles: true,
     cancelable: true,
@@ -72,28 +77,28 @@ export function createMouseEvent(type: string, x = 0, y = 0, button = 0) {
     altKey: false,
     shiftKey: false,
     metaKey: false,
-    button: button,
+    button,
     relatedTarget: null,
     buttons: 1
   });
 }
 
 export class MockNgZone extends NgZone {
-  override onStable: EventEmitter<unknown> = new EventEmitter(false);
+  public override onStable = new EventEmitter<unknown>(false);
 
   constructor() {
     super({ enableLongStackTrace: false });
   }
 
-  override run<T>(fn: (...args: any[]) => T): T {
+  public override run<T>(fn: () => T): T {
     return fn();
   }
 
-  override runOutsideAngular<T>(fn: (...args: any[]) => T): T {
+  public override runOutsideAngular<T>(fn: () => T): T {
     return fn();
   }
 
-  simulateZoneExit(): void {
+  public simulateZoneExit(): void {
     this.onStable.emit(null);
   }
 }

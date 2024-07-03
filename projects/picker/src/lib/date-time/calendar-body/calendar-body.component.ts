@@ -18,16 +18,17 @@ export class CalendarCell {
     public displayValue: string,
     public ariaLabel: string,
     public enabled: boolean,
-    public out: boolean = false,
-    public cellClass: string = ''
+    public out = false,
+    public cellClass = ''
   ) { }
 }
 
 @Component({
+  standalone: true,
   selector: '[owl-date-time-calendar-body]',
   exportAs: 'owlDateTimeCalendarBody',
   templateUrl: './calendar-body.component.html',
-  styleUrls: ['./calendar-body.component.scss'],
+  styleUrl: './calendar-body.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlCalendarBodyComponent {
@@ -40,60 +41,58 @@ export class OwlCalendarBodyComponent {
    * The cell number of the active cell in the table.
    */
   @Input()
-  activeCell = 0;
+  public activeCell = 0;
 
   /**
    * The cells to display in the table.
    */
   @Input()
-  rows: CalendarCell[][];
+  public rows: Array<Array<CalendarCell>>;
 
   /**
    * The number of columns in the table.
    */
   @Input()
-  numCols = 7;
+  public numCols = 7;
 
   /**
    * The ratio (width / height) to use for the cells in the table.
    */
   @Input()
-  cellRatio = 1;
+  public cellRatio = 1;
 
   /**
    * The value in the table that corresponds to today.
    */
   @Input()
-  todayValue: number;
+  public todayValue: number;
 
   /**
    * The value in the table that is currently selected.
    */
   @Input()
-  selectedValues: number[];
+  public selectedValues: Array<number>;
 
   /**
    * Current picker select mode
    */
   @Input()
-  selectMode: SelectMode;
+  public selectMode: SelectMode;
 
   /**
    * Emit when a calendar cell is selected
    */
   @Output()
-  public readonly select = new EventEmitter<CalendarCell>();
+  public readonly cellSelected = new EventEmitter<CalendarCell>();
 
   @HostBinding('class.owl-dt-calendar-body')
-  get owlDTCalendarBodyClass(): boolean {
-    return true;
-  }
+  public readonly owlDTCalendarBodyClass = true;
 
-  get isInSingleMode(): boolean {
+  public get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  public get isInRangeMode(): boolean {
     return (
       this.selectMode === 'range' ||
       this.selectMode === 'rangeFrom' ||
@@ -102,7 +101,7 @@ export class OwlCalendarBodyComponent {
   }
 
   public selectCell(cell: CalendarCell): void {
-    this.select.emit(cell);
+    this.cellSelected.emit(cell);
   }
 
   public isActiveCell(rowIndex: number, colIndex: number): boolean {

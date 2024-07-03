@@ -6,9 +6,9 @@ export function createDate(
   year: number,
   month: number,
   date: number,
-  hours: number = 0,
-  minutes: number = 0,
-  seconds: number = 0
+  hours = 0,
+  minutes = 0,
+  seconds = 0
 ): Date {
   if (month < 0 || month > 11) {
     throw Error(
@@ -80,9 +80,9 @@ function createDateWithOverflow(
   year: number,
   month: number,
   date: number,
-  hours: number = 0,
-  minutes: number = 0,
-  seconds: number = 0
+  hours = 0,
+  minutes = 0,
+  seconds = 0
 ): Date {
   const result = new Date(year, month, date, hours, minutes, seconds);
 

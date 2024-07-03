@@ -11,14 +11,12 @@ import { OWL_DIALOG_SCROLL_STRATEGY_PROVIDER, OwlDialogService } from './dialog.
     CommonModule,
     A11yModule,
     OverlayModule,
-    PortalModule
-  ],
-  declarations: [
-    OwlDialogContainerComponent,
+    PortalModule,
+    OwlDialogContainerComponent
   ],
   providers: [
     OWL_DIALOG_SCROLL_STRATEGY_PROVIDER,
-    OwlDialogService,
+    OwlDialogService
   ]
 })
 export class OwlDialogModule {

@@ -20,8 +20,9 @@ import { OwlYearViewComponent } from './calendar-year-view.component';
 describe('OwlYearViewComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
         StandardYearViewComponent,
         YearViewWithDateFilterComponent
       ],
@@ -71,7 +72,7 @@ describe('OwlYearViewComponent', () => {
       dispatchMouseEvent(cellDecember, 'click');
       fixture.detectChanges();
 
-      const selector = '.owl-dt-calendar-cell-active .owl-dt-calendar-cell-content'
+      const selector = '.owl-dt-calendar-cell-active .owl-dt-calendar-cell-content';
       const selectedElContent = yearViewElement.querySelector(selector)!;
       expect(selectedElContent.innerHTML.trim()).toBe('Dec');
     });
@@ -256,33 +257,37 @@ describe('OwlYearViewComponent', () => {
 });
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)">
+      (yearSelected)="handleChange($event)">
     </owl-date-time-year-view>
-  `
+  `,
+  imports: [OwlYearViewComponent]
 })
 class StandardYearViewComponent {
-  selected = new Date(2018, MONTHS.JAN, 10);
-  pickerMoment = new Date(2018, MONTHS.JAN, 5);
+  public selected = new Date(2018, MONTHS.JAN, 10);
+  public pickerMoment = new Date(2018, MONTHS.JAN, 5);
   public handleChange(date: Date): void {
     this.pickerMoment = new Date(date);
   }
 }
 
 @Component({
+  standalone: true,
   template: `
     <owl-date-time-year-view
-      [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter">
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment">
     </owl-date-time-year-view>
-  `
+  `,
+  imports: [OwlYearViewComponent]
 })
 class YearViewWithDateFilterComponent {
   public pickerMoment = new Date(2018, MONTHS.JAN, 1);
-  public dateFilter(date: Date) {
+  public dateFilter(date: Date): boolean {
     return date.getMonth() !== MONTHS.FEB;
   }
 }

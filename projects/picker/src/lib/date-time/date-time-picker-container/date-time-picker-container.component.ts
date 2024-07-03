@@ -1,4 +1,5 @@
 import { AnimationEvent } from '@angular/animations';
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import {
   DOWN_ARROW,
   LEFT_ARROW,
@@ -6,6 +7,7 @@ import {
   SPACE,
   UP_ARROW
 } from '@angular/cdk/keycodes';
+import { NgIf } from '@angular/common';
 import {
   AfterContentInit,
   AfterViewInit,
@@ -19,7 +21,7 @@ import {
   ViewChild,
   inject
 } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DateTimeAdapter } from '../adapter';
 import { OwlCalendarComponent } from '../calendar';
 import { OwlDateTime, PickerType } from '../date-time';
@@ -28,15 +30,17 @@ import { OwlTimerComponent } from '../timer';
 import { owlDateTimePickerAnimations } from './date-time-picker.animations';
 
 @Component({
+  standalone: true,
   exportAs: 'owlDateTimeContainer',
   selector: 'owl-date-time-container',
   templateUrl: './date-time-picker-container.component.html',
-  styleUrls: ['./date-time-picker-container.component.scss'],
+  styleUrl: './date-time-picker-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     owlDateTimePickerAnimations.transformPicker,
     owlDateTimePickerAnimations.fadeInPicker
-  ]
+  ],
+  imports: [NgIf, CdkTrapFocus, OwlTimerComponent, OwlCalendarComponent]
 })
 export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentInit, AfterViewInit {
 
@@ -64,32 +68,20 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * Stream emits when try to hide picker
    */
-  private hidePicker$ = new Subject<any>();
-
-  get hidePickerStream(): Observable<any> {
-    return this.hidePicker$.asObservable();
-  }
+  private hidePicker$ = new Subject<void>();
+  public hidePickerStream = this.hidePicker$.asObservable();
 
   /**
    * Stream emits when try to confirm the selected value
    */
-  private confirmSelected$ = new Subject<any>();
+  private readonly confirmSelected$ = new Subject<MouseEvent>();
+  public readonly confirmSelectedStream = this.confirmSelected$.asObservable();
 
-  get confirmSelectedStream(): Observable<any> {
-    return this.confirmSelected$.asObservable();
-  }
+  private readonly beforePickerOpened$ = new Subject<void>();
+  public readonly beforePickerOpenedStream = this.beforePickerOpened$.asObservable();
 
-  private beforePickerOpened$ = new Subject<any>();
-
-  get beforePickerOpenedStream(): Observable<any> {
-    return this.beforePickerOpened$.asObservable();
-  }
-
-  private pickerOpened$ = new Subject<any>();
-
-  get pickerOpenedStream(): Observable<any> {
-    return this.pickerOpened$.asObservable();
-  }
+  private readonly pickerOpened$ = new Subject<void>();
+  public readonly pickerOpenedStream = this.pickerOpened$.asObservable();
 
   /**
    * The current picker moment. This determines which time period is shown and which date is
@@ -97,11 +89,11 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    */
   private _clamPickerMoment: T;
 
-  get pickerMoment() {
+  public get pickerMoment(): T {
     return this._clamPickerMoment;
   }
 
-  set pickerMoment(value: T) {
+  public set pickerMoment(value: T) {
     if (value) {
       this._clamPickerMoment = this.#dateTimeAdapter.clampDate(
         value,
@@ -112,36 +104,36 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     this.#cdRef.markForCheck();
   }
 
-  get pickerType(): PickerType {
+  public get pickerType(): PickerType {
     return this.picker.pickerType;
   }
 
-  get cancelLabel(): string {
+  public get cancelLabel(): string {
     return this.#pickerIntl.cancelBtnLabel;
   }
 
-  get setLabel(): string {
+  public get setLabel(): string {
     return this.#pickerIntl.setBtnLabel;
   }
 
   /**
    * The range 'from' label
    */
-  get fromLabel(): string {
+  public get fromLabel(): string {
     return this.#pickerIntl.rangeFromLabel;
   }
 
   /**
    * The range 'to' label
    */
-  get toLabel(): string {
+  public get toLabel(): string {
     return this.#pickerIntl.rangeToLabel;
   }
 
   /**
    * The range 'from' formatted value
    */
-  get fromFormattedValue(): string {
+  public get fromFormattedValue(): string {
     const value = this.picker.selecteds[0];
     return value
       ? this.#dateTimeAdapter.format(value, this.picker.formatString)
@@ -151,7 +143,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * The range 'to' formatted value
    */
-  get toFormattedValue(): string {
+  public get toFormattedValue(): string {
     const value = this.picker.selecteds[1];
     return value
       ? this.#dateTimeAdapter.format(value, this.picker.formatString)
@@ -163,54 +155,54 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * 1) picker mode is 'dialog'
    * 2) picker type is NOT 'calendar' and the picker mode is NOT 'inline'
    */
-  get showControlButtons(): boolean {
+  public get showControlButtons(): boolean {
     return (
       this.picker.pickerMode === 'dialog' ||
-      (this.picker.pickerType !== 'calendar' &&
-        this.picker.pickerMode !== 'inline')
+      (
+        this.picker.pickerType !== 'calendar' &&
+        this.picker.pickerMode !== 'inline'
+      )
     );
   }
 
-  get containerElm(): HTMLElement {
+  public get containerElm(): HTMLElement {
     return this.#elmRef.nativeElement;
   }
 
   @HostBinding('class.owl-dt-container')
-  get owlDTContainerClass(): boolean {
-    return true;
-  }
+  public owlDTContainerClass = true;
 
   @HostBinding('class.owl-dt-popup-container')
-  get owlDTPopupContainerClass(): boolean {
+  public get owlDTPopupContainerClass(): boolean {
     return this.picker.pickerMode === 'popup';
   }
 
   @HostBinding('class.owl-dt-dialog-container')
-  get owlDTDialogContainerClass(): boolean {
+  public get owlDTDialogContainerClass(): boolean {
     return this.picker.pickerMode === 'dialog';
   }
 
   @HostBinding('class.owl-dt-inline-container')
-  get owlDTInlineContainerClass(): boolean {
+  public get owlDTInlineContainerClass(): boolean {
     return this.picker.pickerMode === 'inline';
   }
 
   @HostBinding('class.owl-dt-container-disabled')
-  get owlDTContainerDisabledClass(): boolean {
+  public get owlDTContainerDisabledClass(): boolean {
     return this.picker.disabled;
   }
 
   @HostBinding('attr.id')
-  get owlDTContainerId(): string {
+  public get owlDTContainerId(): string {
     return this.picker.id;
   }
 
   @HostBinding('@transformPicker')
-  get owlDTContainerAnimation(): any {
+  public get owlDTContainerAnimation(): '' | 'enter' {
     return this.picker.pickerMode === 'inline' ? '' : 'enter';
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     if (this.picker.selectMode === 'range') {
       if (this.picker.selecteds[0]) {
         this.retainStartTime = this.#dateTimeAdapter.clone(this.picker.selecteds[0]);
@@ -321,7 +313,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * Handle click on cancel button
    */
-  public onCancelClicked(event: any): void {
+  public onCancelClicked(event: MouseEvent): void {
     this.hidePicker$.next(null);
     event.preventDefault();
     return;
@@ -330,7 +322,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * Handle click on set button
    */
-  public onSetClicked(event: any): void {
+  public onSetClicked(event: MouseEvent): void {
     if (!this.picker.dateTimeChecker(this.pickerMoment)) {
       this.hidePicker$.next(null);
       event.preventDefault();
@@ -345,7 +337,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * Handle click on inform radio group
    */
-  public handleClickOnInfoGroup(event: any, index: number): void {
+  public handleClickOnInfoGroup(event: Event, index: number): void {
     this.setActiveSelectedIndex(index);
     event.preventDefault();
     event.stopPropagation();
@@ -355,8 +347,8 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * Handle click on inform radio group
    */
   public handleKeydownOnInfoGroup(
-    event: any,
-    next: any,
+    event: KeyboardEvent,
+    next: HTMLElement,
     index: number
   ): void {
     switch (event.keyCode) {
@@ -434,8 +426,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     // otherwise, set it as 'from' and set 'to' to null
     if (this.picker.selectMode === 'range') {
       if (
-        this.picker.selecteds &&
-        this.picker.selecteds.length &&
+        this.picker.selecteds?.length &&
         !to &&
         from &&
         this.#dateTimeAdapter.differenceInCalendarDays(result, from) >= 0
