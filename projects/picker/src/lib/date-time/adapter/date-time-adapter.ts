@@ -1,7 +1,6 @@
 import { InjectionToken, LOCALE_ID, inject } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 
-/** @internal */
 export function OWL_DATE_TIME_LOCALE_FACTORY(): string {
   return inject(LOCALE_ID);
 }

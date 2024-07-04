@@ -40,7 +40,6 @@ export function OWL_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(
   return () => overlay.scrollStrategies.block();
 }
 
-/** @internal */
 export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
   provide: OWL_DIALOG_SCROLL_STRATEGY,
   deps: [Overlay],

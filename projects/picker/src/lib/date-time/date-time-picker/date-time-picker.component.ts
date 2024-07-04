@@ -1,7 +1,6 @@
 import { coerceArray, coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ESCAPE, UP_ARROW } from '@angular/cdk/keycodes';
 import {
-  BlockScrollStrategy,
   Overlay,
   OverlayConfig,
   OverlayRef,
@@ -42,18 +41,13 @@ import { OwlDateTimeInputDirective } from '../date-time-input/date-time-input.di
 import { OwlDateTimeContainerComponent } from '../date-time-picker-container';
 
 /** Injection token that determines the scroll handling while the dtPicker is open. */
-export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<
-  () => ScrollStrategy
->('owl-dtpicker-scroll-strategy');
+export type ScrollStrategyFactory = () => ScrollStrategy;
+export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<ScrollStrategyFactory>('owl-dtpicker-scroll-strategy');
 
-/** @internal */
-export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(
-  overlay: Overlay
-): () => BlockScrollStrategy {
+export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): ScrollStrategyFactory {
   return () => overlay.scrollStrategies.block();
 }
 
-/** @internal */
 export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
   provide: OWL_DTPICKER_SCROLL_STRATEGY,
   deps: [Overlay],
