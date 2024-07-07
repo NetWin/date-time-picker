@@ -61,7 +61,7 @@
     "@angular/cli": "^18.0.7",
     "@angular/compiler-cli": "^18.0.6",
     "@types/jasmine": "~5.1.4",
-    "@types/node": "^20.14.9",
+    "@types/node": "^20.14.10",
     "angular-eslint": "18.0.1",
     "eslint": "^9.6.0",
     "jasmine-core": "~5.1.2",
@@ -74,14 +74,5 @@
     "sass": "^1.77.6",
     "typescript": "~5.4.5",
     "typescript-eslint": "8.0.0-alpha.20"
-  },
-  "overrides": {
-    "@lmdb/lmdb-darwin-arm64": "3.0.12"
-  },
-  "optionalDependencies": {
-    "@nx/nx-darwin-arm64": "19.3.2",
-    "@nx/nx-darwin-x64": "19.3.2",
-    "@nx/nx-linux-x64-gnu": "19.3.2",
-    "@nx/nx-win32-x64-msvc": "19.3.2"
   }
 }
