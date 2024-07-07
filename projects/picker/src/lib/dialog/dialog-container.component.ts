@@ -1,288 +1,284 @@
-/**
- * dialog-container.component
- */
-
 import {
-    ChangeDetectorRef,
-    Component,
-    ComponentRef,
-    ElementRef,
-    EmbeddedViewRef,
-    EventEmitter,
-    Inject,
-    OnInit,
-    Optional,
-    ViewChild
-} from '@angular/core';
-import {
-    animate,
-    animateChild,
-    AnimationEvent,
-    keyframes,
-    style,
-    transition,
-    trigger
+  AnimationEvent,
+  animate,
+  animateChild,
+  keyframes,
+  style,
+  transition,
+  trigger
 } from '@angular/animations';
-import { DOCUMENT } from '@angular/common';
 import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 import {
-    BasePortalOutlet,
-    CdkPortalOutlet,
-    ComponentPortal,
-    TemplatePortal
+  BasePortalOutlet,
+  CdkPortalOutlet,
+  ComponentPortal,
+  TemplatePortal
 } from '@angular/cdk/portal';
-import { OwlDialogConfigInterface } from './dialog-config.class';
+import { DOCUMENT } from '@angular/common';
+import {
+  ChangeDetectorRef,
+  Component,
+  ComponentRef,
+  ElementRef,
+  EmbeddedViewRef,
+  EventEmitter,
+  HostBinding,
+  HostListener,
+  ViewChild,
+  inject
+} from '@angular/core';
+import { OwlDialogConfigInterface } from './dialog-config';
+
+type AnimationState = 'void' | 'enter' | 'exit';
+interface AnimationParams {
+  x: string;
+  y: string;
+  ox: string;
+  oy: string;
+  scale: number;
+}
 
 const zoomFadeIn = {
-    opacity: 0,
-    transform: 'translateX({{ x }}) translateY({{ y }}) scale({{scale}})'
+  opacity: 0,
+  transform: 'translateX({{ x }}) translateY({{ y }}) scale({{scale}})'
 };
 const zoomFadeInFrom = {
-    opacity: 0,
-    transform: 'translateX({{ x }}) translateY({{ y }}) scale({{scale}})',
-    transformOrigin: '{{ ox }} {{ oy }}'
+  opacity: 0,
+  transform: 'translateX({{ x }}) translateY({{ y }}) scale({{scale}})',
+  transformOrigin: '{{ ox }} {{ oy }}'
 };
 
 @Component({
-    selector: 'owl-dialog-container',
-    templateUrl: './dialog-container.component.html',
-    animations: [
-        trigger('slideModal', [
-            transition(
-                'void => enter',
-                [
-                    style(zoomFadeInFrom),
-                    animate('300ms cubic-bezier(0.35, 0, 0.25, 1)', style('*')),
-                    animate(
-                        '150ms',
-                        keyframes([
-                            style({ transform: 'scale(1)', offset: 0 }),
-                            style({ transform: 'scale(1.05)', offset: 0.3 }),
-                            style({ transform: 'scale(.95)', offset: 0.8 }),
-                            style({ transform: 'scale(1)', offset: 1.0 })
-                        ])
-                    ),
-                    animateChild()
-                ],
-                {
-                    params: {
-                        x: '0px',
-                        y: '0px',
-                        ox: '50%',
-                        oy: '50%',
-                        scale: 1
-                    }
-                }
-            ),
-            transition(
-                'enter => exit',
-                [animateChild(), animate(200, style(zoomFadeIn))],
-                { params: { x: '0px', y: '0px', ox: '50%', oy: '50%' } }
-            )
-        ])
-    ],
-    host: {
-        '(@slideModal.start)': 'onAnimationStart($event)',
-        '(@slideModal.done)': 'onAnimationDone($event)',
-        '[class.owl-dialog-container]': 'owlDialogContainerClass',
-        '[attr.tabindex]': 'owlDialogContainerTabIndex',
-        '[attr.id]': 'owlDialogContainerId',
-        '[attr.role]': 'owlDialogContainerRole',
-        '[attr.aria-labelledby]': 'owlDialogContainerAriaLabelledby',
-        '[attr.aria-describedby]': 'owlDialogContainerAriaDescribedby',
-        '[@slideModal]': 'owlDialogContainerAnimation'
-    }
+  standalone: true,
+  selector: 'owl-dialog-container',
+  templateUrl: './dialog-container.component.html',
+  animations: [
+    trigger('slideModal', [
+      transition(
+        'void => enter',
+        [
+          style(zoomFadeInFrom),
+          animate('300ms cubic-bezier(0.35, 0, 0.25, 1)', style('*')),
+          animate(
+            '150ms',
+            keyframes([
+              style({ transform: 'scale(1)', offset: 0 }),
+              style({ transform: 'scale(1.05)', offset: 0.3 }),
+              style({ transform: 'scale(.95)', offset: 0.8 }),
+              style({ transform: 'scale(1)', offset: 1.0 })
+            ])
+          ),
+          animateChild()
+        ],
+        {
+          params: {
+            x: '0px',
+            y: '0px',
+            ox: '50%',
+            oy: '50%',
+            scale: 1
+          }
+        }
+      ),
+      transition(
+        'enter => exit',
+        [animateChild(), animate(200, style(zoomFadeIn))],
+        { params: { x: '0px', y: '0px', ox: '50%', oy: '50%' } }
+      )
+    ])
+  ],
+  imports: [CdkPortalOutlet]
 })
-export class OwlDialogContainerComponent extends BasePortalOutlet
-    implements OnInit {
-    @ViewChild(CdkPortalOutlet, { static: true })
-    portalOutlet: CdkPortalOutlet | null = null;
+export class OwlDialogContainerComponent extends BasePortalOutlet {
 
-    /** The class that traps and manages focus within the dialog. */
-    private focusTrap: FocusTrap;
+  readonly #changeDetector = inject(ChangeDetectorRef);
 
-    /** ID of the element that should be considered as the dialog's label. */
-    public ariaLabelledBy: string | null = null;
+  readonly #elementRef = inject(ElementRef);
 
-    /** Emits when an animation state changes. */
-    public animationStateChanged = new EventEmitter<AnimationEvent>();
+  readonly #focusTrapFactory = inject(FocusTrapFactory);
 
-    public isAnimating = false;
+  readonly #document = inject(DOCUMENT, { optional: true });
 
-    private _config: OwlDialogConfigInterface;
-    get config(): OwlDialogConfigInterface {
-        return this._config;
+  @ViewChild(CdkPortalOutlet, { static: true })
+  public portalOutlet!: CdkPortalOutlet;
+
+  /** The class that traps and manages focus within the dialog. */
+  private focusTrap: FocusTrap;
+
+  /** ID of the element that should be considered as the dialog's label. */
+  public ariaLabelledBy: string | null = null;
+
+  /** Emits when an animation state changes. */
+  public animationStateChanged = new EventEmitter<AnimationEvent>();
+
+  public isAnimating = false;
+
+  private _config: OwlDialogConfigInterface;
+  public get config(): OwlDialogConfigInterface {
+    return this._config;
+  }
+
+  private state: AnimationState = 'enter';
+
+  // for animation purpose
+  private params: AnimationParams = {
+    x: '0px',
+    y: '0px',
+    ox: '50%',
+    oy: '50%',
+    scale: 0
+  };
+
+  // A variable to hold the focused element before the dialog was open.
+  // This would help us to refocus back to element when the dialog was closed.
+  private elementFocusedBeforeDialogWasOpened: HTMLElement | null = null;
+
+  @HostBinding('class.owl-dialog-container')
+  public readonly owlDialogContainerClass = true;
+
+  @HostBinding('attr.tabindex')
+  public readonly owlDialogContainerTabIndex = -1;
+
+  @HostBinding('attr.id')
+  public get owlDialogContainerId(): string {
+    return this._config.id;
+  }
+
+  @HostBinding('attr.role')
+  public get owlDialogContainerRole(): string {
+    return this._config.role || null;
+  }
+
+  @HostBinding('attr.aria-labelledby')
+  public get owlDialogContainerAriaLabelledby(): string {
+    return this.ariaLabelledBy;
+  }
+
+  @HostBinding('attr.aria-describedby')
+  public get owlDialogContainerAriaDescribedby(): string {
+    return this._config.ariaDescribedBy || null;
+  }
+
+  @HostBinding('@slideModal')
+  public get owlDialogContainerAnimation(): { value: AnimationState, params: AnimationParams } {
+    return { value: this.state, params: this.params };
+  }
+
+  /**
+   * Attach a ComponentPortal as content to this dialog container.
+   */
+  public attachComponentPortal<T>(
+    portal: ComponentPortal<T>
+  ): ComponentRef<T> {
+    if (this.portalOutlet.hasAttached()) {
+      throw Error(
+        'Attempting to attach dialog content after content is already attached'
+      );
     }
 
-    private state: 'void' | 'enter' | 'exit' = 'enter';
+    this.savePreviouslyFocusedElement();
+    return this.portalOutlet.attachComponentPortal(portal);
+  }
 
-    // for animation purpose
-    private params: any = {
-        x: '0px',
-        y: '0px',
-        ox: '50%',
-        oy: '50%',
-        scale: 0
-    };
+  public attachTemplatePortal<C>(
+    _portal: TemplatePortal<C>
+  ): EmbeddedViewRef<C> {
+    throw new Error('Method not implemented.');
+  }
 
-    // A variable to hold the focused element before the dialog was open.
-    // This would help us to refocus back to element when the dialog was closed.
-    private elementFocusedBeforeDialogWasOpened: HTMLElement | null = null;
+  public setConfig(config: OwlDialogConfigInterface): void {
+    this._config = config;
 
-    get owlDialogContainerClass(): boolean {
-        return true;
+    if (config.event) {
+      this.calculateZoomOrigin(config.event);
+    }
+  }
+
+  @HostListener('@slideModal.start', ['$event'])
+  public onAnimationStart(event: AnimationEvent): void {
+    this.isAnimating = true;
+    this.animationStateChanged.emit(event);
+  }
+
+  @HostListener('@slideModal.done', ['$event'])
+  public onAnimationDone(event: AnimationEvent): void {
+    if (event.toState === 'enter') {
+      this.trapFocus();
+    } else if (event.toState === 'exit') {
+      this.restoreFocus();
     }
 
-    get owlDialogContainerTabIndex(): number {
-        return -1;
+    this.animationStateChanged.emit(event);
+    this.isAnimating = false;
+  }
+
+  public startExitAnimation(): void {
+    this.state = 'exit';
+    this.#changeDetector.markForCheck();
+  }
+
+  /**
+   * Calculate origin used in the `zoomFadeInFrom()`
+   * for animation purpose
+   */
+  private calculateZoomOrigin(event: MouseEvent): void {
+    if (!event) {
+      return;
     }
 
-    get owlDialogContainerId(): string {
-        return this._config.id;
+    const clientX = event.clientX;
+    const clientY = event.clientY;
+
+    const wh = window.innerWidth / 2;
+    const hh = window.innerHeight / 2;
+    const x = clientX - wh;
+    const y = clientY - hh;
+    const ox = clientX / window.innerWidth;
+    const oy = clientY / window.innerHeight;
+
+    this.params.x = `${x}px`;
+    this.params.y = `${y}px`;
+    this.params.ox = `${ox * 100}%`;
+    this.params.oy = `${oy * 100}%`;
+    this.params.scale = 0;
+
+    return;
+  }
+
+  /**
+   * Save the focused element before dialog was open
+   */
+  private savePreviouslyFocusedElement(): void {
+    if (this.#document) {
+      this.elementFocusedBeforeDialogWasOpened = this.#document
+        .activeElement as HTMLElement;
+
+      Promise.resolve().then(() => this.#elementRef.nativeElement.focus());
+    }
+  }
+
+  private trapFocus(): void {
+    if (!this.focusTrap) {
+      this.focusTrap = this.#focusTrapFactory.create(
+        this.#elementRef.nativeElement
+      );
     }
 
-    get owlDialogContainerRole(): string {
-        return this._config.role || null;
+    if (this._config.autoFocus) {
+      this.focusTrap.focusInitialElementWhenReady();
+    }
+  }
+
+  private restoreFocus(): void {
+    const toFocus = this.elementFocusedBeforeDialogWasOpened;
+
+    // We need the extra check, because IE can set the `activeElement` to null in some cases.
+    if (toFocus && typeof toFocus.focus === 'function') {
+      toFocus.focus();
     }
 
-    get owlDialogContainerAriaLabelledby(): string {
-        return this.ariaLabelledBy;
+    if (this.focusTrap) {
+      this.focusTrap.destroy();
     }
-
-    get owlDialogContainerAriaDescribedby(): string {
-        return this._config.ariaDescribedBy || null;
-    }
-
-    get owlDialogContainerAnimation(): any {
-        return { value: this.state, params: this.params };
-    }
-
-    constructor(
-        private changeDetector: ChangeDetectorRef,
-        private elementRef: ElementRef,
-        private focusTrapFactory: FocusTrapFactory,
-        @Optional()
-        @Inject(DOCUMENT)
-        private document: any
-    ) {
-        super();
-    }
-
-    public ngOnInit() {}
-
-    /**
-     * Attach a ComponentPortal as content to this dialog container.
-     */
-    public attachComponentPortal<T>(
-        portal: ComponentPortal<T>
-    ): ComponentRef<T> {
-        if (this.portalOutlet.hasAttached()) {
-            throw Error(
-                'Attempting to attach dialog content after content is already attached'
-            );
-        }
-
-        this.savePreviouslyFocusedElement();
-        return this.portalOutlet.attachComponentPortal(portal);
-    }
-
-    public attachTemplatePortal<C>(
-        portal: TemplatePortal<C>
-    ): EmbeddedViewRef<C> {
-        throw new Error('Method not implemented.');
-    }
-
-    public setConfig(config: OwlDialogConfigInterface): void {
-        this._config = config;
-
-        if (config.event) {
-            this.calculateZoomOrigin(event);
-        }
-    }
-
-    public onAnimationStart( event: AnimationEvent ): void {
-        this.isAnimating = true;
-        this.animationStateChanged.emit(event);
-    }
-
-    public onAnimationDone( event: AnimationEvent ): void {
-        if (event.toState === 'enter') {
-            this.trapFocus();
-        } else if (event.toState === 'exit') {
-            this.restoreFocus();
-        }
-
-        this.animationStateChanged.emit(event);
-        this.isAnimating = false;
-    }
-
-    public startExitAnimation() {
-        this.state = 'exit';
-        this.changeDetector.markForCheck();
-    }
-
-    /**
-     * Calculate origin used in the `zoomFadeInFrom()`
-     * for animation purpose
-     */
-    private calculateZoomOrigin(event: any): void {
-        if (!event) {
-            return;
-        }
-
-        const clientX = event.clientX;
-        const clientY = event.clientY;
-
-        const wh = window.innerWidth / 2;
-        const hh = window.innerHeight / 2;
-        const x = clientX - wh;
-        const y = clientY - hh;
-        const ox = clientX / window.innerWidth;
-        const oy = clientY / window.innerHeight;
-
-        this.params.x = `${x}px`;
-        this.params.y = `${y}px`;
-        this.params.ox = `${ox * 100}%`;
-        this.params.oy = `${oy * 100}%`;
-        this.params.scale = 0;
-
-        return;
-    }
-
-    /**
-     * Save the focused element before dialog was open
-     */
-    private savePreviouslyFocusedElement(): void {
-        if (this.document) {
-            this.elementFocusedBeforeDialogWasOpened = this.document
-                .activeElement as HTMLElement;
-
-            Promise.resolve().then(() => this.elementRef.nativeElement.focus());
-        }
-    }
-
-    private trapFocus(): void {
-        if (!this.focusTrap) {
-            this.focusTrap = this.focusTrapFactory.create(
-                this.elementRef.nativeElement
-            );
-        }
-
-        if (this._config.autoFocus) {
-            this.focusTrap.focusInitialElementWhenReady();
-        }
-    }
-
-    private restoreFocus(): void {
-        const toFocus = this.elementFocusedBeforeDialogWasOpened;
-
-        // We need the extra check, because IE can set the `activeElement` to null in some cases.
-        if (toFocus && typeof toFocus.focus === 'function') {
-            toFocus.focus();
-        }
-
-        if (this.focusTrap) {
-            this.focusTrap.destroy();
-        }
-    }
+  }
 }
