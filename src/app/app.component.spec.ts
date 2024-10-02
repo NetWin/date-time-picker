@@ -3,9 +3,9 @@ import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(() => {
-    TestBed
-      .configureTestingModule({ imports: [AppComponent] })
-      .compileComponents();
+    TestBed.configureTestingModule({
+      imports: [AppComponent]
+    }).compileComponents();
   });
 
   it('should create the app', () => {

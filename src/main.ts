@@ -12,7 +12,7 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: OptionsTokens.multiYear,
-      useFactory: () => ({ yearRows: 5, yearsPerRow: 3, }),
-    },
+      useFactory: () => ({ yearRows: 5, yearsPerRow: 3 })
+    }
   ]
-})
+});

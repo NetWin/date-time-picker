@@ -11,19 +11,12 @@ const ONE_DAY = 24 * 60 * 60 * 1000;
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    FormsModule,
-    OwlDateTimeModule,
-    OwlNativeDateTimeModule
-  ]
+  imports: [FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
 })
 export class AppComponent {
   protected readonly currentTab = signal<string>('date-range');
 
-  protected selectedDates: [Date, Date] = [
-    new Date(Date.now() - ONE_DAY),
-    new Date(Date.now() + ONE_DAY)
-  ];
+  protected selectedDates: [Date, Date] = [new Date(Date.now() - ONE_DAY), new Date(Date.now() + ONE_DAY)];
 
   protected currentValue: Date = new Date(this.selectedDates[0]);
 

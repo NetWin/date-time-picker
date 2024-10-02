@@ -15,9 +15,7 @@
 <main>
   @switch (currentTab()) {
     @case ('date-range') {
-      <label for="daterange">
-        Datetime range (click, then press 'Set' to modify):
-      </label>
+      <label for="daterange"> Datetime range (click, then press 'Set' to modify): </label>
 
       <input
         [(ngModel)]="selectedDates"
@@ -25,7 +23,7 @@
         [owlDateTimeTrigger]="date_range_component"
         [owlDateTime]="date_range_component"
         style="width: 100%; color: cornflowerblue"
-        id="daterange">
+        id="daterange" />
 
       <owl-date-time
         #date_range_component
