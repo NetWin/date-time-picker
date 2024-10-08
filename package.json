@@ -20,7 +20,7 @@
     "start": "ng serve",
     "build": "ng build picker",
     "test": "ng test picker",
-    "test:ci": "ng test --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox --code-coverage=true picker",
+    "test:ci": "ng test picker --watch=false",
     "lint": "ng lint",
     "build_lib_onWindows": "ng build picker --configuration production && copy \"README.md\" \"dist/picker\"",
     "build_lib_onLinux": "ng build picker --configuration production && cp README.md dist/picker",
