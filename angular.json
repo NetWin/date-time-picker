@@ -71,19 +71,38 @@
                   "maximumWarning": "6kb"
                 }
               ]
+            },
+            "development": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ],
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "date-time-picker-app:build"
+            "buildTarget": "date-time-picker-app:build",
+            "port": 4201
           },
           "configurations": {
             "production": {
               "buildTarget": "date-time-picker-app:build:production"
+            },
+            "development": {
+              "buildTarget": "date-time-picker-app:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
