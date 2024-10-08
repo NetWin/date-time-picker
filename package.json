@@ -22,7 +22,6 @@
     "test": "ng test picker",
     "test-with-coverage": "ng test --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox --code-coverage=true picker",
     "lint": "ng lint",
-    "e2e": "ng e2e",
     "build_lib_onWindows": "ng build picker --configuration production && copy \"README.md\" \"dist/picker\"",
     "build_lib_onLinux": "ng build picker --configuration production && cp README.md dist/picker",
     "build_css_onWindows": "mkdir \"dist/picker/assets/style\" && sass --style=compressed projects/picker/src/sass/picker.scss > dist/picker/assets/style/picker.min.css",
