@@ -23,12 +23,10 @@
   },
   "include": ["**/*.ts"],
   "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
     "fullTemplateTypeCheck": true,
-    "enableResourceInlining": true,
     "compilationMode": "partial"
   }
 }
