@@ -53,7 +53,7 @@ export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
  * */
 export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>('owl-dialog-default-options');
 
-@Injectable()
+@Injectable({ providedIn: 'any' })
 export class OwlDialogService {
   private ariaHiddenElements = new Map<Element, string | null>();
 
