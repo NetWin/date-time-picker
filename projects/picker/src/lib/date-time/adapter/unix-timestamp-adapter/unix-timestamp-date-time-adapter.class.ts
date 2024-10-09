@@ -13,8 +13,9 @@ import {
 } from '../../../utils/constants';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter.class';
+import { UnixTimestampDateTimeModule } from './unix-timestamp-date-time.module';
 
-@Injectable()
+@Injectable({ providedIn: UnixTimestampDateTimeModule })
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   constructor(
     @Optional()
@@ -165,7 +166,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date(date).getDate();
   }
 
-  getDateNames(): string[] {
+  getDateNames(): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.locale, {
         day: 'numeric',
@@ -184,7 +185,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date(date).getDay();
   }
 
-  getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
+  getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.locale, {
         weekday: style,
@@ -212,7 +213,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date(date).getMonth();
   }
 
-  getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
+  getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.locale, {
         month: style,

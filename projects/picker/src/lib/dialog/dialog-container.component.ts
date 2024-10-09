@@ -14,7 +14,6 @@ import {
   EmbeddedViewRef,
   EventEmitter,
   Inject,
-  OnInit,
   Optional,
   ViewChild
 } from '@angular/core';
@@ -78,9 +77,9 @@ const zoomFadeInFrom = {
     '[@slideModal]': 'owlDialogContainerAnimation'
   }
 })
-export class OwlDialogContainerComponent extends BasePortalOutlet implements OnInit {
+export class OwlDialogContainerComponent extends BasePortalOutlet {
   @ViewChild(CdkPortalOutlet, { static: true })
-  portalOutlet: CdkPortalOutlet | null = null;
+  public portalOutlet: CdkPortalOutlet | null = null;
 
   /** The class that traps and manages focus within the dialog. */
   private focusTrap: FocusTrap;
@@ -94,7 +93,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet implements OnI
   public isAnimating = false;
 
   private _config: OwlDialogConfigInterface;
-  get config(): OwlDialogConfigInterface {
+  public get config(): OwlDialogConfigInterface {
     return this._config;
   }
 
@@ -152,8 +151,6 @@ export class OwlDialogContainerComponent extends BasePortalOutlet implements OnI
     super();
   }
 
-  public ngOnInit() {}
-
   /**
    * Attach a ComponentPortal as content to this dialog container.
    */
@@ -194,7 +191,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet implements OnI
     this.isAnimating = false;
   }
 
-  public startExitAnimation() {
+  public startExitAnimation(): void {
     this.state = 'exit';
     this.changeDetector.markForCheck();
   }
@@ -233,8 +230,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet implements OnI
   private savePreviouslyFocusedElement(): void {
     if (this.document) {
       this.elementFocusedBeforeDialogWasOpened = this.document.activeElement as HTMLElement;
-
-      Promise.resolve().then(() => this.elementRef.nativeElement.focus());
+      setTimeout(() => this.elementRef.nativeElement.focus(), 0);
     }
   }
 
@@ -244,7 +240,7 @@ export class OwlDialogContainerComponent extends BasePortalOutlet implements OnI
     }
 
     if (this._config.autoFocus) {
-      this.focusTrap.focusInitialElementWhenReady();
+      void this.focusTrap.focusInitialElementWhenReady();
     }
   }
 

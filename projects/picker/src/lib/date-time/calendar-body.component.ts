@@ -2,16 +2,7 @@
  * calendar-body.component
  */
 
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  NgZone,
-  OnInit,
-  Output
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { SelectMode } from './date-time.class';
 
@@ -37,7 +28,7 @@ export class CalendarCell {
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlCalendarBodyComponent implements OnInit {
+export class OwlCalendarBodyComponent {
   /**
    * The cell number of the active cell in the table.
    */
@@ -48,7 +39,7 @@ export class OwlCalendarBodyComponent implements OnInit {
    * The cells to display in the table.
    * */
   @Input()
-  rows: CalendarCell[][];
+  rows: Array<Array<CalendarCell>>;
 
   /**
    * The number of columns in the table.
@@ -72,7 +63,7 @@ export class OwlCalendarBodyComponent implements OnInit {
    * The value in the table that is currently selected.
    * */
   @Input()
-  selectedValues: number[];
+  selectedValues: Array<number>;
 
   /**
    * Current picker select mode
@@ -103,8 +94,6 @@ export class OwlCalendarBodyComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
-  public ngOnInit() {}
-
   public selectCell(cell: CalendarCell): void {
     this.select.emit(cell);
   }
@@ -132,6 +121,8 @@ export class OwlCalendarBodyComponent implements OnInit {
 
       return value === fromValue || value === toValue;
     }
+
+    return false;
   }
 
   /**
@@ -148,6 +139,7 @@ export class OwlCalendarBodyComponent implements OnInit {
         return value === fromValue || value === toValue;
       }
     }
+    return false;
   }
 
   /**
@@ -158,6 +150,7 @@ export class OwlCalendarBodyComponent implements OnInit {
       const fromValue = this.selectedValues[0];
       return fromValue !== null && value === fromValue;
     }
+    return false;
   }
 
   /**
@@ -168,6 +161,7 @@ export class OwlCalendarBodyComponent implements OnInit {
       const toValue = this.selectedValues[1];
       return toValue !== null && value === toValue;
     }
+    return false;
   }
 
   /**

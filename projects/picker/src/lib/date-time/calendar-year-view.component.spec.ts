@@ -281,8 +281,8 @@ class StandardYearViewComponent {
 @Component({
   template: `
     <owl-date-time-year-view
-      [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter"></owl-date-time-year-view>
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment"></owl-date-time-year-view>
   `
 })
 class YearViewWithDateFilterComponent {

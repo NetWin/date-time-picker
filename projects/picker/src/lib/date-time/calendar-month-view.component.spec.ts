@@ -311,8 +311,8 @@ describe('OwlMonthViewComponent', () => {
 @Component({
   template: `
     <owl-date-time-month-view
-      [(selected)]="selected"
-      [(pickerMoment)]="pickerMoment"></owl-date-time-month-view>
+      [(pickerMoment)]="pickerMoment"
+      [(selected)]="selected"></owl-date-time-month-view>
   `
 })
 class StandardMonthViewComponent {
@@ -323,14 +323,13 @@ class StandardMonthViewComponent {
 @Component({
   template: `
     <owl-date-time-month-view
-      [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter"></owl-date-time-month-view>
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment"></owl-date-time-month-view>
   `
 })
 class MonthViewWithDateFilterComponent {
   pickerMoment = new Date(2018, JAN, 1);
   dateFilter(date: Date) {
-    // tslint:disable-next-line:triple-equals
-    return date.getDate() % 2 === 0;
+       return date.getDate() % 2 === 0;
   }
 }

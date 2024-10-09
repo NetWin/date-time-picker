@@ -1,13 +1,13 @@
 <div class="button-row">
   Select demo:
   <button
-    (click)="currentTab.set('date-range')"
-    [class.active]="currentTab() === 'date-range'">
+    [class.active]="currentTab() === 'date-range'"
+    (click)="currentTab.set('date-range')">
     Date Range
   </button>
   <button
-    (click)="currentTab.set('date-time-inline')"
-    [class.active]="currentTab() === 'date-time-inline'">
+    [class.active]="currentTab() === 'date-time-inline'"
+    (click)="currentTab.set('date-time-inline')">
     DateTime Range (Inline)
   </button>
 </div>
@@ -18,17 +18,16 @@
       <label for="daterange"> Datetime range (click, then press 'Set' to modify): </label>
 
       <input
-        [(ngModel)]="selectedDates"
-        [selectMode]="'range'"
-        [owlDateTimeTrigger]="date_range_component"
         [owlDateTime]="date_range_component"
-        style="width: 100%; color: cornflowerblue"
+        [owlDateTimeTrigger]="date_range_component"
+        [selectMode]="'range'"
+        [(ngModel)]="selectedDates"
         id="daterange" />
 
       <owl-date-time
         #date_range_component
-        [startAt]="currentValue"
         [endAt]="endValue"
+        [startAt]="currentValue"
         (afterPickerClosed)="selectedTrigger($event)"
         (dateSelected)="selectedTrigger($event)">
       </owl-date-time>
@@ -36,11 +35,11 @@
 
     @case ('date-time-inline') {
       <owl-date-time-inline
-        [(ngModel)]="selectedDates"
-        [startAt]="currentValue"
         [endAt]="endValue"
-        selectMode="range"
-        pickerType="both">
+        [startAt]="currentValue"
+        [(ngModel)]="selectedDates"
+        pickerType="both"
+        selectMode="range">
       </owl-date-time-inline>
     }
   }

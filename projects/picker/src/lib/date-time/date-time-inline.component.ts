@@ -63,11 +63,11 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   private _disabled = false;
   @Input()
-  get disabled(): boolean {
+  override get disabled(): boolean {
     return !!this._disabled;
   }
 
-  set disabled(value: boolean) {
+  override set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
   }
 
@@ -178,13 +178,13 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.selected = value;
   }
 
-  private _values: T[] = [];
+  private _values: Array<T> = [];
   @Input()
   get values() {
     return this._values;
   }
 
-  set values(values: T[]) {
+  set values(values: Array<T>) {
     if (values && values.length > 0) {
       values = values.map((v) => {
         v = this.dateTimeAdapter.deserialize(v);
@@ -229,12 +229,12 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.changeDetector.markForCheck();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   get selecteds() {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.changeDetector.markForCheck();
   }
@@ -259,15 +259,18 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     return true;
   }
 
-  private onModelChange: Function = () => {};
-  private onModelTouched: Function = () => {};
+  private onModelChange: (v: T | Array<T>) => void = () => {
+    /* noop */
+  };
+
+  private onModelTouched: () => void = () => {
+    /* noop */
+  };
 
   constructor(
     protected changeDetector: ChangeDetectorRef,
-    @Optional() protected dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    protected dateTimeFormats: OwlDateTimeFormats
+    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
+    @Optional() @Inject(OWL_DATE_TIME_FORMATS) protected override dateTimeFormats: OwlDateTimeFormats
   ) {
     super(dateTimeAdapter, dateTimeFormats);
   }
@@ -298,7 +301,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.disabled = isDisabled;
   }
 
-  public select(date: T[] | T): void {
+  public select(date: Array<T> | T): void {
     if (this.disabled) {
       return;
     }

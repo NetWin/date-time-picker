@@ -114,8 +114,8 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "lintFilePatterns": [
-              "src/app**/*.ts",
-              "src/app/**/*.html"
+              "src/**/*.ts",
+              "src/**/*.html"
             ],
             "eslintConfig": "./eslint.config.js"
           }
@@ -138,7 +138,8 @@
             "production": {
               "tsConfig": "projects/picker/tsconfig.lib.prod.json"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

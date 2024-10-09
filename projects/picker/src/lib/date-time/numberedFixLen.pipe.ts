@@ -19,7 +19,7 @@ export class NumberFixedLenPipe implements PipeTransform {
     let numString = number.toString();
 
     while (numString.length < length) {
-      numString = '0' + numString;
+      numString = `0${  numString}`;
     }
 
     return numString;

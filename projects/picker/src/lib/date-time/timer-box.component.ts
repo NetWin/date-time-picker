@@ -18,6 +18,7 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
+
   exportAs: 'owlDateTimeTimerBox',
   selector: 'owl-date-time-timer-box',
   templateUrl: './timer-box.component.html',
@@ -77,7 +78,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    return value < 10 ? '0' + value.toString() : value.toString();
+    return value < 10 ? `0${value.toString()}` : value.toString();
   }
 
   get owlDTTimerBoxClass(): boolean {
@@ -87,8 +88,6 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   @ViewChild('valueInput', { static: true })
   private valueInput: ElementRef<HTMLInputElement>;
   private onValueInputMouseWheelBind = this.onValueInputMouseWheel.bind(this);
-
-  constructor() {}
 
   public ngOnInit() {
     this.inputStreamSub = this.inputStream.pipe(debounceTime(750)).subscribe((val: string) => {
@@ -154,7 +153,11 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
       }
     }
 
-    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+    if (event.preventDefault) {
+      event.preventDefault();
+    } else {
+      event.returnValue = false;
+    }
   }
 
   private bindValueInputMouseWheel(): void {

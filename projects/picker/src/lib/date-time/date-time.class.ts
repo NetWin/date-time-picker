@@ -145,7 +145,7 @@ export abstract class OwlDateTime<T> {
 
   abstract get selected(): T | null;
 
-  abstract get selecteds(): T[] | null;
+  abstract get selecteds(): Array<T> | null;
 
   abstract get dateTimeFilter(): (date: T | null) => boolean;
 
@@ -169,7 +169,7 @@ export abstract class OwlDateTime<T> {
 
   abstract get isInRangeMode(): boolean;
 
-  abstract select(date: T | T[]): void;
+  abstract select(date: T | Array<T>): void;
 
   abstract yearSelected: EventEmitter<T>;
 
@@ -184,11 +184,15 @@ export abstract class OwlDateTime<T> {
   abstract selectDate(normalizedDate: T): void;
 
   get formatString(): string {
-    return (
-      this.pickerType === 'both' ? this.dateTimeFormats.fullPickerInput
-      : this.pickerType === 'calendar' ? this.dateTimeFormats.datePickerInput
-      : this.dateTimeFormats.timePickerInput
-    );
+    if (this.pickerType === 'both') {
+      return this.dateTimeFormats.fullPickerInput;
+    }
+
+    if (this.pickerType === 'calendar') {
+      return this.dateTimeFormats.datePickerInput;
+    }
+
+    return this.dateTimeFormats.timePickerInput;
   }
 
   /**

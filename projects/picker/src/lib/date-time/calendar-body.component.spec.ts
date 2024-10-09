@@ -93,27 +93,30 @@ describe('OwlCalendarBodyComponent', () => {
 });
 
 @Component({
+
   template: ` <table
-    owl-date-time-calendar-body
-    [rows]="rows"
-    [todayValue]="todayValue"
-    [selectedValues]="selectedValues"
-    [selectMode]="'single'"
     [activeCell]="activeCell"
-    (select)="handleSelect()"></table>`
+    [rows]="rows"
+    [selectMode]="'single'"
+    [selectedValues]="selectedValues"
+    [todayValue]="todayValue"
+    (select)="handleSelect()"
+    owl-date-time-calendar-body></table>`
 })
 class StandardCalendarBodyComponent {
-  rows = [
+  public rows = [
     [1, 2, 3, 4, 5, 6, 7],
     [8, 9, 10, 11, 12, 13, 14]
   ].map((r) => r.map(createCell));
-  todayValue = 3;
-  selectedValues = [4];
-  activeCell = 10;
+  public todayValue = 3;
+  public selectedValues = [4];
+  public activeCell = 10;
 
-  handleSelect() {}
+  public handleSelect(): void {
+    // Do nothing
+  }
 }
 
-function createCell(value: number) {
+function createCell(value: number): CalendarCell {
   return new CalendarCell(value, `${value}`, `${value}-label`, true);
 }

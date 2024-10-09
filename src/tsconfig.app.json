@@ -1,16 +1,13 @@
 {
-  "extends": "../tsconfig.base.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../out-tsc/app",
+    "outDir": "../out-tsc/app"
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true,
     "strictTemplates": true,
-    "enableIvy": true
+    "compilationMode": "partial"
   },
-  "files": [
-    "main.ts",
-    "polyfills.ts"
-  ]
+  "files": ["main.ts", "polyfills.ts"]
 }

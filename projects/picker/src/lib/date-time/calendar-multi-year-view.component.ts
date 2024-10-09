@@ -21,7 +21,6 @@ import {
   EventEmitter,
   Inject,
   Input,
-  OnInit,
   Optional,
   Output,
   ViewChild
@@ -33,6 +32,7 @@ import { SelectMode } from './date-time.class';
 import { OptionsTokens } from './options-provider';
 
 @Component({
+
   selector: 'owl-date-time-multi-year-view',
   templateUrl: './calendar-multi-year-view.component.html',
   styleUrls: ['./calendar-multi-year-view.component.scss'],
@@ -43,7 +43,7 @@ import { OptionsTokens } from './options-provider';
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
+export class OwlMultiYearViewComponent<T> implements AfterContentInit {
   /**
    * The select mode of the picker;
    * */
@@ -78,13 +78,13 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
     }
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values.map((v) => {
       v = this.dateTimeAdapter.deserialize(v);
       return this.getValidDate(v);
@@ -159,13 +159,13 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
     return this._todayYear;
   }
 
-  private _years: CalendarCell[][];
+  private _years: Array<Array<CalendarCell>>;
   get years() {
     return this._years;
   }
 
-  private _selectedYears: number[];
-  get selectedYears(): number[] {
+  private _selectedYears: Array<number>;
+  get selectedYears(): Array<number> {
     return this._selectedYears;
   }
 
@@ -179,16 +179,18 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
     return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
-  get activeCell(): number {
+  get activeCell(): number | undefined {
     if (this._pickerMoment) {
       return this.dateTimeAdapter.getYear(this._pickerMoment) % (this.options.yearsPerRow * this.options.yearRows);
     }
+    return undefined;
   }
 
-  get tableHeader(): string {
+  get tableHeader(): string | undefined {
     if (this._years && this._years.length > 0) {
       return `${this._years[0][0].displayValue} - ${this._years[this.options.yearRows - 1][this.options.yearsPerRow - 1].displayValue}`;
     }
+    return undefined;
   }
 
   get prevButtonLabel(): string {
@@ -233,8 +235,6 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
     @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
     @Inject(OptionsTokens.multiYear) private options: any
   ) {}
-
-  public ngOnInit() {}
 
   public ngAfterContentInit(): void {
     this._todayYear = this.dateTimeAdapter.getYear(this.dateTimeAdapter.now());
@@ -411,7 +411,7 @@ export class OwlMultiYearViewComponent<T> implements OnInit, AfterContentInit {
   private createYearCell(year: number): CalendarCell {
     const startDateOfYear = this.dateTimeAdapter.createDate(year, 0, 1);
     const ariaLabel = this.dateTimeAdapter.getYearName(startDateOfYear);
-    const cellClass = 'owl-dt-year-' + year;
+    const cellClass = `owl-dt-year-${year}`;
     return new CalendarCell(year, year.toString(), ariaLabel, this.isYearEnabled(year), false, cellClass);
   }
 

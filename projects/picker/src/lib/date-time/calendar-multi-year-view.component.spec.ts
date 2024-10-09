@@ -250,8 +250,8 @@ class StandardMultiYearViewComponent {
 @Component({
   template: `
     <owl-date-time-multi-year-view
-      [(pickerMoment)]="pickerMoment"
-      [dateFilter]="dateFilter"></owl-date-time-multi-year-view>
+      [dateFilter]="dateFilter"
+      [(pickerMoment)]="pickerMoment"></owl-date-time-multi-year-view>
   `
 })
 class MultiYearViewWithDateFilterComponent {

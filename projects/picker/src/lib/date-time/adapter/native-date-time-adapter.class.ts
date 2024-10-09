@@ -19,9 +19,9 @@ import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from './date-time-adapter.class
  * (https://tools.ietf.org/html/rfc3339). Note that the string may not actually be a valid date
  * because the regex will match strings an with out of bounds month, date, etc.
  */
-const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+\-]\d{2}:\d{2}))?)?$/;
+const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+-]\d{2}:\d{2}))?)?$/;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
@@ -32,7 +32,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
    * will produce `'8/13/1800'`.
    */
-  useUtcForDisplay: boolean;
+  public useUtcForDisplay: boolean;
 
   constructor(
     @Optional()
@@ -118,7 +118,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return String(this.getYear(date));
   }
 
-  public getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
+  public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         month: style,
@@ -129,7 +129,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return DEFAULT_MONTH_NAMES[style];
   }
 
-  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
+  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         weekday: style,
@@ -141,7 +141,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return DEFAULT_DAY_OF_WEEK_NAMES[style];
   }
 
-  public getDateNames(): string[] {
+  public getDateNames(): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), {
         day: 'numeric',
@@ -291,7 +291,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * (https://www.ietf.org/rfc/rfc3339.txt) into valid Dates and empty string into null. Returns an
    * invalid date for all other values.
    */
-  public deserialize(value: any): Date | null {
+  public override deserialize(value: any): Date | null {
     if (typeof value === 'string') {
       if (!value) {
         return null;
@@ -313,7 +313,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * other browsers do not. We remove them to make output consistent and because they interfere with
    * date parsing.
    */
-  private stripDirectionalityCharacters(str: string) {
+  private stripDirectionalityCharacters(str: string): string {
     return str.replace(/[\u200e\u200f]/g, '');
   }
 
@@ -324,7 +324,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * We work around this problem building a new Date object which has its internal UTC
    * representation with the local date and time.
    */
-  private _format(dtf: Intl.DateTimeFormat, date: Date) {
+  private _format(dtf: Intl.DateTimeFormat, date: Date): string {
     const d = new Date(
       Date.UTC(
         date.getFullYear(),

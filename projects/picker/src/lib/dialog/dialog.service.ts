@@ -2,7 +2,14 @@
  * dialog.service
  */
 
-import { Overlay, OverlayConfig, OverlayContainer, OverlayRef, ScrollStrategy } from '@angular/cdk/overlay';
+import {
+  BlockScrollStrategy,
+  Overlay,
+  OverlayConfig,
+  OverlayContainer,
+  OverlayRef,
+  ScrollStrategy
+} from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType, PortalInjector } from '@angular/cdk/portal';
 import { Location } from '@angular/common';
 import {
@@ -30,7 +37,7 @@ export const OWL_DIALOG_DATA = new InjectionToken<any>('OwlDialogData');
 export const OWL_DIALOG_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>('owl-dialog-scroll-strategy');
 
 export function OWL_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => ScrollStrategy {
-  const fn = () => overlay.scrollStrategies.block();
+  const fn = (): BlockScrollStrategy => overlay.scrollStrategies.block();
   return fn;
 }
 
@@ -50,29 +57,29 @@ export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>('o
 export class OwlDialogService {
   private ariaHiddenElements = new Map<Element, string | null>();
 
-  private _openDialogsAtThisLevel: OwlDialogRef<any>[] = [];
+  private _openDialogsAtThisLevel: Array<OwlDialogRef<any>> = [];
   private _beforeOpenAtThisLevel = new Subject<OwlDialogRef<any>>();
   private _afterOpenAtThisLevel = new Subject<OwlDialogRef<any>>();
   private _afterAllClosedAtThisLevel = new Subject<void>();
 
   /** Keeps track of the currently-open dialogs. */
-  get openDialogs(): OwlDialogRef<any>[] {
+  public get openDialogs(): Array<OwlDialogRef<any>> {
     return this.parentDialog ? this.parentDialog.openDialogs : this._openDialogsAtThisLevel;
   }
 
   /** Stream that emits when a dialog has been opened. */
-  get beforeOpen(): Subject<OwlDialogRef<any>> {
+  public get beforeOpen(): Subject<OwlDialogRef<any>> {
     return this.parentDialog ? this.parentDialog.beforeOpen : this._beforeOpenAtThisLevel;
   }
 
   /** Stream that emits when a dialog has been opened. */
-  get afterOpen(): Subject<OwlDialogRef<any>> {
+  public get afterOpen(): Subject<OwlDialogRef<any>> {
     return this.parentDialog ? this.parentDialog.afterOpen : this._afterOpenAtThisLevel;
   }
 
-  get _afterAllClosed(): any {
+  get #afterAllClosed(): Subject<void> {
     const parent = this.parentDialog;
-    return parent ? parent._afterAllClosed : this._afterAllClosedAtThisLevel;
+    return parent ? parent.#afterAllClosed : this._afterAllClosedAtThisLevel;
   }
 
   /**
@@ -80,8 +87,8 @@ export class OwlDialogService {
    * Will emit on subscribe if there are no open dialogs to begin with.
    */
 
-  afterAllClosed: Observable<{}> = defer(() =>
-    this._openDialogsAtThisLevel.length ? this._afterAllClosed : this._afterAllClosed.pipe(startWith(undefined))
+  public afterAllClosed: Observable<void> = defer(() =>
+    this._openDialogsAtThisLevel.length ? this.#afterAllClosed : this.#afterAllClosed.pipe(startWith(undefined))
   );
 
   private readonly scrollStrategy: () => ScrollStrategy;
@@ -154,7 +161,7 @@ export class OwlDialogService {
     dialogContainer: OwlDialogContainerComponent,
     overlayRef: OverlayRef,
     config: OwlDialogConfigInterface
-  ) {
+  ): OwlDialogRef<T> {
     const dialogRef = new OwlDialogRef<T>(overlayRef, dialogContainer, config.id, this.location);
 
     if (config.hasBackdrop) {
@@ -165,8 +172,7 @@ export class OwlDialogService {
       });
     }
 
-    if (componentOrTemplateRef instanceof TemplateRef) {
-    } else {
+    if (!(componentOrTemplateRef instanceof TemplateRef)) {
       const injector = this.createInjector<T>(config, dialogRef, dialogContainer);
       const contentRef = dialogContainer.attachComponentPortal(
         new ComponentPortal(componentOrTemplateRef, undefined, injector)
@@ -183,8 +189,8 @@ export class OwlDialogService {
     config: OwlDialogConfigInterface,
     dialogRef: OwlDialogRef<T>,
     dialogContainer: OwlDialogContainerComponent
-  ) {
-    const userInjector = config && config.viewContainerRef && config.viewContainerRef.injector;
+  ): PortalInjector {
+    const userInjector = config?.viewContainerRef?.injector;
     const injectionTokens = new WeakMap();
 
     injectionTokens.set(OwlDialogRef, dialogRef);
@@ -243,7 +249,7 @@ export class OwlDialogService {
         });
 
         this.ariaHiddenElements.clear();
-        this._afterAllClosed.next();
+        this.#afterAllClosed.next();
       }
     }
   }
@@ -251,7 +257,7 @@ export class OwlDialogService {
   /**
    * Hides all of the content that isn't an overlay from assistive technology.
    */
-  private hideNonDialogContentFromAssistiveTechnology() {
+  private hideNonDialogContentFromAssistiveTechnology(): void {
     const overlayContainer = this.overlayContainer.getContainerElement();
 
     // Ensure that the overlay container is attached to the DOM.

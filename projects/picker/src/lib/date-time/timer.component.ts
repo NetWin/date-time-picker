@@ -10,7 +10,6 @@ import {
   EventEmitter,
   Input,
   NgZone,
-  OnInit,
   Optional,
   Output
 } from '@angular/core';
@@ -30,11 +29,11 @@ import { OwlDateTimeIntl } from './date-time-picker-intl.service';
     '[attr.tabindex]': 'owlDTTimeTabIndex'
   }
 })
-export class OwlTimerComponent<T> implements OnInit {
+export class OwlTimerComponent<T> {
   /** The current picker moment */
   private _pickerMoment: T;
   @Input()
-  get pickerMoment() {
+  get pickerMoment(): T {
     return this._pickerMoment;
   }
 
@@ -185,12 +184,10 @@ export class OwlTimerComponent<T> implements OnInit {
     @Optional() private dateTimeAdapter: DateTimeAdapter<T>
   ) {}
 
-  public ngOnInit() {}
-
   /**
    * Focus to the host element
    * */
-  public focus() {
+  public focus(): void {
     this.ngZone.runOutsideAngular(() => {
       this.ngZone.onStable
         .asObservable()

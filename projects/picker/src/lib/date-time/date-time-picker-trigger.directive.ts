@@ -9,7 +9,6 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   SimpleChanges
 } from '@angular/core';
 import { Subscription, merge, of as observableOf } from 'rxjs';
@@ -22,7 +21,7 @@ import { OwlDateTimeComponent } from './date-time-picker.component';
     '[class.owl-dt-trigger-disabled]': 'owlDTTriggerDisabledClass'
   }
 })
-export class OwlDateTimeTriggerDirective<T> implements OnInit, OnChanges, AfterContentInit, OnDestroy {
+export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentInit, OnDestroy {
   @Input('owlDateTimeTrigger') dtPicker: OwlDateTimeComponent<T>;
 
   private _disabled: boolean;
@@ -42,8 +41,6 @@ export class OwlDateTimeTriggerDirective<T> implements OnInit, OnChanges, AfterC
   private stateChanges = Subscription.EMPTY;
 
   constructor(protected changeDetector: ChangeDetectorRef) {}
-
-  public ngOnInit(): void {}
 
   public ngOnChanges(changes: SimpleChanges) {
     if (changes.datepicker) {
