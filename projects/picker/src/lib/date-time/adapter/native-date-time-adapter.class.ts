@@ -21,7 +21,7 @@ import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from './date-time-adapter.class
  */
 const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+-]\d{2}:\d{2}))?)?$/;
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
