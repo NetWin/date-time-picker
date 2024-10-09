@@ -25,17 +25,17 @@ const JAN = 0,
   DEC = 11;
 
 class MockNgZone extends NgZone {
-  onStable: EventEmitter<any> = new EventEmitter(false);
+  public override onStable = new EventEmitter(false);
   constructor() {
     super({ enableLongStackTrace: false });
   }
-  run(fn: Function): any {
+  public override run<T>(fn: () => T): T {
     return fn();
   }
-  runOutsideAngular(fn: Function): any {
+  public override runOutsideAngular<T>(fn: () => T): T {
     return fn();
   }
-  simulateZoneExit(): void {
+  public simulateZoneExit(): void {
     this.onStable.emit(null);
   }
 }
@@ -114,8 +114,8 @@ describe('OwlTimerComponent', () => {
       const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
       expect(arrowBtns.length).toBe(6);
 
-      for (let i = 0; i < arrowBtns.length; i++) {
-        arrowBtns[i].click();
+      for (const btn of Array.from(arrowBtns)) {
+        btn.click();
         fixture.detectChanges();
         flush();
       }
@@ -295,11 +295,15 @@ describe('OwlTimerComponent', () => {
       dispatchFakeEvent(timeCells[0], 'focusin');
       timeCells[0].value = '5';
       dispatchFakeEvent(timeCells[0], 'input');
-      setTimeout(() => {}, 1000);
+      setTimeout(() => {
+        /* noop */
+      }, 1000);
 
       timeCells[1].value = '8';
       dispatchFakeEvent(timeCells[1], 'input');
-      setTimeout(() => {}, 1000);
+      setTimeout(() => {
+        /* noop */
+      }, 1000);
 
       fixture.detectChanges();
 
@@ -312,16 +316,17 @@ describe('OwlTimerComponent', () => {
 });
 
 @Component({
+
   template: `
     <owl-date-time-timer
       [hour12Timer]="hour12Timer"
-      [showSecondsTimer]="showSecondsTimer"
+      [maxDateTime]="maxDateTime"
+      [minDateTime]="minDateTime"
       [pickerMoment]="pickerMoment"
+      [showSecondsTimer]="showSecondsTimer"
       [stepHour]="stepHour"
       [stepMinute]="stepMinute"
       [stepSecond]="stepSecond"
-      [minDateTime]="minDateTime"
-      [maxDateTime]="maxDateTime"
       (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
   `
 })

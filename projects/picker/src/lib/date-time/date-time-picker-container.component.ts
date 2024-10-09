@@ -389,7 +389,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   /**
    * Select dates in range Mode
    */
-  private dateSelectedInRangeMode(date: T): T[] | null {
+  private dateSelectedInRangeMode(date: T): Array<T> | null {
     let from = this.picker.selecteds[0];
     let to = this.picker.selecteds[1];
 

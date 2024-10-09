@@ -25,7 +25,6 @@ import {
   Input,
   NgZone,
   OnDestroy,
-  OnInit,
   Optional,
   Output,
   ViewContainerRef
@@ -64,14 +63,14 @@ export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   preserveWhitespaces: false
 })
-export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, OnDestroy {
+export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy {
   /** Custom class for the picker backdrop. */
   @Input()
-  public backdropClass: string | string[] = [];
+  public backdropClass: string | Array<string> = [];
 
   /** Custom class for the picker overlay pane. */
   @Input()
-  public panelClass: string | string[] = [];
+  public panelClass: string | Array<string> = [];
 
   /** The date to open the calendar to initially. */
   private _startAt: T | null;
@@ -91,9 +90,9 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
       } else if (this._dtInput.selectMode === 'rangeTo') {
         return this._dtInput.values[1] || null;
       }
-    } else {
-      return null;
     }
+
+    return null;
   }
 
   set startAt(date: T | null) {
@@ -114,9 +113,8 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
       } else if (this._dtInput.selectMode === 'range' || this._dtInput.selectMode === 'rangeFrom') {
         return this._dtInput.values[1] || null;
       }
-    } else {
-      return null;
     }
+    return null;
   }
 
   set endAt(date: T | null) {
@@ -164,11 +162,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
   /** Whether the date time picker should be disabled. */
   private _disabled: boolean;
   @Input()
-  get disabled(): boolean {
+  override get disabled(): boolean {
     return this._disabled === undefined && this._dtInput ? this._dtInput.disabled : !!this._disabled;
   }
 
-  set disabled(value: boolean) {
+  override set disabled(value: boolean) {
     value = coerceBooleanProperty(value);
     if (value !== this._disabled) {
       this._disabled = value;
@@ -184,7 +182,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
   }
 
   set opened(val: boolean) {
-    val ? this.open() : this.close();
+    if (val) {
+      this.open();
+    } else {
+      this.close();
+    }
   }
 
   /**
@@ -235,7 +237,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
   /**
    * Emit when the selected value has been confirmed
    * */
-  public confirmSelectedChange = new EventEmitter<T[] | T>();
+  public confirmSelectedChange = new EventEmitter<Array<T> | T>();
 
   /**
    * Emits when the date time picker is disabled.
@@ -270,12 +272,12 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
     this.changeDetector.markForCheck();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   get selecteds() {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.changeDetector.markForCheck();
   }
@@ -314,11 +316,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
     private dialogService: OwlDialogService,
     private ngZone: NgZone,
     protected changeDetector: ChangeDetectorRef,
-    @Optional() protected dateTimeAdapter: DateTimeAdapter<T>,
+    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
     @Inject(OWL_DTPICKER_SCROLL_STRATEGY) defaultScrollStrategy: any,
     @Optional()
     @Inject(OWL_DATE_TIME_FORMATS)
-    protected dateTimeFormats: OwlDateTimeFormats,
+    protected override dateTimeFormats: OwlDateTimeFormats,
     @Optional()
     @Inject(DOCUMENT)
     private document: any
@@ -326,8 +328,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
     super(dateTimeAdapter, dateTimeFormats);
     this.defaultScrollStrategy = defaultScrollStrategy;
   }
-
-  public ngOnInit() {}
 
   public ngOnDestroy(): void {
     this.close();
@@ -345,7 +345,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
     }
 
     this._dtInput = input;
-    this.dtInputSub = this._dtInput.valueChange.subscribe((value: T[] | T | null) => {
+    this.dtInputSub = this._dtInput.valueChange.subscribe((value: Array<T> | T | null) => {
       if (Array.isArray(value)) {
         this.selecteds = value;
       } else {
@@ -387,7 +387,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
       );
     }
 
-    this.pickerMode === 'dialog' ? this.openAsDialog() : this.openAsPopup();
+    if (this.pickerMode === 'dialog') {
+      this.openAsDialog();
+    } else {
+      this.openAsPopup();
+    }
 
     this.pickerContainer.picker = this;
 
@@ -405,7 +409,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnInit, O
   /**
    * Selects the given date
    */
-  public select(date: T[] | T): void {
+  public select(date: Array<T> | T): void {
     if (Array.isArray(date)) {
       this.selecteds = [...date];
     } else {

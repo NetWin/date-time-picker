@@ -14,7 +14,6 @@ import {
   Input,
   NgZone,
   OnDestroy,
-  OnInit,
   Optional,
   Output
 } from '@angular/core';
@@ -36,7 +35,7 @@ import { DateView, DateViewType, SelectMode } from './date-time.class';
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlCalendarComponent<T> implements OnInit, AfterContentInit, AfterViewChecked, OnDestroy {
+export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked, OnDestroy {
   DateView = DateView;
 
   @Input()
@@ -98,11 +97,11 @@ export class OwlCalendarComponent<T> implements OnInit, AfterContentInit, AfterV
   }
 
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = values.map((v) => {
       v = this.dateTimeAdapter.deserialize(v);
       return this.getValidDate(v);
@@ -213,7 +212,7 @@ export class OwlCalendarComponent<T> implements OnInit, AfterContentInit, AfterV
   /** The currently selected moment. */
   private _selected: T | null;
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
 
   /**
    * The view that the calendar should start in.
@@ -289,8 +288,6 @@ export class OwlCalendarComponent<T> implements OnInit, AfterContentInit, AfterV
       (!this.maxDate || this.dateTimeAdapter.compare(date, this.maxDate) <= 0)
     );
   };
-
-  public ngOnInit() {}
 
   public ngAfterContentInit(): void {
     this._currentView = this.startView;

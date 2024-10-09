@@ -376,9 +376,9 @@ describe('OwlCalendarComponent', () => {
 @Component({
   template: `
     <owl-date-time-calendar
-      [(selected)]="selected"
-      [selectMode]="selectMode"
       [pickerMoment]="pickerMoment"
+      [selectMode]="selectMode"
+      [(selected)]="selected"
       (monthSelected)="selectedMonth = $event"
       (yearSelected)="selectedYear = $event"></owl-date-time-calendar>
   `
@@ -394,10 +394,10 @@ class StandardCalendarComponent {
 @Component({
   template: `
     <owl-date-time-calendar
-      [selectMode]="selectMode"
-      [pickerMoment]="pickerMoment"
+      [maxDate]="maxDate"
       [minDate]="minDate"
-      [maxDate]="maxDate"></owl-date-time-calendar>
+      [pickerMoment]="pickerMoment"
+      [selectMode]="selectMode"></owl-date-time-calendar>
   `
 })
 class CalendarWithMinMaxComponent {
@@ -411,10 +411,10 @@ class CalendarWithMinMaxComponent {
 @Component({
   template: `
     <owl-date-time-calendar
-      [(selected)]="selected"
-      [selectMode]="selectMode"
+      [dateFilter]="dateFilter"
       [pickerMoment]="pickerMoment"
-      [dateFilter]="dateFilter"></owl-date-time-calendar>
+      [selectMode]="selectMode"
+      [(selected)]="selected"></owl-date-time-calendar>
   `
 })
 class CalendarWithDateFilterComponent {

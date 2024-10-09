@@ -103,6 +103,12 @@ module.exports = tsEslint.config(
       // https://typescript-eslint.io/rules/array-type
       // Enforce the use of the array type (i.e. prever `Array<T>` over `T[]`)
       '@typescript-eslint/array-type': ['warn', { 'default': 'generic' }],
+      // https://typescript-eslint.io/rules/class-literal-property-style
+      // Enforce that literals on classes are exposed in a consistent style.
+      '@typescript-eslint/class-literal-property-style': 'warn',
+      // https://eslint.org/docs/latest/rules/no-self-assign
+      // warn about self-assignment for now (this.foo = this.foo)
+      'no-self-assign': 'warn',
 
       /** #################################################
        *
@@ -118,7 +124,7 @@ module.exports = tsEslint.config(
       '@angular-eslint/use-injectable-provided-in': 'error',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-standalone.md
       // Enforce the creation of standalone Angular components
-      '@angular-eslint/prefer-standalone': 'error',
+      '@angular-eslint/prefer-standalone': 'warn',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-output-on-prefix.md
       // Disallow the use of the `on` prefix in Angular output bindings
       '@angular-eslint/no-output-on-prefix': 'warn',
@@ -142,7 +148,7 @@ module.exports = tsEslint.config(
       ],
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-input-rename.md
       // Disallow renaming Angular input properties
-      '@angular-eslint/no-input-rename': 'error'
+      '@angular-eslint/no-input-rename': 'warn'
     }
   },
   {

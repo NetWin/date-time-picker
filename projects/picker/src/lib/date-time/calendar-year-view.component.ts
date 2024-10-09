@@ -37,6 +37,7 @@ const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
 
 @Component({
+
   selector: 'owl-date-time-year-view',
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',
@@ -78,16 +79,16 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     this.setSelectedMonths();
   }
 
-  private _selecteds: T[] = [];
+  private _selecteds: Array<T> = [];
   @Input()
-  get selecteds(): T[] {
+  get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: T[]) {
+  set selecteds(values: Array<T>) {
     this._selecteds = [];
-    for (let i = 0; i < values.length; i++) {
-      const value = this.dateTimeAdapter.deserialize(values[i]);
+    for (const val of values) {
+      const value = this.dateTimeAdapter.deserialize(val);
       this._selecteds.push(this.getValidDate(value));
     }
 
@@ -156,9 +157,9 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     }
   }
 
-  private readonly monthNames: string[];
+  private readonly monthNames: Array<string>;
 
-  private _months: CalendarCell[][];
+  private _months: Array<Array<CalendarCell>>;
   get months() {
     return this._months;
   }
@@ -167,6 +168,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     if (this._pickerMoment) {
       return this.dateTimeAdapter.getMonth(this._pickerMoment);
     }
+    return undefined;
   }
 
   get isInSingleMode(): boolean {
@@ -187,7 +189,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
    * An array to hold all selectedDates' month value
    * the value is the month number in current year
    * */
-  public selectedMonths: number[] = [];
+  public selectedMonths: Array<number> = [];
 
   /**
    * Callback to invoke when a new month is selected
@@ -377,7 +379,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   private createMonthCell(month: number): CalendarCell {
     const startDateOfMonth = this.dateTimeAdapter.createDate(this.dateTimeAdapter.getYear(this.pickerMoment), month, 1);
     const ariaLabel = this.dateTimeAdapter.format(startDateOfMonth, this.dateTimeFormats.monthYearA11yLabel);
-    const cellClass = 'owl-dt-month-' + month;
+    const cellClass = `owl-dt-month-${month}`;
     return new CalendarCell(month, this.monthNames[month], ariaLabel, this.isMonthEnabled(month), false, cellClass);
   }
 

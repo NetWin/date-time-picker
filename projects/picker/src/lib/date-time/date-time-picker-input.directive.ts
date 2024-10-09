@@ -197,13 +197,13 @@ export class OwlDateTimeInputDirective<T>
     }
   }
 
-  private _values: T[] = [];
+  private _values: Array<T> = [];
   @Input()
   get values() {
     return this._values;
   }
 
-  set values(values: T[]) {
+  set values(values: Array<T>) {
     if (values && values.length > 0) {
       this._values = values.map((v) => {
         v = this.dateTimeAdapter.deserialize(v);
@@ -255,9 +255,15 @@ export class OwlDateTimeInputDirective<T>
 
   private lastValueValid = true;
 
-  private onModelChange: Function = () => {};
-  private onModelTouched: Function = () => {};
-  private validatorOnChange: Function = () => {};
+  private onModelChange: (v: T | Array<T>) => void = () => {
+    /* noop */
+  };
+  private onModelTouched: () => void = () => {
+    /* noop */
+  };
+  private validatorOnChange: () => void = () => {
+    /* noop */
+  };
 
   /** The form control validator for whether the input parses. */
   private parseValidator: ValidatorFn = (): ValidationErrors | null => {
@@ -288,6 +294,7 @@ export class OwlDateTimeInputDirective<T>
             }
           };
     }
+    return null;
   };
 
   /** The form control validator for the max date. */
@@ -314,6 +321,7 @@ export class OwlDateTimeInputDirective<T>
             }
           };
     }
+    return null;
   };
 
   /** The form control validator for the date filter. */
@@ -369,7 +377,7 @@ export class OwlDateTimeInputDirective<T>
   ]);
 
   /** Emits when the value changes (either due to user input or programmatic change). */
-  public valueChange = new EventEmitter<T[] | T | null>();
+  public valueChange = new EventEmitter<Array<T> | T | null>();
 
   /** Emits when the disabled state has changed */
   public disabledChange = new EventEmitter<boolean>();
@@ -431,7 +439,7 @@ export class OwlDateTimeInputDirective<T>
   }
 
   public ngAfterContentInit(): void {
-    this.dtPickerSub = this.dtPicker.confirmSelectedChange.subscribe((selecteds: T[] | T) => {
+    this.dtPickerSub = this.dtPicker.confirmSelectedChange.subscribe((selecteds: Array<T> | T) => {
       if (Array.isArray(selecteds)) {
         this.values = selecteds;
       } else {
@@ -553,7 +561,7 @@ export class OwlDateTimeInputDirective<T>
             this.renderer.setProperty(
               this.elmRef.nativeElement,
               'value',
-              fromFormatted + ' ' + this.rangeSeparator + ' ' + toFormatted
+              `${fromFormatted} ${this.rangeSeparator} ${toFormatted}`
             );
           } else if (this._selectMode === 'rangeFrom') {
             this.renderer.setProperty(this.elmRef.nativeElement, 'value', fromFormatted);
@@ -596,7 +604,7 @@ export class OwlDateTimeInputDirective<T>
     if (timeString) {
       const v = dateTime || this.dateTimeAdapter.now();
       const dateString = this.dateTimeAdapter.format(v, this.dateTimeFormats.datePickerInput);
-      return dateString + ' ' + timeString;
+      return `${dateString} ${timeString}`;
     } else {
       return null;
     }

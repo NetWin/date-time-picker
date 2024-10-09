@@ -30,7 +30,7 @@ export abstract class OptionsTokens {
   public static multiYear = new InjectionToken<Options['multiYear']>('Grid view options token');
 }
 
-export const optionsProviders: Provider[] = [
+export const optionsProviders: Array<Provider> = [
   {
     provide: OptionsTokens.all,
     useFactory: defaultOptionsFactory

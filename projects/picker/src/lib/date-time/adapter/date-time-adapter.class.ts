@@ -101,17 +101,17 @@ export abstract class DateTimeAdapter<T> {
   /**
    * Get a list of month names
    */
-  abstract getMonthNames(style: 'long' | 'short' | 'narrow'): string[];
+  abstract getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string>;
 
   /**
    * Get a list of week names
    */
-  abstract getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[];
+  abstract getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string>;
 
   /**
    * Gets a list of names for the dates of the month.
    */
-  abstract getDateNames(): string[];
+  abstract getDateNames(): Array<string>;
 
   /**
    * Return a Date object as a string, using the ISO standard
