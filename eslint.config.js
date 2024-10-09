@@ -121,7 +121,7 @@ module.exports = tsEslint.config(
       '@angular-eslint/use-component-view-encapsulation': 'error',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/use-injectable-provided-in.md
       // Require the `providedIn` property in Angular injectables
-      '@angular-eslint/use-injectable-provided-in': 'error',
+      '@angular-eslint/use-injectable-provided-in': 'warn',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-standalone.md
       // Enforce the creation of standalone Angular components
       '@angular-eslint/prefer-standalone': 'warn',

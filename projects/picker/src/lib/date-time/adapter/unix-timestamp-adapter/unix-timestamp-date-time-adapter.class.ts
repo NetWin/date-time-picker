@@ -13,9 +13,8 @@ import {
 } from '../../../utils/constants';
 import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
 import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter.class';
-import { UnixTimestampDateTimeModule } from './unix-timestamp-date-time.module';
 
-@Injectable({ providedIn: UnixTimestampDateTimeModule })
+@Injectable()
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   constructor(
     @Optional()
