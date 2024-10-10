@@ -20,7 +20,7 @@ var config = {
     '@semantic-release/changelog',
     ['@semantic-release/npm', { npmPublish: false }],
     ['@semantic-release/npm', { npmPublish: false, pkgRoot: 'projects/picker' }],
-    ['@semantic-release/npm', { npmPublish: false, pkgRoot: 'dist/picker' }],
+    ['@semantic-release/npm', { npmPublish: true, pkgRoot: 'dist/picker' }],
     [
       '@semantic-release/git',
       {
