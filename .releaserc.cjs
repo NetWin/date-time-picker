@@ -2,7 +2,7 @@
 var branch = process.env.GITHUB_REF_NAME;
 
 // Assets to update on release
-var assetsToUpdate = ['package.json', 'package-lock.json'];
+var assetsToUpdate = ['package.json', 'package-lock.json', 'projects/picker/package.json'];
 
 // Add changelog to assets if it's a production release
 if (branch === 'master') {
