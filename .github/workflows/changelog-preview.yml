@@ -1,0 +1,56 @@
+name: Preview Changelog
+on:
+  pull_request:
+
+permissions:
+  # semantic-release does a push test in even in dry-run mode.
+  contents: write
+  pull-requests: write
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Prepare Changelog Entries
+        id: changelog
+        run: |
+          ./build/changelog-preview.sh "master" "${{ github.event.pull_request.head.sha }}"
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: changelog-preview-1337
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            This repository uses [semantic-release](https://github.com/semantic-release/semantic-release) to automate the process of releasing new versions. The following changelog entries would be generated for the next release. Please review them to ensure they correctly reflect the changes in this pull request.
+            If you want to change the changelog entries, please edit the commit messages in this pull request following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines. Use `git rebase -i ${{ github.event.pull_request.base.ref }}` to edit the commit history.
+
+            Changelog preview (the formatting is slightly different from the actual release):
+
+            ```md
+            ${{ steps.changelog.outputs.changelog || 'This PR does not trigger any release. No changelog entries will be generated.'}}
+            ```
+
+            <!-- changelog-preview-1337 -->
+          edit-mode: replace
