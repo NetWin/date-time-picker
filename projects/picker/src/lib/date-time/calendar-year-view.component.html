@@ -1,16 +1,22 @@
 <table class="owl-dt-calendar-table owl-dt-calendar-year-table">
-    <thead class="owl-dt-calendar-header">
+  <thead class="owl-dt-calendar-header">
     <tr>
-        <th class="owl-dt-calendar-table-divider" aria-hidden="true" colspan="3"></th>
+      <th
+        aria-hidden="true"
+        class="owl-dt-calendar-table-divider"
+        colspan="3"></th>
     </tr>
-    </thead>
-    <tbody owl-date-time-calendar-body role="grid"
-           [rows]="months" [numCols]="3" [cellRatio]="3 / 7"
-           [activeCell]="activeCell"
-           [todayValue]="todayMonth"
-           [selectedValues]="selectedMonths"
-           [selectMode]="selectMode"
-           (keydown)="handleCalendarKeydown($event)"
-           (select)="selectCalendarCell($event)">
-    </tbody>
+  </thead>
+  <tbody
+    [activeCell]="activeCell"
+    [cellRatio]="3 / 7"
+    [numCols]="3"
+    [rows]="months"
+    [selectMode]="selectMode"
+    [selectedValues]="selectedMonths"
+    [todayValue]="todayMonth"
+    (keydown)="handleCalendarKeydown($event)"
+    (select)="selectCalendarCell($event)"
+    owl-date-time-calendar-body
+    role="grid"></tbody>
 </table>
