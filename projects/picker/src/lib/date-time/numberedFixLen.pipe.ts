@@ -8,7 +8,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'numberFixedLen'
 })
 export class NumberFixedLenPipe implements PipeTransform {
-  transform(num: number, len: number): any {
+  public transform(num: number, len: number): string | number {
     const number = Math.floor(num);
     const length = Math.floor(len);
 
@@ -19,7 +19,7 @@ export class NumberFixedLenPipe implements PipeTransform {
     let numString = number.toString();
 
     while (numString.length < length) {
-      numString = `0${  numString}`;
+      numString = `0${numString}`;
     }
 
     return numString;

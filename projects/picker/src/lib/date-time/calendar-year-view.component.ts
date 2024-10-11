@@ -37,7 +37,6 @@ const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
 
 @Component({
-
   selector: 'owl-date-time-year-view',
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',

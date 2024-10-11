@@ -18,7 +18,6 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
-
   exportAs: 'owlDateTimeTimerBox',
   selector: 'owl-date-time-timer-box',
   templateUrl: './timer-box.component.html',

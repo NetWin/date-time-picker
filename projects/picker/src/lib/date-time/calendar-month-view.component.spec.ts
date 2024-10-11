@@ -330,6 +330,6 @@ class StandardMonthViewComponent {
 class MonthViewWithDateFilterComponent {
   pickerMoment = new Date(2018, JAN, 1);
   dateFilter(date: Date) {
-       return date.getDate() % 2 === 0;
+    return date.getDate() % 2 === 0;
   }
 }

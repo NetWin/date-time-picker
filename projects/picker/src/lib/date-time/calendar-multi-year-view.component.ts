@@ -32,7 +32,6 @@ import { SelectMode } from './date-time.class';
 import { OptionsTokens } from './options-provider';
 
 @Component({
-
   selector: 'owl-date-time-multi-year-view',
   templateUrl: './calendar-multi-year-view.component.html',
   styleUrls: ['./calendar-multi-year-view.component.scss'],

@@ -72,6 +72,7 @@ module.exports = tsEslint.config(
       '@typescript-eslint/prefer-optional-chain': 'warn',
       // https://typescript-eslint.io/rules/consistent-type-definitions
       // Disables the rule that enforces consistent usage of either "type" or "interface" for type definitions
+      // TODO: enable again
       '@typescript-eslint/consistent-type-definitions': 'off',
       // https://typescript-eslint.io/rules/explicit-function-return-type
       // Require explicit return types on functions and class methods
@@ -124,7 +125,8 @@ module.exports = tsEslint.config(
       '@angular-eslint/use-injectable-provided-in': 'warn',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-standalone.md
       // Enforce the creation of standalone Angular components
-      '@angular-eslint/prefer-standalone': 'warn',
+      // TODO: enable again
+      '@angular-eslint/prefer-standalone': 'off',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-output-on-prefix.md
       // Disallow the use of the `on` prefix in Angular output bindings
       '@angular-eslint/no-output-on-prefix': 'warn',
@@ -135,13 +137,13 @@ module.exports = tsEslint.config(
       // Directive class names should have the suffix "Directive"
       '@angular-eslint/directive-class-suffix': 'error',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/directive-selector.md
-      // Directive selectors should be camelCase prefixed with "snac"
+      // Directive selectors should be camelCase prefixed with "owl"
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['owl'], style: 'camelCase' }],
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-class-suffix.md
       // Component class names should have the suffix "Component"
       '@angular-eslint/component-class-suffix': ['error'],
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-selector.md
-      // Component selectors should be kebab-case prefixed with "snac"
+      // Component selectors should be kebab-case prefixed with "owl"
       '@angular-eslint/component-selector': [
         'error',
         { type: ['element', 'attribute'], prefix: ['owl'], style: 'kebab-case' }

@@ -27,7 +27,7 @@
     "build:css:windows": "mkdir \"dist/picker/assets/style\" && sass --style=compressed projects/picker/src/sass/picker.scss > dist/picker/assets/style/picker.min.css",
     "build:css:linux": "mkdir -p dist/picker/assets/style && sass --style=compressed projects/picker/src/sass/picker.scss > dist/picker/assets/style/picker.min.css",
     "npm_pack": "cd dist/picker && npm pack",
-    "prettier": "prettier --write \"projects/**/*.{ts,html,scss}\" \"src/**/*.{ts,html,scss}\" \"e2e/**/*.{ts,html,scss}\"",
+    "prettier": "prettier --write \"projects/**/*.{ts,html,scss}\" \"src/**/*.{ts,html,scss}\"",
     "prepare": "husky"
   },
   "repository": {
