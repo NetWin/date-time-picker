@@ -1,0 +1,23 @@
+# [18.1.0](https://github.com/netwin/date-time-picker/compare/18.0.0...18.1.0) (2024-10-11)
+
+
+### Bug Fixes
+
+* **ci:** enable lint/test before releases again ([94f8fc5](https://github.com/netwin/date-time-picker/commit/94f8fc51e482eb359e141cd692fd6d13a7fe66cb))
+* **ci:** use "NODE_AUTH_TOKEN" instead of "NPM_TOKEN" as release env variable ([e344963](https://github.com/netwin/date-time-picker/commit/e344963477e4d530d7430e6d1370c385758885ed))
+* **deps:** update dependencies ([0fef43d](https://github.com/netwin/date-time-picker/commit/0fef43da01c38886f2a79ca5e2371fc0ef12e414))
+* **dialog-service:** add providedIn parameter ([d904a67](https://github.com/netwin/date-time-picker/commit/d904a676658d7cfe3b530686f2f9dbe7cbdf8f02))
+* fix many linter warnings / errors ([e4f1fde](https://github.com/netwin/date-time-picker/commit/e4f1fdeb70e3dc7a42ccecefaea15eb5209562ff))
+* **ng:** correctly set compilation mode per application/project ([737b4a6](https://github.com/netwin/date-time-picker/commit/737b4a69e28041d3a237989e5a7a46a5175b890f))
+* redeploying ([64d28ae](https://github.com/netwin/date-time-picker/commit/64d28ae0685d8297d42180d18e5491791c217855))
+* redeploying ([4bb3bc9](https://github.com/netwin/date-time-picker/commit/4bb3bc99c4b01e8e1f7376c49f325412fa61f549))
+* **tests:** remove providedIn from some injectables for now ([b09021d](https://github.com/netwin/date-time-picker/commit/b09021d381b77130fdff2b09ef361514c069f8a2))
+* use correct version and include project package.json in release commit ([054a96e](https://github.com/netwin/date-time-picker/commit/054a96eb01ff57ddedd2b1f12c6967f710a99f4b))
+
+
+### Features
+
+* add eslint / update config ([3bb47da](https://github.com/netwin/date-time-picker/commit/3bb47da42822c302f0a34ee2091072bb85f9cc80))
+* enable publishing to npm ([b774749](https://github.com/netwin/date-time-picker/commit/b774749fb7884b6fc8471e881dd7c7b26e32b4e4))
+* **husky:** add eslint,prettier pre-commit hook ([dcfead0](https://github.com/netwin/date-time-picker/commit/dcfead0ca02858aa48607ed9d3f6a9b541c1b381))
+* introduce prettier ([1709198](https://github.com/netwin/date-time-picker/commit/170919803bf2c2088594b1cde1d5af05fef7b75b))
