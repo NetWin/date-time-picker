@@ -10,7 +10,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "date-time-picker-app": {
+    "docs": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -22,14 +22,14 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@ng-doc/builder:application",
           "options": {
             "allowedCommonJsDependencies": [
-              "moment-timezone"
+              "@ng-doc/core"
             ],
             "aot": true,
             "outputPath": {
-              "base": "dist/date-time-picker-app"
+              "base": "dist/docs"
             },
             "index": "src/index.html",
             "polyfills": [
@@ -37,10 +37,26 @@
             ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              },
+              {
+                "glob": "**/*",
+                "input": "ng-doc/docs/assets",
+                "output": "assets/ng-doc"
+              },
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -89,17 +105,17 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@ng-doc/builder:dev-server",
           "options": {
-            "buildTarget": "date-time-picker-app:build",
+            "buildTarget": "docs:build",
             "port": 4201
           },
           "configurations": {
             "production": {
-              "buildTarget": "date-time-picker-app:build:production"
+              "buildTarget": "docs:build:production"
             },
             "development": {
-              "buildTarget": "date-time-picker-app:build:development"
+              "buildTarget": "docs:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -107,7 +123,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "date-time-picker-app:build"
+            "buildTarget": "docs:build"
           }
         },
         "lint": {

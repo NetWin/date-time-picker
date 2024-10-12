@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "outDir": "../out-tsc/app"
   },
   "angularCompilerOptions": {
@@ -10,5 +11,7 @@
     "fullTemplateTypeCheck": true,
     "compilationMode": "full"
   },
+  "include": [],
+  "exclude": ["test.ts", "**/*.spec.ts"],
   "files": ["main.ts", "polyfills.ts"]
 }

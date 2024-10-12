@@ -1,46 +1,26 @@
-<div class="button-row">
-  Select demo:
-  <button
-    [class.active]="currentTab() === 'date-range'"
-    (click)="currentTab.set('date-range')">
-    Date Range
-  </button>
-  <button
-    [class.active]="currentTab() === 'date-time-inline'"
-    (click)="currentTab.set('date-time-inline')">
-    DateTime Range (Inline)
-  </button>
-</div>
+<ng-doc-root>
+  <ng-doc-navbar [glassEffect]="false">
+    <a
+      ngDocNavbarLeft
+      routerLink="/home">
+      <h3>DateTimePicker</h3>
+    </a>
 
-<main>
-  @switch (currentTab()) {
-    @case ('date-range') {
-      <label for="daterange"> Datetime range (click, then press 'Set' to modify): </label>
+    <a
+      class="github-icon"
+      href="https://github.com/NetWin/date-time-picker"
+      ngDocNavbarRight
+      rel="noopener noreferrer"
+      target="_blank">
+      <img
+        alt="GitHub Repository"
+        height="24px"
+        src="assets/github-mark-white.png"
+        width="24px" />
+    </a>
+  </ng-doc-navbar>
 
-      <input
-        [owlDateTime]="date_range_component"
-        [owlDateTimeTrigger]="date_range_component"
-        [selectMode]="'range'"
-        [(ngModel)]="selectedDates"
-        id="daterange" />
+  <ng-doc-sidebar />
 
-      <owl-date-time
-        #date_range_component
-        [endAt]="endValue"
-        [startAt]="currentValue"
-        (afterPickerClosed)="selectedTrigger($event)"
-        (dateSelected)="selectedTrigger($event)">
-      </owl-date-time>
-    }
-
-    @case ('date-time-inline') {
-      <owl-date-time-inline
-        [endAt]="endValue"
-        [startAt]="currentValue"
-        [(ngModel)]="selectedDates"
-        pickerType="both"
-        selectMode="range">
-      </owl-date-time-inline>
-    }
-  }
-</main>
+  <router-outlet />
+</ng-doc-root>
