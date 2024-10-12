@@ -18,11 +18,9 @@
         [tabindex]="isActiveCell(rowIndex, colIndex) ? 0 : -1"
         (click)="selectCell(item)">
         <span
-          [ngClass]="{
-            'owl-dt-calendar-cell-out': item.out,
-            'owl-dt-calendar-cell-today': item.value === todayValue,
-            'owl-dt-calendar-cell-selected': isSelected(item.value)
-          }"
+          [class.owl-dt-calendar-cell-out]="item.out"
+          [class.owl-dt-calendar-cell-selected]="isSelected(item.value)"
+          [class.owl-dt-calendar-cell-today]="item.value === todayValue"
           class="owl-dt-calendar-cell-content">
           {{ item.displayValue }}
         </span>

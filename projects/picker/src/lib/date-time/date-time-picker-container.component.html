@@ -44,9 +44,7 @@
       <div
         #from
         [attr.aria-checked]="activeSelectedIndex === 0"
-        [ngClass]="{
-          'owl-dt-container-info-active': activeSelectedIndex === 0
-        }"
+        [class.owl-dt-container-info-active]="activeSelectedIndex === 0"
         [tabindex]="activeSelectedIndex === 0 ? 0 : -1"
         (click)="handleClickOnInfoGroup($event, 0)"
         (keydown)="handleKeydownOnInfoGroup($event, to, 0)"
@@ -62,9 +60,7 @@
       <div
         #to
         [attr.aria-checked]="activeSelectedIndex === 1"
-        [ngClass]="{
-          'owl-dt-container-info-active': activeSelectedIndex === 1
-        }"
+        [class.owl-dt-container-info-active]="activeSelectedIndex === 1"
         [tabindex]="activeSelectedIndex === 1 ? 0 : -1"
         (click)="handleClickOnInfoGroup($event, 1)"
         (keydown)="handleKeydownOnInfoGroup($event, from, 1)"
