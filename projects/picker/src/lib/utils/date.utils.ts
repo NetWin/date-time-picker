@@ -1,8 +1,4 @@
 /**
- * date.utils
- */
-
-/**
  * Creates a date with the given year, month, date, hour, minute and second. Does not allow over/under-flow of the
  * month and date.
  */

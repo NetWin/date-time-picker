@@ -43,3 +43,6 @@ Thumbs.db
 .angular
 .cache
 coverage
+
+# NgDoc files
+/ng-doc

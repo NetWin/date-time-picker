@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "Bundler",
     "outDir": "../../out-tsc/lib"
   },
   "exclude": ["src/test.ts", "**/*.spec.ts"]
