@@ -31,8 +31,6 @@ import {
 } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { OwlDialogRef } from '../dialog/dialog-ref.class';
-import { OwlDialogService } from '../dialog/dialog.service';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
@@ -142,22 +140,8 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     }
   }
 
-  /**
-   * Whether the picker open as a dialog
-   */
-  _pickerMode: PickerMode = 'popup';
   @Input()
-  get pickerMode() {
-    return this._pickerMode;
-  }
-
-  set pickerMode(mode: PickerMode) {
-    if (mode === 'popup') {
-      this._pickerMode = mode;
-    } else {
-      this._pickerMode = 'dialog';
-    }
-  }
+  public pickerMode: PickerMode = 'popup';
 
   /** Whether the date time picker should be disabled. */
   private _disabled: boolean;
@@ -192,62 +176,61 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * The scroll strategy when the picker is open
    * Learn more this from https://material.angular.io/cdk/overlay/overview#scroll-strategies
-   * */
+   */
   @Input()
   public scrollStrategy: ScrollStrategy;
 
   /**
    * Callback when the picker is closed
-   * */
+   */
   @Output()
   afterPickerClosed = new EventEmitter<any>();
 
   /**
    * Callback before the picker is open
-   * */
+   */
   @Output()
   beforePickerOpen = new EventEmitter<any>();
 
   /**
    * Callback when the picker is open
-   * */
+   */
   @Output()
   afterPickerOpen = new EventEmitter<any>();
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
   dateSelected = new EventEmitter<T>();
 
   /**
    * Emit when the selected value has been confirmed
-   * */
+   */
   public confirmSelectedChange = new EventEmitter<Array<T> | T>();
 
   /**
    * Emits when the date time picker is disabled.
-   * */
+   */
   public disabledChange = new EventEmitter<boolean>();
 
   private pickerContainerPortal: ComponentPortal<OwlDateTimeContainerComponent<T>>;
   private pickerContainer: OwlDateTimeContainerComponent<T>;
   private popupRef: OverlayRef;
-  private dialogRef: OwlDialogRef<OwlDateTimeContainerComponent<T>>;
   private dtInputSub = Subscription.EMPTY;
   private hidePickerStreamSub = Subscription.EMPTY;
   private confirmSelectedStreamSub = Subscription.EMPTY;
@@ -313,7 +296,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   constructor(
     public overlay: Overlay,
     private viewContainerRef: ViewContainerRef,
-    private dialogService: OwlDialogService,
     private ngZone: NgZone,
     protected changeDetector: ChangeDetectorRef,
     @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
@@ -387,11 +369,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       );
     }
 
-    if (this.pickerMode === 'dialog') {
-      this.openAsDialog();
-    } else {
-      this.openAsPopup();
-    }
+    this.openAsPopup();
 
     this.pickerContainer.picker = this;
 
@@ -416,44 +394,54 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.selected = date;
     }
 
-    /**
+    /*
      * Cases in which automatically confirm the select when date or dates are selected:
-     * 1) picker mode is NOT 'dialog'
-     * 2) picker type is 'calendar' and selectMode is 'single'.
-     * 3) picker type is 'calendar' and selectMode is 'range' and
-     *    the 'selecteds' has 'from'(selecteds[0]) and 'to'(selecteds[1]) values.
-     * 4) selectMode is 'rangeFrom' and selecteds[0] has value.
-     * 5) selectMode is 'rangeTo' and selecteds[1] has value.
-     * */
-    if (
-      this.pickerMode !== 'dialog' &&
-      this.pickerType === 'calendar' &&
-      ((this.selectMode === 'single' && this.selected) ||
-        (this.selectMode === 'rangeFrom' && this.selecteds[0]) ||
-        (this.selectMode === 'rangeTo' && this.selecteds[1]) ||
-        (this.selectMode === 'range' && this.selecteds[0] && this.selecteds[1]))
-    ) {
-      this.confirmSelect();
+     * - picker type is 'calendar' and selectMode is 'single'.
+     * - picker type is 'calendar' and selectMode is 'range' and
+     *   the 'selecteds' has 'from'(selecteds[0]) and 'to'(selecteds[1]) values.
+     * - selectMode is 'rangeFrom' and selecteds[0] has value.
+     * - selectMode is 'rangeTo' and selecteds[1] has value.
+     */
+    if (this.pickerType !== 'calendar') {
+      return;
     }
+
+    if (this.selectMode === 'single' && !this.selected) {
+      return;
+    }
+
+    if (this.selectMode === 'range' && (!this.selecteds[0] || !this.selecteds[1])) {
+      return;
+    }
+
+    if (this.selectMode === 'rangeFrom' && !this.selecteds[0]) {
+      return;
+    }
+
+    if (this.selectMode === 'rangeTo' && !this.selecteds[1]) {
+      return;
+    }
+
+    this.confirmSelect();
   }
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }
@@ -494,11 +482,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.pickerOpenedStreamSub = null;
     }
 
-    if (this.dialogRef) {
-      this.dialogRef.close();
-      this.dialogRef = null;
-    }
-
     const completeClose = () => {
       if (this._opened) {
         this._opened = false;
@@ -534,29 +517,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
     this.close();
     return;
-  }
-
-  /**
-   * Open the picker as a dialog
-   */
-  private openAsDialog(): void {
-    this.dialogRef = this.dialogService.open(OwlDateTimeContainerComponent, {
-      autoFocus: false,
-      backdropClass: ['cdk-overlay-dark-backdrop', ...coerceArray(this.backdropClass)],
-      paneClass: ['owl-dt-dialog', ...coerceArray(this.panelClass)],
-      viewContainerRef: this.viewContainerRef,
-      scrollStrategy: this.scrollStrategy || this.defaultScrollStrategy()
-    });
-    this.pickerContainer = this.dialogRef.componentInstance;
-
-    this.dialogRef.beforeOpen().subscribe(() => {
-      this.beforePickerOpen.emit(null);
-    });
-    this.dialogRef.afterOpen().subscribe(() => {
-      this.afterPickerOpen.emit(null);
-      this._opened = true;
-    });
-    this.dialogRef.afterClosed().subscribe(() => this.close());
   }
 
   /**
@@ -624,7 +584,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   /**
    * Create the popup PositionStrategy.
-   * */
+   */
   private createPopupPositionStrategy(): PositionStrategy {
     return this.overlay
       .position()

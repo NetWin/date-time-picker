@@ -42,7 +42,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   /**
    * Value would be displayed in the box
    * If it is null, the box would display [value]
-   * */
+   */
   @Input() boxValue: number;
 
   @Input() value: number;

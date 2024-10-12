@@ -10,7 +10,7 @@ let nextUniqueId = 0;
 
 export type PickerType = 'both' | 'calendar' | 'timer';
 
-export type PickerMode = 'popup' | 'dialog' | 'inline';
+export type PickerMode = 'popup' | 'inline';
 
 export type SelectMode = 'single' | 'range' | 'rangeFrom' | 'rangeTo';
 

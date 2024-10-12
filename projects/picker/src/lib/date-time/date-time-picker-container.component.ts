@@ -36,7 +36,6 @@ import { OwlTimerComponent } from './timer.component';
     '(@transformPicker.done)': 'handleContainerAnimationDone($event)',
     '[class.owl-dt-container]': 'owlDTContainerClass',
     '[class.owl-dt-popup-container]': 'owlDTPopupContainerClass',
-    '[class.owl-dt-dialog-container]': 'owlDTDialogContainerClass',
     '[class.owl-dt-inline-container]': 'owlDTInlineContainerClass',
     '[class.owl-dt-container-disabled]': 'owlDTContainerDisabledClass',
     '[attr.id]': 'owlDTContainerId',
@@ -58,7 +57,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to hide picker
-   * */
+   */
   private hidePicker$ = new Subject<any>();
 
   get hidePickerStream(): Observable<any> {
@@ -67,7 +66,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to confirm the selected value
-   * */
+   */
   private confirmSelected$ = new Subject<any>();
 
   get confirmSelectedStream(): Observable<any> {
@@ -117,21 +116,21 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * The range 'from' label
-   * */
+   */
   get fromLabel(): string {
     return this.pickerIntl.rangeFromLabel;
   }
 
   /**
    * The range 'to' label
-   * */
+   */
   get toLabel(): string {
     return this.pickerIntl.rangeToLabel;
   }
 
   /**
    * The range 'from' formatted value
-   * */
+   */
   get fromFormattedValue(): string {
     const value = this.picker.selecteds[0];
     return value ? this.dateTimeAdapter.format(value, this.picker.formatString) : '';
@@ -139,7 +138,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * The range 'to' formatted value
-   * */
+   */
   get toFormattedValue(): string {
     const value = this.picker.selecteds[1];
     return value ? this.dateTimeAdapter.format(value, this.picker.formatString) : '';
@@ -147,14 +146,10 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Cases in which the control buttons show in the picker
-   * 1) picker mode is 'dialog'
-   * 2) picker type is NOT 'calendar' and the picker mode is NOT 'inline'
-   * */
+   * - picker type is NOT 'calendar' and the picker mode is NOT 'inline'
+   */
   get showControlButtons(): boolean {
-    return (
-      this.picker.pickerMode === 'dialog' ||
-      (this.picker.pickerType !== 'calendar' && this.picker.pickerMode !== 'inline')
-    );
+    return this.picker.pickerType !== 'calendar' && this.picker.pickerMode !== 'inline';
   }
 
   get containerElm(): HTMLElement {
@@ -167,10 +162,6 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   get owlDTPopupContainerClass(): boolean {
     return this.picker.pickerMode === 'popup';
-  }
-
-  get owlDTDialogContainerClass(): boolean {
-    return this.picker.pickerMode === 'dialog';
   }
 
   get owlDTInlineContainerClass(): boolean {
@@ -507,7 +498,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Focus to the picker
-   * */
+   */
   private focusPicker(): void {
     if (this.picker.pickerMode === 'inline') {
       return;

@@ -22,7 +22,7 @@ import { OwlDateTimeContainerComponent } from './date-time-picker-container.comp
 import { OwlDateTimeInputDirective } from './date-time-picker-input.directive';
 import { OwlDateTimeTriggerDirective } from './date-time-picker-trigger.directive';
 import { OwlDateTimeComponent } from './date-time-picker.component';
-import { DateView } from './date-time.class';
+import { DateView, PickerMode, PickerType, SelectMode } from './date-time.class';
 import { OwlDateTimeModule } from './date-time.module';
 
 const JAN = 0,
@@ -96,18 +96,6 @@ describe('OwlDateTimeComponent', () => {
         expect(document.querySelector('.cdk-overlay-pane.owl-dt-popup')).not.toBeNull();
       });
 
-      it('should open dialog when pickerMode is "dialog"', () => {
-        testComponent.pickerMode = 'dialog';
-        fixture.detectChanges();
-
-        expect(document.querySelector('.owl-dt-dialog owl-dialog-container')).toBeNull();
-
-        testComponent.dateTimePicker.open();
-        fixture.detectChanges();
-
-        expect(document.querySelector('.owl-dt-dialog owl-dialog-container')).not.toBeNull();
-      });
-
       it('should open dateTimePicker if opened input is set to true', fakeAsync(() => {
         testComponent.opened = true;
         fixture.detectChanges();
@@ -178,23 +166,6 @@ describe('OwlDateTimeComponent', () => {
         flush();
 
         expect(testComponent.dateTimePicker.opened).toBe(false, 'Expected dateTimePicker to be closed.');
-      }));
-
-      it('should close dialog when fn close is called', fakeAsync(() => {
-        testComponent.pickerMode = 'dialog';
-        fixture.detectChanges();
-
-        testComponent.dateTimePicker.open();
-        fixture.detectChanges();
-        flush();
-
-        expect(document.querySelector('owl-dialog-container')).not.toBeNull();
-
-        testComponent.dateTimePicker.close();
-        fixture.detectChanges();
-        flush();
-
-        expect(document.querySelector('owl-dialog-container')).toBeNull();
       }));
 
       it('should close popup panel when cancel button clicked', fakeAsync(() => {
@@ -283,26 +254,6 @@ describe('OwlDateTimeComponent', () => {
       });
 
       it('input should aria-owns owl-date-time-container after opened in popup mode', fakeAsync(() => {
-        const inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
-        expect(inputEl.getAttribute('aria-owns')).toBeNull();
-
-        testComponent.dateTimePicker.open();
-        fixture.detectChanges();
-        flush();
-        fixture.detectChanges();
-
-        const ownedElementId = inputEl.getAttribute('aria-owns');
-        expect(ownedElementId).not.toBeNull();
-
-        const ownedElement = document.getElementById(ownedElementId);
-        expect(ownedElement).not.toBeNull();
-        expect((ownedElement as Element).tagName.toLowerCase()).toBe('owl-date-time-container');
-      }));
-
-      it('input should aria-owns owl-date-time-container after opened in dialog mode', fakeAsync(() => {
-        testComponent.pickerMode = 'dialog';
-        fixture.detectChanges();
-
         const inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
         expect(inputEl.getAttribute('aria-owns')).toBeNull();
 
@@ -1811,15 +1762,21 @@ describe('OwlDateTimeComponent', () => {
   `
 })
 class StandardDateTimePickerComponent {
-  date: Date | null = new Date(2020, JAN, 1);
-  pickerType = 'both';
-  pickerMode = 'popup';
-  opened = false;
-  disabled = false;
+  public date: Date | null = new Date(2020, JAN, 1);
+
+  public pickerType: PickerType = 'both';
+
+  public pickerMode: PickerMode = 'popup';
+
+  public opened = false;
+
+  public disabled = false;
+
   @ViewChild('dt', { static: true })
-  dateTimePicker: OwlDateTimeComponent<Date>;
+  public dateTimePicker: OwlDateTimeComponent<Date>;
+
   @ViewChild(OwlDateTimeInputDirective, { static: true })
-  dateTimePickerInput: OwlDateTimeInputDirective<Date>;
+  public dateTimePickerInput: OwlDateTimeInputDirective<Date>;
 }
 
 @Component({
@@ -1836,15 +1793,15 @@ class StandardDateTimePickerComponent {
   `
 })
 class RangeDateTimePickerComponent {
-  dates: Array<Date> | null = [new Date(2020, JAN, 1), new Date(2020, FEB, 1)];
-  selectMode = 'range';
-  pickerType = 'both';
-  startAt = new Date(2020, JAN, 1);
-  endAt = new Date(2020, JAN, 2);
+  public dates: Array<Date> | null = [new Date(2020, JAN, 1), new Date(2020, FEB, 1)];
+  public selectMode: SelectMode = 'range';
+  public pickerType: PickerType = 'both';
+  public startAt = new Date(2020, JAN, 1);
+  public endAt = new Date(2020, JAN, 2);
   @ViewChild('dt', { static: true })
-  dateTimePicker: OwlDateTimeComponent<Date>;
+  public dateTimePicker: OwlDateTimeComponent<Date>;
   @ViewChild(OwlDateTimeInputDirective, { static: true })
-  dateTimePickerInput: OwlDateTimeInputDirective<Date>;
+  public dateTimePickerInput: OwlDateTimeInputDirective<Date>;
 }
 
 @Component({

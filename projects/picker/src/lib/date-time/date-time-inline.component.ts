@@ -202,20 +202,20 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
   monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
   dateSelected = new EventEmitter<T>();
 
@@ -317,21 +317,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }

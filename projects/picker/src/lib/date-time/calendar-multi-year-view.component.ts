@@ -45,7 +45,7 @@ import { OptionsTokens } from './options-provider';
 export class OwlMultiYearViewComponent<T> implements AfterContentInit {
   /**
    * The select mode of the picker;
-   * */
+   */
   private _selectMode: SelectMode = 'single';
   @Input()
   get selectMode(): SelectMode {
@@ -109,7 +109,7 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
 
   /**
    * A function used to filter which dates are selectable
-   * */
+   */
   private _dateFilter: (date: T) => boolean;
   @Input()
   get dateFilter() {
@@ -202,12 +202,12 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
 
   /**
    * Callback to invoke when a new month is selected
-   * */
+   */
   @Output() readonly change = new EventEmitter<T>();
 
   /**
    * Emits the selected year. This doesn't imply a change on the selected date
-   * */
+   */
   @Output() readonly yearSelected = new EventEmitter<T>();
 
   /** Emits when any date is activated. */
@@ -266,7 +266,7 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
 
   /**
    * Generate the previous year list
-   * */
+   */
   public prevYearList(event: any): void {
     this._pickerMoment = this.dateTimeAdapter.addCalendarYears(
       this.pickerMoment,
@@ -278,7 +278,7 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
 
   /**
    * Generate the next year list
-   * */
+   */
   public nextYearList(event: any): void {
     this._pickerMoment = this.dateTimeAdapter.addCalendarYears(
       this.pickerMoment,

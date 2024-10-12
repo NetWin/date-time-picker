@@ -165,7 +165,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Bind class 'owl-dt-calendar' to host
-   * */
+   */
   get owlDTCalendarClass(): boolean {
     return true;
   }
@@ -187,7 +187,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Date filter for the month and year view
-   * */
+   */
   @Input()
   dateFilter: (date: T) => boolean;
 
@@ -234,7 +234,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Whether to hide dates in other months at the start or end of the current month.
-   * */
+   */
   @Input()
   hideOtherMonths: boolean;
 
@@ -256,13 +256,13 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Emits the selected year. This doesn't imply a change on the selected date
-   * */
+   */
   @Output()
   readonly yearSelected = new EventEmitter<T>();
 
   /**
    * Emits the selected month. This doesn't imply a change on the selected date
-   * */
+   */
   @Output()
   readonly monthSelected = new EventEmitter<T>();
 
@@ -325,7 +325,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Handles user clicks on the previous button.
-   * */
+   */
   public previousClicked(): void {
     this.pickerMoment =
       this.isMonthView ?
@@ -337,7 +337,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Handles user clicks on the next button.
-   * */
+   */
   public nextClicked(): void {
     this.pickerMoment =
       this.isMonthView ?
@@ -405,7 +405,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   /**
    * Focus to the host element
-   * */
+   */
   public focusActiveCell() {
     this.ngZone.runOutsideAngular(() => {
       this.ngZone.onStable

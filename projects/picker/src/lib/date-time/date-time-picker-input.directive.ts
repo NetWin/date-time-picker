@@ -69,7 +69,7 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Required flag to be used for range of [null, null]
-   * */
+   */
   private _required: boolean;
   @Input()
   get required() {
@@ -83,7 +83,7 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * The date time picker that this input is associated with.
-   * */
+   */
   @Input()
   set owlDateTime(value: OwlDateTimeComponent<T>) {
     this.registerDateTimePicker(value);
@@ -225,13 +225,13 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Callback to invoke when `change` event is fired on this `<input>`
-   * */
+   */
   @Output()
   dateTimeChange = new EventEmitter<any>();
 
   /**
    * Callback to invoke when an `input` event is fired on this `<input>`.
-   * */
+   */
   @Output()
   dateTimeInput = new EventEmitter<any>();
 
@@ -335,7 +335,7 @@ export class OwlDateTimeInputDirective<T>
   /**
    * The form control validator for the range.
    * Check whether the 'before' value is before the 'to' value
-   * */
+   */
   private rangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (this.isInSingleMode || !control.value) {
       return null;
@@ -352,7 +352,7 @@ export class OwlDateTimeInputDirective<T>
   /**
    * The form control validator for the range when required.
    * Check whether the 'before' and 'to' values are present
-   * */
+   */
   private requiredRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (this.isInSingleMode || !control.value || !this.required) {
       return null;
@@ -498,7 +498,7 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Open the picker when user hold alt + DOWN_ARROW
-   * */
+   */
   public handleKeydownOnHost(event: KeyboardEvent): void {
     if (event.altKey && event.keyCode === DOWN_ARROW) {
       this.dtPicker.open();
