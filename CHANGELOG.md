@@ -1,3 +1,10 @@
+# [18.2.0](https://github.com/netwin/date-time-picker/compare/18.1.0...18.2.0) (2024-10-12)
+
+
+### Features
+
+* **docs:** add initial documentation implementation using ng-doc ([83cd3d9](https://github.com/netwin/date-time-picker/commit/83cd3d9da313aedda62b3eb302f2b11d53ef1b1f))
+
 # [18.1.0](https://github.com/netwin/date-time-picker/compare/18.0.0...18.1.0) (2024-10-11)
 
 
