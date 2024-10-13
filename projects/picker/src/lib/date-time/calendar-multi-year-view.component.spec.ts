@@ -1,7 +1,3 @@
-/**
- * calendar-multi-year-view.component.spec
- */
-
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -13,25 +9,13 @@ import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 import { Options, OptionsTokens } from './options-provider';
 
-const JAN = 0,
-  FEB = 1,
-  MAR = 2,
-  APR = 3,
-  MAY = 4,
-  JUN = 5,
-  JUL = 6,
-  AUG = 7,
-  SEP = 8,
-  OCT = 9,
-  NOV = 10,
-  DEC = 11;
-
+const JAN = 0;
 const YEAR_ROWS = 7;
 const YEARS_PER_ROW = 3;
 
 describe('OwlMultiYearViewComponent', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
+    void TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardMultiYearViewComponent, MultiYearViewWithDateFilterComponent],
       providers: [
@@ -239,10 +223,10 @@ describe('OwlMultiYearViewComponent', () => {
   `
 })
 class StandardMultiYearViewComponent {
-  selected = new Date(2020, JAN, 10);
-  pickerMoment = new Date(2018, JAN, 5);
+  public selected = new Date(2020, JAN, 10);
+  public pickerMoment = new Date(2018, JAN, 5);
 
-  handleChange(date: Date): void {
+  public handleChange(date: Date): void {
     this.pickerMoment = new Date(date);
   }
 }
@@ -255,8 +239,8 @@ class StandardMultiYearViewComponent {
   `
 })
 class MultiYearViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getFullYear() !== 2018;
   }
 }

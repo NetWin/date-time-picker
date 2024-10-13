@@ -1,9 +1,5 @@
-/**
- * native-date-time-adapter.class
- */
-
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { range } from '../../utils/array.utils';
 import {
   DEFAULT_DATE_NAMES,
@@ -23,29 +19,17 @@ const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?
 
 @Injectable()
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
+  private readonly platform = inject(Platform);
+
+  private readonly owlDateTimeLocale = inject(OWL_DATE_TIME_LOCALE, { optional: true });
+
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
 
-  /**
-   * Whether to use `timeZone: 'utc'` with `Intl.DateTimeFormat` when formatting dates.
-   * Without this `Intl.DateTimeFormat` sometimes chooses the wrong timeZone, which can throw off
-   * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
-   * will produce `'8/13/1800'`.
-   */
-  public useUtcForDisplay: boolean;
-
-  constructor(
-    @Optional()
-    @Inject(OWL_DATE_TIME_LOCALE)
-    private owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  constructor() {
     super();
-    super.setLocale(owlDateTimeLocale);
-
-    // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !platform.TRIDENT;
-    this._clampDate = platform.TRIDENT || platform.EDGE;
+    super.setLocale(this.owlDateTimeLocale);
+    this._clampDate = this.platform.TRIDENT || this.platform.EDGE;
   }
 
   public getYear(date: Date): number {
@@ -184,7 +168,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date(NaN);
   }
 
-  public isDateInstance(obj: any): boolean {
+  public isDateInstance(obj: unknown): obj is Date {
     return obj instanceof Date;
   }
 
@@ -259,7 +243,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date();
   }
 
-  public format(date: Date, displayFormat: any): string {
+  public format(date: Date, displayFormat: Intl.DateTimeFormatOptions): string {
     if (!this.isValid(date)) {
       throw Error('JSNativeDate: Cannot format invalid date.');
     }
@@ -278,33 +262,25 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return this.stripDirectionalityCharacters(date.toDateString());
   }
 
-  public parse(value: any, parseFormat: any): Date | null {
-    // There is no way using the native JS Date to set the parse format or locale
-    if (typeof value === 'number') {
-      return new Date(value);
-    }
-    return value ? new Date(Date.parse(value)) : null;
-  }
-
   /**
    * Returns the given value if given a valid Date or null. Deserializes valid ISO 8601 strings
    * (https://www.ietf.org/rfc/rfc3339.txt) into valid Dates and empty string into null. Returns an
    * invalid date for all other values.
    */
-  public override deserialize(value: any): Date | null {
-    if (typeof value === 'string') {
-      if (!value) {
-        return null;
-      }
-      // The `Date` constructor accepts formats other than ISO 8601, so we need to make sure the
-      // string is the right format first.
-      if (ISO_8601_REGEX.test(value)) {
-        const date = new Date(value);
-        if (this.isValid(date)) {
-          return date;
-        }
+  public override deserialize(value: unknown): Date | null {
+    if (value === '') {
+      return null;
+    }
+
+    // The `Date` constructor accepts formats other than ISO 8601, so we need to make sure the
+    // string is the right format first.
+    if (typeof value === 'string' && ISO_8601_REGEX.test(value)) {
+      const date = new Date(value);
+      if (this.isValid(date)) {
+        return date;
       }
     }
+
     return super.deserialize(value);
   }
 

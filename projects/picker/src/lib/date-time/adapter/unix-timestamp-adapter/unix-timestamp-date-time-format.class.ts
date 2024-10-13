@@ -1,10 +1,6 @@
-/**
- * unix-timestamp-date-time-format.class
- */
 import { OwlDateTimeFormats } from '../date-time-format.class';
 
 export const OWL_UNIX_TIMESTAMP_DATE_TIME_FORMATS: OwlDateTimeFormats = {
-  parseInput: null,
   fullPickerInput: {
     year: 'numeric',
     month: 'numeric',

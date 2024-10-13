@@ -1,19 +1,15 @@
-/**
- * calendar.component.spec
- */
-
 import { ENTER, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import { Component, NgZone } from '@angular/core';
 import { ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchFakeEvent, dispatchKeyboardEvent, dispatchMouseEvent, MockNgZone } from '../../test-helpers';
+import { DateView } from '../types';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlYearViewComponent } from './calendar-year-view.component';
 import { OwlCalendarComponent } from './calendar.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { DateView } from './date-time.class';
 import { OwlDateTimeModule } from './date-time.module';
 
 export const JAN = 0,
@@ -33,7 +29,7 @@ describe('OwlCalendarComponent', () => {
   let zone: MockNgZone;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
+    void TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardCalendarComponent, CalendarWithMinMaxComponent, CalendarWithDateFilterComponent],
       providers: [
@@ -47,13 +43,14 @@ describe('OwlCalendarComponent', () => {
   });
 
   describe('standard calendar', () => {
+    let intl: OwlDateTimeIntl;
     let fixture: ComponentFixture<StandardCalendarComponent>;
     let testComponent: StandardCalendarComponent;
     let calendarElement: HTMLElement;
     let periodButton: HTMLElement;
     let calendarInstance: OwlCalendarComponent<Date>;
 
-    beforeEach(() => {
+    beforeEach(inject([OwlDateTimeIntl], (dateTimeIntl: OwlDateTimeIntl) => {
       fixture = TestBed.createComponent(StandardCalendarComponent);
       fixture.detectChanges();
 
@@ -63,7 +60,8 @@ describe('OwlCalendarComponent', () => {
       periodButton = calendarElement.querySelector('.owl-dt-control-period-button') as HTMLElement;
       calendarInstance = calendarDebugElement.componentInstance;
       testComponent = fixture.componentInstance;
-    });
+      intl = dateTimeIntl;
+    }));
 
     it('should be in month view with specified month active', () => {
       expect(calendarInstance.currentView).toBe(DateView.MONTH);
@@ -113,15 +111,13 @@ describe('OwlCalendarComponent', () => {
     });
 
     it('should re-render when the i18n labels have changed', () => {
-      inject([OwlDateTimeIntl], (intl: OwlDateTimeIntl) => {
-        const button = fixture.debugElement.nativeElement.querySelector('.owl-dt-control-period-button');
+      const button = fixture.debugElement.nativeElement.querySelector('.owl-dt-control-period-button');
 
-        intl.switchToMultiYearViewLabel = 'Go to multi-year view?';
-        intl.changes.next();
-        fixture.detectChanges();
+      intl.switchToMultiYearViewLabel = 'Go to multi-year view?';
+      intl.changes.next();
+      fixture.detectChanges();
 
-        expect(button.getAttribute('aria-label')).toBe('Go to multi-year view?');
-      });
+      expect(button.getAttribute('aria-label')).toBe('Go to multi-year view?');
     });
 
     it('should set all buttons to be `type="button"`', () => {
@@ -233,7 +229,6 @@ describe('OwlCalendarComponent', () => {
     let fixture: ComponentFixture<CalendarWithMinMaxComponent>;
     let testComponent: CalendarWithMinMaxComponent;
     let calendarElement: HTMLElement;
-    let calendarInstance: OwlCalendarComponent<Date>;
 
     beforeEach(() => {
       fixture = TestBed.createComponent(CalendarWithMinMaxComponent);
@@ -241,8 +236,6 @@ describe('OwlCalendarComponent', () => {
 
       const calendarDebugElement = fixture.debugElement.query(By.directive(OwlCalendarComponent));
       calendarElement = calendarDebugElement.nativeElement;
-
-      calendarInstance = calendarDebugElement.componentInstance;
       testComponent = fixture.componentInstance;
     });
 
@@ -349,7 +342,6 @@ describe('OwlCalendarComponent', () => {
     let fixture: ComponentFixture<CalendarWithDateFilterComponent>;
     let testComponent: CalendarWithDateFilterComponent;
     let calendarElement: HTMLElement;
-    let calendarInstance: OwlCalendarComponent<Date>;
 
     beforeEach(() => {
       fixture = TestBed.createComponent(CalendarWithDateFilterComponent);
@@ -357,7 +349,6 @@ describe('OwlCalendarComponent', () => {
 
       const calendarDebugElement = fixture.debugElement.query(By.directive(OwlCalendarComponent));
       calendarElement = calendarDebugElement.nativeElement;
-      calendarInstance = calendarDebugElement.componentInstance;
       testComponent = fixture.componentInstance;
     });
 
@@ -384,11 +375,11 @@ describe('OwlCalendarComponent', () => {
   `
 })
 class StandardCalendarComponent {
-  selectMode = 'single';
-  selected: Date;
-  selectedYear: Date;
-  selectedMonth: Date;
-  pickerMoment = new Date(2018, JAN, 31);
+  public selectMode = 'single';
+  public selected: Date;
+  public selectedYear: Date;
+  public selectedMonth: Date;
+  public pickerMoment = new Date(2018, JAN, 31);
 }
 
 @Component({
@@ -401,11 +392,11 @@ class StandardCalendarComponent {
   `
 })
 class CalendarWithMinMaxComponent {
-  selectMode = 'single';
-  startAt: Date;
-  minDate = new Date(2016, JAN, 1);
-  maxDate = new Date(2019, JAN, 1);
-  pickerMoment = new Date(2018, JAN, 31);
+  public selectMode = 'single';
+  public startAt: Date;
+  public minDate = new Date(2016, JAN, 1);
+  public maxDate = new Date(2019, JAN, 1);
+  public pickerMoment = new Date(2018, JAN, 31);
 }
 
 @Component({
@@ -418,11 +409,11 @@ class CalendarWithMinMaxComponent {
   `
 })
 class CalendarWithDateFilterComponent {
-  selectMode = 'single';
-  selected: Date;
-  pickerMoment = new Date(2018, JAN, 31);
+  public selectMode = 'single';
+  public selected: Date;
+  public pickerMoment = new Date(2018, JAN, 31);
 
-  dateFilter(date: Date) {
+  public dateFilter(date: Date): boolean {
     return !(date.getDate() % 2) && date.getMonth() !== NOV;
   }
 }
