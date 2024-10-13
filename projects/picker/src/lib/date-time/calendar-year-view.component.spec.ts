@@ -1,7 +1,3 @@
-/**
- * calendar-year-view.component.spec
- */
-
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -12,22 +8,20 @@ import { OwlYearViewComponent } from './calendar-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 
-const JAN = 0,
-  FEB = 1,
-  MAR = 2,
-  APR = 3,
-  MAY = 4,
-  JUN = 5,
-  JUL = 6,
-  AUG = 7,
-  SEP = 8,
-  OCT = 9,
-  NOV = 10,
-  DEC = 11;
+const JAN = 0;
+const FEB = 1;
+const MAR = 2;
+const APR = 3;
+const JUN = 5;
+const JUL = 6;
+const SEP = 8;
+const OCT = 9;
+const NOV = 10;
+const DEC = 11;
 
 describe('OwlYearViewComponent', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({
+    void TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardYearViewComponent, YearViewWithDateFilterComponent],
       providers: [OwlDateTimeIntl]
@@ -270,10 +264,10 @@ describe('OwlYearViewComponent', () => {
   `
 })
 class StandardYearViewComponent {
-  selected = new Date(2018, JAN, 10);
-  pickerMoment = new Date(2018, JAN, 5);
+  public selected = new Date(2018, JAN, 10);
+  public pickerMoment = new Date(2018, JAN, 5);
 
-  handleChange(date: Date): void {
+  public handleChange(date: Date): void {
     this.pickerMoment = new Date(date);
   }
 }
@@ -286,8 +280,8 @@ class StandardYearViewComponent {
   `
 })
 class YearViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getMonth() !== FEB;
   }
 }

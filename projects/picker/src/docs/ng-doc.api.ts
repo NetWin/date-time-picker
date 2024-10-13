@@ -8,8 +8,8 @@ const ApiReference: NgDocApi = {
   scopes: [
     {
       name: 'DateTimePicker',
-      include: 'projects/picker/src/**/*.ts',
-      exclude: 'projects/picker/src/**/*.spec.ts',
+      include: 'projects/picker/src/lib/**/*.ts',
+      exclude: 'projects/picker/src/lib/**/*.spec.ts',
       route: 'date-time-picker'
     }
   ]

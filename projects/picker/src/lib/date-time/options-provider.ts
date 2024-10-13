@@ -1,9 +1,9 @@
 import { InjectionToken, Provider } from '@angular/core';
 
-export function defaultOptionsFactory() {
+export function defaultOptionsFactory(): Options {
   return DefaultOptions.create();
 }
-export function multiYearOptionsFactory(options: Options) {
+export function multiYearOptionsFactory(options: Options): { yearsPerRow: number; yearRows: number } {
   return options.multiYear;
 }
 

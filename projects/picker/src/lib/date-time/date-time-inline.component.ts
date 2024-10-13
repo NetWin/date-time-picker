@@ -1,94 +1,182 @@
-/**
- * date-time-inline.component
- */
-
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
   forwardRef,
-  Inject,
+  inject,
   Input,
-  OnInit,
-  Optional,
+  numberAttribute,
   Output,
-  ViewChild
+  Provider
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { DateView, PickerType, SelectMode } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
-import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
-import { OwlDateTime, PickerMode, PickerType, SelectMode } from './date-time.class';
+import { OWL_DATE_TIME_FORMATS } from './adapter/date-time-format.class';
+import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 
-export const OWL_DATETIME_VALUE_ACCESSOR: any = {
+const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => OwlDateTimeInlineComponent),
   multi: true
 };
+
+let nextUniqueComponentId = 0;
 
 @Component({
   selector: 'owl-date-time-inline',
   templateUrl: './date-time-inline.component.html',
   styleUrls: ['./date-time-inline.component.scss'],
   host: {
-    '[class.owl-dt-inline]': 'owlDTInlineClass'
+    '[class.owl-dt-container-disabled]': 'disabled',
+    'class': 'owl-dt-inline owl-dt-container owl-dt-inline-container'
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
   preserveWhitespaces: false,
   providers: [OWL_DATETIME_VALUE_ACCESSOR]
 })
-export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
-  @ViewChild(OwlDateTimeContainerComponent, { static: true })
-  container: OwlDateTimeContainerComponent<T>;
+export class OwlDateTimeInlineComponent implements ControlValueAccessor {
+  public readonly id: string;
+
+  readonly #changeDetector = inject(ChangeDetectorRef);
+
+  readonly #pickerIntl = inject(OwlDateTimeIntl);
+
+  readonly #dateTimeFormats = inject(OWL_DATE_TIME_FORMATS, { optional: true });
+
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<Date>>(DateTimeAdapter, { optional: true });
 
   /**
-   * Set the type of the dateTime picker
-   *      'both' -- show both calendar and timer
-   *      'calendar' -- show only calendar
-   *      'timer' -- show only timer
+   * Whether the timer is in hour12 format
    */
-  private _pickerType: PickerType = 'both';
-  @Input()
-  get pickerType(): PickerType {
-    return this._pickerType;
-  }
+  @Input({ transform: booleanAttribute })
+  public hour12Timer = false;
 
-  set pickerType(val: PickerType) {
-    if (val !== this._pickerType) {
-      this._pickerType = val;
+  /**
+   * The view that the calendar should start in.
+   */
+  @Input()
+  public startView: DateView = DateView.MONTH;
+
+  /**
+   * Whether to should only the year and multi-year views.
+   */
+  @Input({ transform: booleanAttribute })
+  public yearOnly = false;
+
+  /**
+   * Whether to should only the multi-year view.
+   */
+  @Input({ transform: booleanAttribute })
+  public multiyearOnly = false;
+
+  /**
+   * Hours to change per step
+   */
+  @Input()
+  public stepHour: number = 1;
+
+  /**
+   * Minutes to change per step
+   */
+  @Input()
+  public stepMinute: number = 1;
+
+  /**
+   * Seconds to change per step
+   */
+  @Input()
+  public stepSecond: number = 1;
+
+  /**
+   * Set the first day of week.
+   * Has to be a number between 0 (Sunday) and 6 (Saturday)
+   */
+  private _firstDayOfWeek: number;
+  @Input()
+  public get firstDayOfWeek(): number {
+    return this._firstDayOfWeek;
+  }
+  public set firstDayOfWeek(value: number) {
+    value = numberAttribute(value, undefined);
+    if (value > 6 || value < 0) {
+      this._firstDayOfWeek = undefined;
+    } else {
+      this._firstDayOfWeek = value;
     }
   }
 
-  private _disabled = false;
-  @Input()
-  override get disabled(): boolean {
-    return !!this._disabled;
-  }
+  /**
+   * Whether to hide dates in other months at the start or end of the current month.
+   */
 
-  override set disabled(value: boolean) {
-    this._disabled = coerceBooleanProperty(value);
-  }
+  @Input({ transform: booleanAttribute })
+  public hideOtherMonths: boolean = false;
 
-  private _selectMode: SelectMode = 'single';
-  @Input()
-  get selectMode() {
-    return this._selectMode;
-  }
-
-  set selectMode(mode: SelectMode) {
-    if (mode !== 'single' && mode !== 'range' && mode !== 'rangeFrom' && mode !== 'rangeTo') {
-      throw Error('OwlDateTime Error: invalid selectMode value!');
+  protected get formatOptions(): Intl.DateTimeFormatOptions {
+    if (this.pickerType === 'both') {
+      return this.#dateTimeFormats.fullPickerInput;
     }
 
-    this._selectMode = mode;
+    if (this.pickerType === 'calendar') {
+      return this.#dateTimeFormats.datePickerInput;
+    }
+
+    return this.#dateTimeFormats.timePickerInput;
   }
 
-  /** The date to open the calendar to initially. */
-  private _startAt: T | null;
+  /**
+   * Date Time Checker to check if the give dateTime is selectable
+   */
+  public dateTimeChecker = (dateTime: Date): boolean => {
+    return (
+      !!dateTime &&
+      (!this.dateTimeFilter || this.dateTimeFilter(dateTime)) &&
+      (!this.min || this.#dateTimeAdapter.compare(dateTime, this.min) >= 0) &&
+      (!this.max || this.#dateTimeAdapter.compare(dateTime, this.max) <= 0)
+    );
+  };
+
+  protected getValidDate(obj: unknown): Date | null {
+    return this.#dateTimeAdapter.isDateInstance(obj) && this.#dateTimeAdapter.isValid(obj) ? obj : null;
+  }
+
+  /**
+   * Set the {@link PickerType} of the dateTime picker
+   */
   @Input()
-  get startAt(): T | null {
+  public pickerType: PickerType = 'both';
+
+  /**
+   * Whether the picker is disabled or not
+   */
+  @Input({ transform: booleanAttribute })
+  public disabled = false;
+
+  /**
+   * Whether to show the second's timer
+   */
+  @Input({ transform: booleanAttribute })
+  public showSecondsTimer = false;
+
+  /**
+   * Which select mode to use:
+   * - 'single'
+   * - 'range'
+   * - 'rangeFrom'
+   * - 'rangeTo'
+   */
+  @Input()
+  public selectMode: SelectMode = 'single';
+
+  /**
+   * The date to open the calendar to initially.
+   */
+  private _startAt: Date | null;
+  @Input()
+  public get startAt(): Date | null {
     if (this._startAt) {
       return this._startAt;
     }
@@ -103,15 +191,16 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-
-  set startAt(date: T | null) {
-    this._startAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
+  public set startAt(date: Date | null) {
+    this._startAt = this.getValidDate(this.#dateTimeAdapter.deserialize(date));
   }
 
-  /** The date to open for range calendar. */
-  private _endAt: T | null;
+  /**
+   * The date to open for range calendar.
+   */
+  private _endAt: Date | null;
   @Input()
-  get endAt(): T | null {
+  public get endAt(): Date | null {
     if (this._endAt) {
       return this._endAt;
     }
@@ -124,72 +213,74 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-
-  set endAt(date: T | null) {
-    this._endAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
+  public set endAt(date: Date | null) {
+    this._endAt = this.getValidDate(this.#dateTimeAdapter.deserialize(date));
   }
 
-  private _dateTimeFilter: (date: T | null) => boolean;
-  @Input('owlDateTimeFilter')
-  get dateTimeFilter() {
-    return this._dateTimeFilter;
+  /**
+   * @deprecated use `dateTimeFilter` instead!
+   */
+  @Input()
+  public owlDateTimeFilter: ((date: Date | null) => boolean) | null = null;
+
+  @Input()
+  public dateTimeFilter: ((date: Date | null) => boolean) | null = null;
+
+  // TODO: remove this getter when `owlDateTimeFilter` is removed
+  protected get dateTimeFilterGetter(): ((date: Date | null) => boolean) | null {
+    return this.dateTimeFilter || this.owlDateTimeFilter;
   }
 
-  set dateTimeFilter(filter: (date: T | null) => boolean) {
-    this._dateTimeFilter = filter;
-  }
-
-  /** The minimum valid date. */
-  private _min: T | null;
-
-  get minDateTime(): T | null {
+  private _min: Date | null;
+  /**
+   * The minimum valid date.
+   */
+  @Input()
+  public get min(): Date | null {
     return this._min || null;
   }
-
-  @Input('min')
-  set minDateTime(value: T | null) {
-    this._min = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+  public set min(value: Date | null) {
+    this._min = this.getValidDate(this.#dateTimeAdapter.deserialize(value));
+    this.#changeDetector.markForCheck();
   }
 
-  /** The maximum valid date. */
-  private _max: T | null;
-
-  get maxDateTime(): T | null {
+  private _max: Date | null;
+  /**
+   * The maximum valid date.
+   */
+  @Input()
+  public get max(): Date | null {
     return this._max || null;
   }
-
-  @Input('max')
-  set maxDateTime(value: T | null) {
-    this._max = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+  public set max(value: Date | null) {
+    this._max = this.getValidDate(this.#dateTimeAdapter.deserialize(value));
+    this.#changeDetector.markForCheck();
   }
 
-  private _value: T | null;
+  private _value: Date | null;
   @Input()
-  get value() {
+  public get value(): Date | null {
     return this._value;
   }
 
-  set value(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set value(value: Date | null) {
+    value = this.#dateTimeAdapter.deserialize(value);
     value = this.getValidDate(value);
     this._value = value;
     this.selected = value;
   }
 
-  private _values: Array<T> = [];
+  private _values: Array<Date> = [];
   @Input()
-  get values() {
+  public get values(): Array<Date> | null {
     return this._values;
   }
-
-  set values(values: Array<T>) {
+  public set values(values: Array<Date>) {
     if (values && values.length > 0) {
       values = values.map((v) => {
-        v = this.dateTimeAdapter.deserialize(v);
+        v = this.#dateTimeAdapter.deserialize(v);
         v = this.getValidDate(v);
-        return v ? this.dateTimeAdapter.clone(v) : null;
+        return v ? this.#dateTimeAdapter.clone(v) : null;
       });
       this._values = [...values];
       this.selecteds = [...values];
@@ -202,64 +293,89 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
-  yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = new EventEmitter<Date>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
-  monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = new EventEmitter<Date>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
-  dateSelected = new EventEmitter<T>();
+  public readonly dateSelected = new EventEmitter<Date>();
 
-  private _selected: T | null;
-  get selected() {
+  protected activeSelectedIndex = 0; // The current active SelectedIndex in range select mode (0: 'from', 1: 'to')
+
+  private _selected: Date | null;
+  protected get selected(): Date | null {
     return this._selected;
   }
-
-  set selected(value: T | null) {
+  protected set selected(value: Date | null) {
     this._selected = value;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
-  private _selecteds: Array<T> = [];
-  get selecteds() {
+  private _selecteds: Array<Date> = [];
+  protected get selecteds(): Array<Date> {
     return this._selecteds;
   }
 
-  set selecteds(values: Array<T>) {
+  protected set selecteds(values: Array<Date>) {
     this._selecteds = values;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
-  get opened(): boolean {
-    return true;
+  /**
+   * Returns whether the picker is in single mode
+   */
+  protected get isInSingleMode(): boolean {
+    return this.selectMode === 'single';
   }
 
-  get pickerMode(): PickerMode {
-    return 'inline';
+  /**
+   * Returns whether the picker is in range mode (range, rangeFrom, rangeTo)
+   */
+  protected get isInRangeMode(): boolean {
+    return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
-  get isInSingleMode(): boolean {
-    return this._selectMode === 'single';
+  /**
+   * The range 'from' label
+   */
+  protected get fromLabel(): string {
+    return this.#pickerIntl.rangeFromLabel;
   }
 
-  get isInRangeMode(): boolean {
-    return this._selectMode === 'range' || this._selectMode === 'rangeFrom' || this._selectMode === 'rangeTo';
+  /**
+   * The range 'to' label
+   */
+  protected get toLabel(): string {
+    return this.#pickerIntl.rangeToLabel;
   }
 
-  get owlDTInlineClass(): boolean {
-    return true;
+  /**
+   * The range 'from' formatted value
+   */
+  protected get fromFormattedValue(): string {
+    const value = this.selecteds[0];
+    return value ? this.#dateTimeAdapter.format(value, this.formatOptions) : '';
   }
 
-  private onModelChange: (v: T | Array<T>) => void = () => {
+  /**
+   * The range 'to' formatted value
+   */
+  protected get toFormattedValue(): string {
+    const value = this.selecteds[1];
+    return value ? this.#dateTimeAdapter.format(value, this.formatOptions) : '';
+  }
+
+  private onModelChange: (v: Date | Array<Date>) => void = () => {
     /* noop */
   };
 
@@ -267,33 +383,40 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     /* noop */
   };
 
-  constructor(
-    protected changeDetector: ChangeDetectorRef,
-    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional() @Inject(OWL_DATE_TIME_FORMATS) protected override dateTimeFormats: OwlDateTimeFormats
-  ) {
-    super(dateTimeAdapter, dateTimeFormats);
+  constructor() {
+    if (!this.#dateTimeAdapter) {
+      throw Error(
+        `OwlDateTimePicker: No provider found for DateTimeAdapter. You must import one of the following ` +
+          `modules at your application root: OwlNativeDateTimeModule, OwlMomentDateTimeModule, or provide a ` +
+          `custom implementation.`
+      );
+    }
+
+    if (!this.#dateTimeFormats) {
+      throw Error(
+        `OwlDateTimePicker: No provider found for OWL_DATE_TIME_FORMATS. You must import one of the following ` +
+          `modules at your application root: OwlNativeDateTimeModule, OwlMomentDateTimeModule, or provide a ` +
+          `custom implementation.`
+      );
+    }
+
+    this.id = `owl-dt-picker-${nextUniqueComponentId++}`;
   }
 
-  public ngOnInit() {
-    this.container.picker = this;
-  }
-
-  public writeValue(value: any): void {
+  public writeValue(value: Date | Array<Date>): void {
     if (this.isInSingleMode) {
-      this.value = value;
-      this.container.pickerMoment = value;
+      this.value = value as Date;
     } else {
-      this.values = value;
-      this.container.pickerMoment = this._values[this.container.activeSelectedIndex];
+      this.values = value as Array<Date>;
+      this.value = this.values[this.activeSelectedIndex];
     }
   }
 
-  public registerOnChange(fn: any): void {
+  public registerOnChange(fn: (v: Date | Array<Date>) => void): void {
     this.onModelChange = fn;
   }
 
-  public registerOnTouched(fn: any): void {
+  public registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 
@@ -301,7 +424,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.disabled = isDisabled;
   }
 
-  public select(date: Array<T> | T): void {
+  public select(date: Array<Date> | Date): void {
     if (this.disabled) {
       return;
     }
@@ -317,22 +440,71 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Emits the selected year in multi-year view
-   * */
-  public selectYear(normalizedYear: T): void {
+   */
+  public selectYear(normalizedYear: Date): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
-  public selectMonth(normalizedMonth: T): void {
+   */
+  public selectMonth(normalizedMonth: Date): void {
+    this.writeValue(normalizedMonth);
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
-  public selectDate(normalizedDate: T): void {
+   */
+  public selectDate(normalizedDate: Date): void {
+    this.writeValue(normalizedDate);
     this.dateSelected.emit(normalizedDate);
+  }
+
+  /**
+   * Sets the active "selected" index in range mode.
+   * - 0 for 'from'
+   * - 1 for 'to'
+   */
+  protected setActiveSelectedIndex(index: number): void {
+    if (this.selectMode === 'range' && this.activeSelectedIndex !== index) {
+      this.activeSelectedIndex = index;
+
+      const selected = this.selecteds[this.activeSelectedIndex];
+      if (this.selecteds && selected) {
+        this.value = this.#dateTimeAdapter.clone(selected);
+      }
+    }
+    return;
+  }
+
+  /**
+   * Handle click on inform radio group
+   */
+  protected handleKeydownOnInfoGroup(event: KeyboardEvent, next: HTMLElement, index: number): void {
+    let handled = false;
+
+    switch (event.key) {
+      // Navigate between the radio group options with arrow keys
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        next.focus();
+        this.setActiveSelectedIndex(index === 0 ? 1 : 0);
+        handled = true;
+        break;
+
+      // Select the active selected index when space is pressed
+      case ' ':
+        this.setActiveSelectedIndex(index);
+        handled = true;
+        break;
+    }
+
+    if (handled) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 }
