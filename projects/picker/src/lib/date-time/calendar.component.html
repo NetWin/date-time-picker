@@ -118,8 +118,8 @@
         [selected]="selected"
         [selecteds]="selecteds"
         (pickerMomentChange)="handlePickerMomentChange($event)"
-        (selectedChange)="dateSelected($event)"
-        (userSelection)="userSelected()"></owl-date-time-month-view>
+        (selectedChange)="dateSelected($event)">
+      </owl-date-time-month-view>
     }
 
     @case (DateView.YEAR) {
@@ -134,7 +134,8 @@
         (change)="goToDateInView($event, DateView.MONTH)"
         (keyboardEnter)="focusActiveCell()"
         (monthSelected)="selectMonthInYearView($event)"
-        (pickerMomentChange)="handlePickerMomentChange($event)"></owl-date-time-year-view>
+        (pickerMomentChange)="handlePickerMomentChange($event)">
+      </owl-date-time-year-view>
     }
 
     @case (DateView.MULTI_YEARS) {
@@ -149,7 +150,8 @@
         (change)="goToDateInView($event, DateView.YEAR)"
         (keyboardEnter)="focusActiveCell()"
         (pickerMomentChange)="handlePickerMomentChange($event)"
-        (yearSelected)="selectYearInMultiYearView($event)"></owl-date-time-multi-year-view>
+        (yearSelected)="selectYearInMultiYearView($event)">
+      </owl-date-time-multi-year-view>
     }
   }
 </div>

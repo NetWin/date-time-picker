@@ -6,7 +6,7 @@
         [attr.aria-disabled]="!item.enabled || null"
         [attr.aria-label]="item.ariaLabel"
         [attr.aria-selected]="isSelected(item.value)"
-        class="owl-dt-calendar-cell {{ item.cellClass }}"
+        [class]="item.cellClass"
         [class.owl-dt-calendar-cell-active]="isActiveCell(rowIndex, colIndex)"
         [class.owl-dt-calendar-cell-disabled]="!item.enabled"
         [class.owl-dt-calendar-cell-in-range]="isInRange(item.value)"
@@ -16,7 +16,8 @@
         [style.paddingTop.%]="(50 * cellRatio) / numCols"
         [style.width.%]="100 / numCols"
         [tabindex]="isActiveCell(rowIndex, colIndex) ? 0 : -1"
-        (click)="selectCell(item)">
+        (click)="selectCell(item)"
+        class="owl-dt-calendar-cell">
         <span
           [class.owl-dt-calendar-cell-out]="item.out"
           [class.owl-dt-calendar-cell-selected]="isSelected(item.value)"

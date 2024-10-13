@@ -10,7 +10,9 @@
   [upBtnDisabled]="!upHourEnabled()"
   [value]="hourValue"
   (inputChange)="setHourValueViaInput($event)"
-  (valueChange)="setHourValue($event)"></owl-date-time-timer-box>
+  (valueChange)="setHourValue($event)">
+</owl-date-time-timer-box>
+
 <owl-date-time-timer-box
   [downBtnAriaLabel]="downMinuteButtonLabel"
   [downBtnDisabled]="!downMinuteEnabled()"
@@ -23,7 +25,8 @@
   [upBtnDisabled]="!upMinuteEnabled()"
   [value]="minuteValue"
   (inputChange)="setMinuteValue($event)"
-  (valueChange)="setMinuteValue($event)"></owl-date-time-timer-box>
+  (valueChange)="setMinuteValue($event)">
+</owl-date-time-timer-box>
 
 @if (showSecondsTimer) {
   <owl-date-time-timer-box
@@ -38,7 +41,8 @@
     [upBtnDisabled]="!upSecondEnabled()"
     [value]="secondValue"
     (inputChange)="setSecondValue($event)"
-    (valueChange)="setSecondValue($event)"></owl-date-time-timer-box>
+    (valueChange)="setSecondValue($event)">
+  </owl-date-time-timer-box>
 }
 
 @if (hour12Timer) {
