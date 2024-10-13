@@ -1,7 +1,3 @@
-/**
- * calendar-month-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -29,10 +25,10 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { SelectMode } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
-import { SelectMode } from './date-time.class';
 
 const DAYS_PER_WEEK = 7;
 const WEEKS_PER_VIEW = 6;
@@ -42,9 +38,7 @@ const WEEKS_PER_VIEW = 6;
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
   styleUrls: ['./calendar-month-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
+  host: { 'class': 'owl-dt-calendar-view' },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -187,11 +181,10 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   /** The maximum selectable date. */
   private _maxDate: T | null;
   @Input()
-  get maxDate(): T | null {
+  public get maxDate(): T | null {
     return this._maxDate;
   }
-
-  set maxDate(value: T | null) {
+  public set maxDate(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     this._maxDate = this.getValidDate(value);
 
@@ -202,27 +195,27 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   }
 
   private _weekdays: Array<{ long: string; short: string; narrow: string }>;
-  get weekdays() {
+  protected get weekdays(): Array<{ long: string; short: string; narrow: string }> {
     return this._weekdays;
   }
 
   private _days: Array<Array<CalendarCell>>;
-  get days() {
+  protected get days(): Array<Array<CalendarCell>> {
     return this._days;
   }
 
-  get activeCell(): number {
+  protected get activeCell(): number {
     if (this.pickerMoment) {
       return this.dateTimeAdapter.getDate(this.pickerMoment) + this.firstRowOffset - 1;
     }
     return undefined;
   }
 
-  get isInSingleMode(): boolean {
+  protected get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  protected get isInRangeMode(): boolean {
     return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
@@ -252,25 +245,15 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    * Callback to invoke when a new date is selected
    */
   @Output()
-  readonly selectedChange = new EventEmitter<T | null>();
-
-  /**
-   * Callback to invoke when any date is selected.
-   */
-  @Output()
-  readonly userSelection = new EventEmitter<void>();
+  public readonly selectedChange = new EventEmitter<T | null>();
 
   /** Emits when any date is activated. */
   @Output()
-  readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
+  public readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
 
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
-  calendarBodyElm: OwlCalendarBodyComponent;
-
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
+  protected calendarBodyElm: OwlCalendarBodyComponent;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -280,7 +263,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     private dateTimeFormats: OwlDateTimeFormats
   ) {}
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.updateFirstDayOfWeek(this.dateTimeAdapter.getLocale());
     this.generateWeekDays();
 
@@ -321,9 +304,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   private selectDate(date: number): void {
     const daysDiff = date - 1;
     const selected = this.dateTimeAdapter.addCalendarDays(this.firstDateOfMonth, daysDiff);
-
     this.selectedChange.emit(selected);
-    this.userSelection.emit();
   }
 
   /**
@@ -515,7 +496,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: any): T | null {
+  private getValidDate(obj: unknown): T | null {
     return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
   }
 
@@ -563,7 +544,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     }
   }
 
-  private focusActiveCell() {
+  private focusActiveCell(): void {
     this.calendarBodyElm.focusActiveCell();
   }
 }

@@ -1,7 +1,3 @@
-/**
- * calendar-year-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -28,10 +24,10 @@ import {
   ViewChild
 } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { SelectMode } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
-import { SelectMode } from './date-time.class';
 
 const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
@@ -41,9 +37,7 @@ const MONTHS_PER_ROW = 3;
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',
   styleUrls: ['./calendar-year-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
+  host: { 'class': 'owl-dt-calendar-view' },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -213,10 +207,6 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
   calendarBodyElm: OwlCalendarBodyComponent;
-
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
 
   constructor(
     private cdRef: ChangeDetectorRef,

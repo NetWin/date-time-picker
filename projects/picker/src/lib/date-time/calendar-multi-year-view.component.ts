@@ -1,7 +1,3 @@
-/**
- * calendar-multi-year-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -25,10 +21,10 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
+import { SelectMode } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
-import { SelectMode } from './date-time.class';
 import { OptionsTokens } from './options-provider';
 
 @Component({
@@ -36,8 +32,8 @@ import { OptionsTokens } from './options-provider';
   templateUrl: './calendar-multi-year-view.component.html',
   styleUrls: ['./calendar-multi-year-view.component.scss'],
   host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView',
-    '[class.owl-dt-calendar-multi-year-view]': 'owlDTCalendarMultiYearView'
+    '[class.owl-dt-calendar-multi-year-view]': 'owlDTCalendarMultiYearView',
+    'class': 'owl-dt-calendar-view'
   },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -219,10 +215,6 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
   calendarBodyElm: OwlCalendarBodyComponent;
-
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
 
   get owlDTCalendarMultiYearView(): boolean {
     return true;

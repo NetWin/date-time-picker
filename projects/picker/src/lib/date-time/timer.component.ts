@@ -1,7 +1,3 @@
-/**
- * timer.component
- */
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -162,7 +158,11 @@ export class OwlTimerComponent<T> {
   }
 
   get hour12ButtonLabel(): string {
-    return this.isPM ? this.pickerIntl.hour12PMLabel : this.pickerIntl.hour12AMLabel;
+    if (this.isPM) {
+      return this.pickerIntl.hour12PMLabel;
+    } else {
+      return this.pickerIntl.hour12AMLabel;
+    }
   }
 
   @Output()

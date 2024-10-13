@@ -20,7 +20,6 @@ const routes: Routes = [...NG_DOC_ROUTING, { path: '**', redirectTo: 'home', pat
 const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
       routes,
       withHashLocation(),

@@ -1,7 +1,3 @@
-/**
- * native-date-time.module
- */
-
 import { PlatformModule } from '@angular/cdk/platform';
 import { NgModule } from '@angular/core';
 import { DateTimeAdapter } from './date-time-adapter.class';

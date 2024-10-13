@@ -1,7 +1,3 @@
-/**
- * date-time-picker-intl.service
- */
-
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -54,12 +50,6 @@ export class OwlDateTimeIntl {
 
   /** A label for the 'switch to year view' button (used by screen readers). */
   switchToMultiYearViewLabel = 'Choose month and year';
-
-  /** A label for the cancel button */
-  cancelBtnLabel = 'Cancel';
-
-  /** A label for the set button */
-  setBtnLabel = 'Set';
 
   /** A label for the range 'from' in picker info */
   rangeFromLabel = 'From';
