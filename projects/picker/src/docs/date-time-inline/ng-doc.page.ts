@@ -13,8 +13,8 @@ const DateTimeInlinePage: NgDocPage = {
   playgrounds: {
     DateTimeInline: {
       target: OwlDateTimeInlineComponent,
-      defaults: { pickerType: 'both', selectMode: 'single' },
-      inputs: { pickerType: 'both', selectMode: 'single' },
+      defaults: { pickerType: 'both', selectMode: 'range' },
+      inputs: { pickerType: 'both', selectMode: 'range' },
       template: '<div style="padding: 10px"><ng-doc-selector /></div>'
     }
   }
