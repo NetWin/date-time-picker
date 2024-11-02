@@ -411,7 +411,7 @@ export class OwlDateTimeInlineComponent implements ControlValueAccessor {
       // Handle the case where the second selected date is before the first selected date
       // In this case "go back" and treat the value as the first selected date
       if (this.activeSelectedIndex === 1) {
-        if (value.getTime() < this.selecteds[0].getTime()) {
+        if (this.selecteds[0] && value.getTime() < this.selecteds[0].getTime()) {
           this.activeSelectedIndex = 0;
         }
       }
