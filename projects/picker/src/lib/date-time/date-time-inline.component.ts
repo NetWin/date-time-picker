@@ -403,12 +403,29 @@ export class OwlDateTimeInlineComponent implements ControlValueAccessor {
     this.id = `owl-dt-picker-${nextUniqueComponentId++}`;
   }
 
-  public writeValue(value: Date | Array<Date>): void {
+  public writeValue(value: Date): void {
     if (this.isInSingleMode) {
-      this.value = value as Date;
+      this.selected = value;
+      this.value = this.selected;
     } else {
-      this.values = value as Array<Date>;
-      this.value = this.values[this.activeSelectedIndex];
+      // Handle the case where the second selected date is before the first selected date
+      // In this case "go back" and treat the value as the first selected date
+      if (this.activeSelectedIndex === 1) {
+        if (value.getTime() < this.selecteds[0].getTime()) {
+          this.activeSelectedIndex = 0;
+        }
+      }
+
+      // Set the correct value according to the active selected index
+      if (this.activeSelectedIndex === 0) {
+        this.selecteds = [value, null];
+      } else {
+        this.selecteds[1] = value;
+      }
+
+      // Set the values to the selecteds
+      this.values = [...this.selecteds];
+      this.activeSelectedIndex = (this.activeSelectedIndex + 1) % 2;
     }
   }
 
