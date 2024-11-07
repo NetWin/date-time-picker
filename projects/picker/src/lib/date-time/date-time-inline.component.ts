@@ -207,7 +207,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Variable to hold the old max date time value for when we override it with rangeLimit
-   */
+   * */
   private _oldMaxDateTime: T | null;
 
   /**
