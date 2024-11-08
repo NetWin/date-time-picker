@@ -200,6 +200,17 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   }
 
   /**
+   * Limit to the amount of days that can be selected at once.
+   * */
+  @Input()
+  public rangeLimit: number | null = null;
+
+  /**
+   * Variable to hold the old max date time value for when we override it with rangeLimit
+   * */
+  private _initialMaxDateTime: T | null;
+
+  /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
    * */
@@ -311,6 +322,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     } else {
       this.value = date;
     }
+
+    // If range limit is set, we need to set the max date time to the range limit, so days after the max range are not selectable
+    if (this.rangeLimit && !this.values[1] && this.values[0]) {
+      const rangeLimitDate = this.dateTimeAdapter.addCalendarDays(this.values[0], this.rangeLimit - 1);
+      if (!this.maxDateTime || this.dateTimeAdapter.compare(this.maxDateTime, rangeLimitDate) > 0) {
+        this._initialMaxDateTime = this.maxDateTime;
+        this.maxDateTime = rangeLimitDate;
+      }
+    }
+
+    // Reset the max date time to the initial value after a full range is selected
+    if (this.rangeLimit && this.values[1]) {
+      this.maxDateTime = this._initialMaxDateTime;
+    }
+
     this.onModelChange(date);
     this.onModelTouched();
   }
