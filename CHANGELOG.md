@@ -1,3 +1,10 @@
+# [18.3.0](https://github.com/netwin/date-time-picker/compare/18.2.0...18.3.0) (2024-11-08)
+
+
+### Features
+
+* **date-time-inline:** add range limit option for range selection mode ([dfed5ff](https://github.com/netwin/date-time-picker/commit/dfed5ff068a4654a01d61b37e5422203c9bb5411))
+
 # [18.2.0](https://github.com/netwin/date-time-picker/compare/18.1.0...18.2.0) (2024-10-12)
 
 
