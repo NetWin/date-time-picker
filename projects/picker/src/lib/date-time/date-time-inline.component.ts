@@ -206,6 +206,12 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   public rangeLimit: number | null = null;
 
   /**
+   * Flag to show today button to jump to today's date. Defaults to `false`.
+   * */
+  @Input()
+  public showTodayButton: boolean = false;
+
+  /**
    * Variable to hold the old max date time value for when we override it with rangeLimit
    * */
   private _initialMaxDateTime: T | null;

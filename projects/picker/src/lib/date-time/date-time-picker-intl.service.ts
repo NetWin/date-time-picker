@@ -72,4 +72,7 @@ export class OwlDateTimeIntl {
 
   /** A label for the hour12 button (PM) */
   hour12PMLabel = 'PM';
+
+  /** A label for the today button */
+  todayButtonLabel = 'Today';
 }
