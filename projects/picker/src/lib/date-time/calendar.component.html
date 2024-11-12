@@ -41,7 +41,8 @@
     <button
       [style.visibility]="currentView !== DateView.MONTH || !showTodayButton ? 'hidden' : 'visible'"
       (click)="jumpToToday()"
-      class="owl-dt-control owl-dt-control-button owl-dt-control-today-button">
+      class="owl-dt-control owl-dt-control-button owl-dt-control-today-button"
+      type="button">
       {{ todayButtonLabel }}
     </button>
   </div>
