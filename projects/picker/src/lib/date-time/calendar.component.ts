@@ -5,6 +5,7 @@
 import {
   AfterContentInit,
   AfterViewChecked,
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -245,8 +246,8 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   /**
    * Flag to show today button to jump to today's date. Defaults to `false`.
    * */
-  @Input()
-  public showTodayButton: boolean = false;
+  @Input({ transform: booleanAttribute })
+  public showTodayButton = false;
 
   /** Emits when the currently picker moment changes. */
   @Output()

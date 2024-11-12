@@ -4,6 +4,7 @@
 
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -208,8 +209,8 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /**
    * Flag to show today button to jump to today's date. Defaults to `false`.
    * */
-  @Input()
-  public showTodayButton: boolean = false;
+  @Input({ transform: booleanAttribute })
+  public showTodayButton = false;
 
   /**
    * Variable to hold the old max date time value for when we override it with rangeLimit
