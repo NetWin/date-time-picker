@@ -38,13 +38,14 @@
         </span>
       </span>
     </button>
-    <button
-      [style.visibility]="currentView !== DateView.MONTH || !showTodayButton ? 'hidden' : 'visible'"
-      (click)="jumpToToday()"
-      class="owl-dt-control owl-dt-control-button owl-dt-control-today-button"
-      type="button">
-      {{ todayButtonLabel }}
-    </button>
+    @if (currentView === DateView.MONTH && showTodayButton) {
+      <button
+        (click)="jumpToToday()"
+        class="owl-dt-control owl-dt-control-button owl-dt-control-today-button"
+        type="button">
+        {{ todayButtonLabel }}
+      </button>
+    }
   </div>
   <button
     [attr.aria-label]="prevButtonLabel"

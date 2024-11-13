@@ -7,7 +7,6 @@ import { DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW, SPACE, UP_ARROW } from '@angular/c
 import {
   AfterContentInit,
   AfterViewInit,
-  booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -63,8 +62,8 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * */
   private hidePicker$ = new Subject<any>();
 
-  @Input({ transform: booleanAttribute })
-  public showTodayButton = false;
+  @Input()
+  public showTodayButton: boolean = false;
 
   get hidePickerStream(): Observable<any> {
     return this.hidePicker$.asObservable();
