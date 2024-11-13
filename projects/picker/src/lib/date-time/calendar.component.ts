@@ -118,6 +118,10 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
     return this.isMonthView ? this.pickerIntl.switchToMultiYearViewLabel : this.pickerIntl.switchToMonthViewLabel;
   }
 
+  get todayButtonLabel(): string {
+    return this.pickerIntl.todayButtonLabel;
+  }
+
   get prevButtonLabel(): string {
     if (this._currentView === DateView.MONTH) {
       return this.pickerIntl.prevMonthLabel;
@@ -238,6 +242,12 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   @Input()
   hideOtherMonths: boolean;
 
+  /**
+   * Flag to show today button to jump to today's date. Defaults to `false`.
+   * */
+  @Input()
+  public showTodayButton: boolean = false;
+
   /** Emits when the currently picker moment changes. */
   @Output()
   pickerMomentChange = new EventEmitter<T>();
@@ -345,6 +355,16 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
       : this.dateTimeAdapter.addCalendarYears(this.pickerMoment, 1);
 
     this.pickerMomentChange.emit(this.pickerMoment);
+  }
+
+  public jumpToToday(): void {
+    const now = this.dateTimeAdapter.now();
+    let today = this.dateTimeAdapter.setHours(now, 0);
+    today = this.dateTimeAdapter.setMinutes(today, 0);
+    today = this.dateTimeAdapter.setSeconds(today, 0);
+
+    this.handlePickerMomentChange(today);
+    this.dateSelected(today);
   }
 
   public dateSelected(date: T): void {

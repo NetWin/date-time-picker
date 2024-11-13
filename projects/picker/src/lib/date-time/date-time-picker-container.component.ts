@@ -11,6 +11,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  Input,
   OnInit,
   Optional,
   ViewChild
@@ -60,6 +61,9 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * Stream emits when try to hide picker
    * */
   private hidePicker$ = new Subject<any>();
+
+  @Input()
+  public showTodayButton: boolean = false;
 
   get hidePickerStream(): Observable<any> {
     return this.hidePicker$.asObservable();

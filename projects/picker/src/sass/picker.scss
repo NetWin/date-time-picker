@@ -212,7 +212,7 @@ $theme-color: #3f51b5;
     display: -webkit-box;
     display: flex;
     -webkit-box-pack: center;
-    justify-content: center;
+    justify-content: space-between;
     -webkit-box-align: center;
     align-items: center;
 
@@ -518,6 +518,19 @@ $theme-color: #3f51b5;
     transition:
       transform 200ms ease,
       -webkit-transform 200ms ease;
+  }
+}
+
+.owl-dt-control-today-button {
+  height: 1.5em;
+  padding: 0 0.5em;
+  border-radius: 3px;
+  -webkit-transition: background-color 100ms linear;
+  transition: background-color 100ms linear;
+  color: $theme-color;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.12);
   }
 }
 
