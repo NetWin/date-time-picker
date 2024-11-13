@@ -1,3 +1,10 @@
+# [18.4.0](https://github.com/netwin/date-time-picker/compare/18.3.0...18.4.0) (2024-11-13)
+
+
+### Features
+
+* **calendar:** add button to jump to and select today's date ([fbf483a](https://github.com/netwin/date-time-picker/commit/fbf483a467bc873eea2fb7530addffba4439f9f6))
+
 # [18.3.0](https://github.com/netwin/date-time-picker/compare/18.2.0...18.3.0) (2024-11-08)
 
 
