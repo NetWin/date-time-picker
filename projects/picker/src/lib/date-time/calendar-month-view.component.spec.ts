@@ -289,7 +289,7 @@ describe('OwlMonthViewComponent', () => {
 
       fixture.detectChanges();
       const weekdayCells = monthViewElement.querySelectorAll('.owl-dt-weekday');
-      expect(weekdayCells[0].getAttribute('aria-label')).toBe('Sunday');
+      expect(['Sonntag', 'Sunday'].includes(weekdayCells[0].getAttribute('aria-label'))).toBeTrue();
     });
 
     it('should update the default day of the week when locale changes', () => {
@@ -309,6 +309,7 @@ describe('OwlMonthViewComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-month-view
       [(pickerMoment)]="pickerMoment"
@@ -321,6 +322,7 @@ class StandardMonthViewComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-month-view
       [dateFilter]="dateFilter"

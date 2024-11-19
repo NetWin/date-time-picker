@@ -47,6 +47,7 @@ export const OWL_DATETIME_VALIDATORS: any = {
 };
 
 @Directive({
+  standalone: false,
   selector: 'input[owlDateTime]',
   exportAs: 'owlDateTimeInput',
   host: {
@@ -69,23 +70,23 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Required flag to be used for range of [null, null]
-   * */
+   */
   private _required: boolean;
   @Input()
-  get required() {
+  public get required() {
     return this._required;
   }
 
-  set required(value: any) {
+  public set required(value: any) {
     this._required = value === '' || value;
     this.validatorOnChange();
   }
 
   /**
    * The date time picker that this input is associated with.
-   * */
+   */
   @Input()
-  set owlDateTime(value: OwlDateTimeComponent<T>) {
+  public set owlDateTime(value: OwlDateTimeComponent<T>) {
     this.registerDateTimePicker(value);
   }
 
@@ -93,24 +94,24 @@ export class OwlDateTimeInputDirective<T>
    * A function to filter date time
    */
   @Input()
-  set owlDateTimeFilter(filter: (date: T | null) => boolean) {
+  public set owlDateTimeFilter(filter: (date: T | null) => boolean) {
     this._dateTimeFilter = filter;
     this.validatorOnChange();
   }
 
   private _dateTimeFilter: (date: T | null) => boolean;
-  get dateTimeFilter() {
+  public get dateTimeFilter(): (date: T | null) => boolean {
     return this._dateTimeFilter;
   }
 
   /** Whether the date time picker's input is disabled. */
   @Input()
   private _disabled: boolean;
-  get disabled() {
+  public get disabled(): boolean {
     return !!this._disabled;
   }
 
-  set disabled(value: boolean) {
+  public set disabled(value: boolean) {
     const newValue = coerceBooleanProperty(value);
     const element = this.elmRef.nativeElement;
 
@@ -131,11 +132,11 @@ export class OwlDateTimeInputDirective<T>
   /** The minimum valid date. */
   private _min: T | null;
   @Input()
-  get min(): T | null {
+  public get min(): T | null {
     return this._min;
   }
 
-  set min(value: T | null) {
+  public set min(value: T | null) {
     this._min = this.getValidDate(this.dateTimeAdapter.deserialize(value));
     this.validatorOnChange();
   }
@@ -143,11 +144,11 @@ export class OwlDateTimeInputDirective<T>
   /** The maximum valid date. */
   private _max: T | null;
   @Input()
-  get max(): T | null {
+  public get max(): T | null {
     return this._max;
   }
 
-  set max(value: T | null) {
+  public set max(value: T | null) {
     this._max = this.getValidDate(this.dateTimeAdapter.deserialize(value));
     this.validatorOnChange();
   }
@@ -157,11 +158,10 @@ export class OwlDateTimeInputDirective<T>
    */
   private _selectMode: SelectMode = 'single';
   @Input()
-  get selectMode() {
+  public get selectMode(): SelectMode {
     return this._selectMode;
   }
-
-  set selectMode(mode: SelectMode) {
+  public set selectMode(mode: SelectMode) {
     if (mode !== 'single' && mode !== 'range' && mode !== 'rangeFrom' && mode !== 'rangeTo') {
       throw Error('OwlDateTime Error: invalid selectMode value!');
     }
@@ -173,15 +173,14 @@ export class OwlDateTimeInputDirective<T>
    * The character to separate the 'from' and 'to' in input value
    */
   @Input()
-  rangeSeparator = '-';
+  public rangeSeparator = '-';
 
   private _value: T | null;
   @Input()
-  get value() {
+  public get value(): T | null {
     return this._value;
   }
-
-  set value(value: T | null) {
+  public set value(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     this.lastValueValid = !value || this.dateTimeAdapter.isValid(value);
     value = this.getValidDate(value);
@@ -199,11 +198,10 @@ export class OwlDateTimeInputDirective<T>
 
   private _values: Array<T> = [];
   @Input()
-  get values() {
+  public get values(): Array<T> {
     return this._values;
   }
-
-  set values(values: Array<T>) {
+  public set values(values: Array<T>) {
     if (values && values.length > 0) {
       this._values = values.map((v) => {
         v = this.dateTimeAdapter.deserialize(v);
@@ -225,15 +223,15 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Callback to invoke when `change` event is fired on this `<input>`
-   * */
+   */
   @Output()
-  dateTimeChange = new EventEmitter<any>();
+  public readonly dateTimeChange = new EventEmitter<any>();
 
   /**
    * Callback to invoke when an `input` event is fired on this `<input>`.
-   * */
+   */
   @Output()
-  dateTimeInput = new EventEmitter<any>();
+  public readonly dateTimeInput = new EventEmitter<any>();
 
   get elementRef(): ElementRef {
     return this.elmRef;
@@ -335,7 +333,7 @@ export class OwlDateTimeInputDirective<T>
   /**
    * The form control validator for the range.
    * Check whether the 'before' value is before the 'to' value
-   * */
+   */
   private rangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (this.isInSingleMode || !control.value) {
       return null;
@@ -352,7 +350,7 @@ export class OwlDateTimeInputDirective<T>
   /**
    * The form control validator for the range when required.
    * Check whether the 'before' and 'to' values are present
-   * */
+   */
   private requiredRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (this.isInSingleMode || !control.value || !this.required) {
       return null;
@@ -498,7 +496,7 @@ export class OwlDateTimeInputDirective<T>
 
   /**
    * Open the picker when user hold alt + DOWN_ARROW
-   * */
+   */
   public handleKeydownOnHost(event: KeyboardEvent): void {
     if (event.altKey && event.keyCode === DOWN_ARROW) {
       this.dtPicker.open();

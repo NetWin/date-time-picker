@@ -18,6 +18,7 @@ import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 
 @Component({
+  standalone: false,
   exportAs: 'owlDateTimeTimer',
   selector: 'owl-date-time-timer',
   templateUrl: './timer.component.html',
@@ -33,11 +34,10 @@ export class OwlTimerComponent<T> {
   /** The current picker moment */
   private _pickerMoment: T;
   @Input()
-  get pickerMoment(): T {
+  public get pickerMoment(): T {
     return this._pickerMoment;
   }
-
-  set pickerMoment(value: T) {
+  public set pickerMoment(value: T) {
     value = this.dateTimeAdapter.deserialize(value);
     this._pickerMoment = this.getValidDate(value) || this.dateTimeAdapter.now();
   }
@@ -45,11 +45,10 @@ export class OwlTimerComponent<T> {
   /** The minimum selectable date time. */
   private _minDateTime: T | null;
   @Input()
-  get minDateTime(): T | null {
+  public get minDateTime(): T | null {
     return this._minDateTime;
   }
-
-  set minDateTime(value: T | null) {
+  public set minDateTime(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     this._minDateTime = this.getValidDate(value);
   }
@@ -57,11 +56,10 @@ export class OwlTimerComponent<T> {
   /** The maximum selectable date time. */
   private _maxDateTime: T | null;
   @Input()
-  get maxDateTime(): T | null {
+  public get maxDateTime(): T | null {
     return this._maxDateTime;
   }
-
-  set maxDateTime(value: T | null) {
+  public set maxDateTime(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     this._maxDateTime = this.getValidDate(value);
   }
@@ -72,33 +70,36 @@ export class OwlTimerComponent<T> {
    * Whether to show the second's timer
    */
   @Input()
-  showSecondsTimer: boolean;
+  public showSecondsTimer: boolean;
 
   /**
    * Whether the timer is in hour12 format
    */
   @Input()
-  hour12Timer: boolean;
+  public hour12Timer: boolean;
 
   /**
    * Hours to change per step
    */
   @Input()
-  stepHour = 1;
+  public stepHour = 1;
 
   /**
    * Minutes to change per step
    */
   @Input()
-  stepMinute = 1;
+  public stepMinute = 1;
 
   /**
    * Seconds to change per step
    */
   @Input()
-  stepSecond = 1;
+  public stepSecond = 1;
 
-  get hourValue(): number {
+  @Output()
+  public readonly selectedChange = new EventEmitter<T>();
+
+  protected get hourValue(): number {
     return this.dateTimeAdapter.getHours(this.pickerMoment);
   }
 
@@ -106,8 +107,8 @@ export class OwlTimerComponent<T> {
    * The value would be displayed in hourBox.
    * We need this because the value displayed in hourBox it not
    * the same as the hourValue when the timer is in hour12Timer mode.
-   * */
-  get hourBoxValue(): number {
+   */
+  protected get hourBoxValue(): number {
     let hours = this.hourValue;
 
     if (!this.hour12Timer) {
@@ -129,50 +130,47 @@ export class OwlTimerComponent<T> {
     }
   }
 
-  get minuteValue(): number {
+  protected get minuteValue(): number {
     return this.dateTimeAdapter.getMinutes(this.pickerMoment);
   }
 
-  get secondValue(): number {
+  protected get secondValue(): number {
     return this.dateTimeAdapter.getSeconds(this.pickerMoment);
   }
 
-  get upHourButtonLabel(): string {
+  protected get upHourButtonLabel(): string {
     return this.pickerIntl.upHourLabel;
   }
 
-  get downHourButtonLabel(): string {
+  protected get downHourButtonLabel(): string {
     return this.pickerIntl.downHourLabel;
   }
 
-  get upMinuteButtonLabel(): string {
+  protected get upMinuteButtonLabel(): string {
     return this.pickerIntl.upMinuteLabel;
   }
 
-  get downMinuteButtonLabel(): string {
+  protected get downMinuteButtonLabel(): string {
     return this.pickerIntl.downMinuteLabel;
   }
 
-  get upSecondButtonLabel(): string {
+  protected get upSecondButtonLabel(): string {
     return this.pickerIntl.upSecondLabel;
   }
 
-  get downSecondButtonLabel(): string {
+  protected get downSecondButtonLabel(): string {
     return this.pickerIntl.downSecondLabel;
   }
 
-  get hour12ButtonLabel(): string {
+  protected get hour12ButtonLabel(): string {
     return this.isPM ? this.pickerIntl.hour12PMLabel : this.pickerIntl.hour12AMLabel;
   }
 
-  @Output()
-  selectedChange = new EventEmitter<T>();
-
-  get owlDTTimerClass(): boolean {
+  protected get owlDTTimerClass(): boolean {
     return true;
   }
 
-  get owlDTTimeTabIndex(): number {
+  protected get owlDTTimeTabIndex(): number {
     return -1;
   }
 
@@ -186,7 +184,7 @@ export class OwlTimerComponent<T> {
 
   /**
    * Focus to the host element
-   * */
+   */
   public focus(): void {
     this.ngZone.runOutsideAngular(() => {
       this.ngZone.onStable
@@ -201,7 +199,7 @@ export class OwlTimerComponent<T> {
   /**
    * Set the hour value via typing into timer box input
    * We need this to handle the hour value when the timer is in hour12 mode
-   * */
+   */
   public setHourValueViaInput(hours: number): void {
     if (this.hour12Timer && this.isPM && hours >= 1 && hours <= 11) {
       hours = hours + 12;
@@ -230,7 +228,7 @@ export class OwlTimerComponent<T> {
     this.cdRef.markForCheck();
   }
 
-  public setMeridiem(event: any): void {
+  public setMeridiem(event: Event): void {
     this.isPM = !this.isPM;
 
     let hours = this.hourValue;
@@ -295,7 +293,7 @@ export class OwlTimerComponent<T> {
    * 1 is after the comparedDate
    * -1 is before the comparedDate
    * 0 is equal the comparedDate
-   * */
+   */
   private compareHours(amount: number, comparedDate: T): number {
     const hours = this.dateTimeAdapter.getHours(this.pickerMoment) + amount;
     const result = this.dateTimeAdapter.setHours(this.pickerMoment, hours);
@@ -307,7 +305,7 @@ export class OwlTimerComponent<T> {
    * 1 is after the comparedDate
    * -1 is before the comparedDate
    * 0 is equal the comparedDate
-   * */
+   */
   private compareMinutes(amount: number, comparedDate: T): number {
     const minutes = this.dateTimeAdapter.getMinutes(this.pickerMoment) + amount;
     const result = this.dateTimeAdapter.setMinutes(this.pickerMoment, minutes);
@@ -319,7 +317,7 @@ export class OwlTimerComponent<T> {
    * 1 is after the comparedDate
    * -1 is before the comparedDate
    * 0 is equal the comparedDate
-   * */
+   */
   private compareSeconds(amount: number, comparedDate: T): number {
     const seconds = this.dateTimeAdapter.getSeconds(this.pickerMoment) + amount;
     const result = this.dateTimeAdapter.setSeconds(this.pickerMoment, seconds);
@@ -329,7 +327,7 @@ export class OwlTimerComponent<T> {
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: any): T | null {
+  private getValidDate(obj: unknown): T | null {
     return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
   }
 }

@@ -93,6 +93,7 @@ describe('OwlCalendarBodyComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: ` <table
     [activeCell]="activeCell"
     [rows]="rows"

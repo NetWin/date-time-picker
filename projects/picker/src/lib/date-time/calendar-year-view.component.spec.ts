@@ -262,6 +262,7 @@ describe('OwlYearViewComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-year-view
       [selected]="selected"
@@ -279,6 +280,7 @@ class StandardYearViewComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-year-view
       [dateFilter]="dateFilter"

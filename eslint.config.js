@@ -127,6 +127,12 @@ module.exports = tsEslint.config(
       // Enforce the creation of standalone Angular components
       // TODO: enable again
       '@angular-eslint/prefer-standalone': 'off',
+      // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-on-push-component-change-detection.md
+      // Ensures component's changeDetection is set to ChangeDetectionStrategy.OnPush
+      '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
+      // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/prefer-output-readonly.md
+      // Prefer to declare @Output, OutputEmitterRef and OutputRef as readonly since they are not supposed to be reassigned
+      '@angular-eslint/prefer-output-readonly': 'error',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/no-output-on-prefix.md
       // Disallow the use of the `on` prefix in Angular output bindings
       '@angular-eslint/no-output-on-prefix': 'warn',

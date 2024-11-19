@@ -1798,6 +1798,7 @@ describe('OwlDateTimeComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"
@@ -1823,6 +1824,7 @@ class StandardDateTimePickerComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"
@@ -1848,6 +1850,7 @@ class RangeDateTimePickerComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input [owlDateTime]="dt" />
     <input [owlDateTime]="dt" />
@@ -1857,6 +1860,7 @@ class RangeDateTimePickerComponent {
 class MultiInputDateTimePickerComponent {}
 
 @Component({
+  standalone: false,
   template: ` <owl-date-time #dt></owl-date-time> `
 })
 class NoInputDateTimePickerComponent {
@@ -1865,6 +1869,7 @@ class NoInputDateTimePickerComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"
@@ -1882,6 +1887,7 @@ class DateTimePickerWithStartAtComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"
@@ -1909,6 +1915,8 @@ class DateTimePickerWithStartViewComponent {
 }
 
 @Component({
+  standalone: false,
+
   template: `
     <input
       [owlDateTime]="dt"
@@ -1927,6 +1935,8 @@ class DateTimePickerWithNgModelComponent {
 }
 
 @Component({
+  standalone: false,
+
   template: `
     <input
       [formControl]="formControl"
@@ -1946,6 +1956,7 @@ class DateTimePickerWithFormControlComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input [owlDateTime]="dt" />
     <button [owlDateTimeTrigger]="dt">Icon</button>
@@ -1960,6 +1971,7 @@ class DateTimePickerWithTriggerComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [max]="max"
@@ -1986,6 +1998,8 @@ class DateTimePickerWithMinAndMaxValidationComponent {
 }
 
 @Component({
+  standalone: false,
+
   template: `
     <input
       [owlDateTime]="dt"
@@ -2009,6 +2023,7 @@ class DateTimePickerWithFilterValidationComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"
@@ -2048,6 +2063,7 @@ class DateTimePickerWithChangeAndInputEventsComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [max]="max"
@@ -2071,6 +2087,7 @@ class DateTimePickerWithISOStringsComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <input
       [owlDateTime]="dt"

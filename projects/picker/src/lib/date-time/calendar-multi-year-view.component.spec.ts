@@ -231,6 +231,7 @@ describe('OwlMultiYearViewComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-multi-year-view
       [selected]="selected"
@@ -248,6 +249,7 @@ class StandardMultiYearViewComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-multi-year-view
       [dateFilter]="dateFilter"

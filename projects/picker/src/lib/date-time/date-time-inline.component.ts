@@ -30,6 +30,7 @@ export const OWL_DATETIME_VALUE_ACCESSOR: any = {
 };
 
 @Component({
+  standalone: false,
   selector: 'owl-date-time-inline',
   templateUrl: './date-time-inline.component.html',
   styleUrls: ['./date-time-inline.component.scss'],
@@ -42,7 +43,7 @@ export const OWL_DATETIME_VALUE_ACCESSOR: any = {
 })
 export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
   @ViewChild(OwlDateTimeContainerComponent, { static: true })
-  container: OwlDateTimeContainerComponent<T>;
+  protected container: OwlDateTimeContainerComponent<T>;
 
   /**
    * Set the type of the dateTime picker
@@ -52,11 +53,10 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
    */
   private _pickerType: PickerType = 'both';
   @Input()
-  get pickerType(): PickerType {
+  public get pickerType(): PickerType {
     return this._pickerType;
   }
-
-  set pickerType(val: PickerType) {
+  public set pickerType(val: PickerType) {
     if (val !== this._pickerType) {
       this._pickerType = val;
     }
@@ -64,21 +64,19 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   private _disabled = false;
   @Input()
-  override get disabled(): boolean {
+  public override get disabled(): boolean {
     return !!this._disabled;
   }
-
-  override set disabled(value: boolean) {
+  public override set disabled(value: boolean) {
     this._disabled = coerceBooleanProperty(value);
   }
 
   private _selectMode: SelectMode = 'single';
   @Input()
-  get selectMode() {
+  public get selectMode(): SelectMode {
     return this._selectMode;
   }
-
-  set selectMode(mode: SelectMode) {
+  public set selectMode(mode: SelectMode) {
     if (mode !== 'single' && mode !== 'range' && mode !== 'rangeFrom' && mode !== 'rangeTo') {
       throw Error('OwlDateTime Error: invalid selectMode value!');
     }
@@ -89,7 +87,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /** The date to open the calendar to initially. */
   private _startAt: T | null;
   @Input()
-  get startAt(): T | null {
+  public get startAt(): T | null {
     if (this._startAt) {
       return this._startAt;
     }
@@ -104,15 +102,14 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-
-  set startAt(date: T | null) {
+  public set startAt(date: T | null) {
     this._startAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
   }
 
   /** The date to open for range calendar. */
   private _endAt: T | null;
   @Input()
-  get endAt(): T | null {
+  public get endAt(): T | null {
     if (this._endAt) {
       return this._endAt;
     }
@@ -125,30 +122,27 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-
-  set endAt(date: T | null) {
+  public set endAt(date: T | null) {
     this._endAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
   }
 
   private _dateTimeFilter: (date: T | null) => boolean;
   @Input('owlDateTimeFilter')
-  get dateTimeFilter() {
+  public get dateTimeFilter(): (date: T | null) => boolean {
     return this._dateTimeFilter;
   }
-
-  set dateTimeFilter(filter: (date: T | null) => boolean) {
+  public set dateTimeFilter(filter: (date: T | null) => boolean) {
     this._dateTimeFilter = filter;
   }
 
   /** The minimum valid date. */
   private _min: T | null;
 
-  get minDateTime(): T | null {
+  @Input('min')
+  public get minDateTime(): T | null {
     return this._min || null;
   }
-
-  @Input('min')
-  set minDateTime(value: T | null) {
+  public set minDateTime(value: T | null) {
     this._min = this.getValidDate(this.dateTimeAdapter.deserialize(value));
     this.changeDetector.markForCheck();
   }
@@ -156,23 +150,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /** The maximum valid date. */
   private _max: T | null;
 
-  get maxDateTime(): T | null {
+  @Input('max')
+  public get maxDateTime(): T | null {
     return this._max || null;
   }
-
-  @Input('max')
-  set maxDateTime(value: T | null) {
+  public set maxDateTime(value: T | null) {
     this._max = this.getValidDate(this.dateTimeAdapter.deserialize(value));
     this.changeDetector.markForCheck();
   }
 
   private _value: T | null;
   @Input()
-  get value() {
+  public get value(): T | null {
     return this._value;
   }
-
-  set value(value: T | null) {
+  public set value(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     value = this.getValidDate(value);
     this._value = value;
@@ -181,11 +173,10 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   private _values: Array<T> = [];
   @Input()
-  get values() {
+  public get values(): Array<T> {
     return this._values;
   }
-
-  set values(values: Array<T>) {
+  public set values(values: Array<T>) {
     if (values && values.length > 0) {
       values = values.map((v) => {
         v = this.dateTimeAdapter.deserialize(v);
@@ -202,78 +193,77 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Limit to the amount of days that can be selected at once.
-   * */
+   */
   @Input()
   public rangeLimit: number | null = null;
 
   /**
    * Flag to show today button to jump to today's date. Defaults to `false`.
-   * */
+   */
   @Input({ transform: booleanAttribute })
   public showTodayButton = false;
 
   /**
    * Variable to hold the old max date time value for when we override it with rangeLimit
-   * */
+   */
   private _initialMaxDateTime: T | null;
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
-  yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = new EventEmitter<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
+   */
   @Output()
-  monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = new EventEmitter<T>();
 
   /**
    * Emits selected date
-   * */
+   */
   @Output()
-  dateSelected = new EventEmitter<T>();
+  public readonly dateSelected = new EventEmitter<T>();
 
   private _selected: T | null;
-  get selected() {
+  public get selected(): T | null {
     return this._selected;
   }
-
-  set selected(value: T | null) {
+  public set selected(value: T | null) {
     this._selected = value;
     this.changeDetector.markForCheck();
   }
 
   private _selecteds: Array<T> = [];
-  get selecteds() {
+  public get selecteds(): Array<T> {
     return this._selecteds;
   }
 
-  set selecteds(values: Array<T>) {
+  public set selecteds(values: Array<T>) {
     this._selecteds = values;
     this.changeDetector.markForCheck();
   }
 
-  get opened(): boolean {
+  public get opened(): boolean {
     return true;
   }
 
-  get pickerMode(): PickerMode {
+  public get pickerMode(): PickerMode {
     return 'inline';
   }
 
-  get isInSingleMode(): boolean {
+  public get isInSingleMode(): boolean {
     return this._selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  public get isInRangeMode(): boolean {
     return this._selectMode === 'range' || this._selectMode === 'rangeFrom' || this._selectMode === 'rangeTo';
   }
 
-  get owlDTInlineClass(): boolean {
+  public get owlDTInlineClass(): boolean {
     return true;
   }
 
@@ -293,7 +283,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     super(dateTimeAdapter, dateTimeFormats);
   }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.container.picker = this;
   }
 
@@ -350,21 +340,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }

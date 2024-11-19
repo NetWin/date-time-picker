@@ -374,6 +374,7 @@ describe('OwlCalendarComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-calendar
       [pickerMoment]="pickerMoment"
@@ -392,6 +393,7 @@ class StandardCalendarComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-calendar
       [maxDate]="maxDate"
@@ -409,6 +411,7 @@ class CalendarWithMinMaxComponent {
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-calendar
       [dateFilter]="dateFilter"

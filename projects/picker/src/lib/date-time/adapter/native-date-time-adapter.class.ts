@@ -184,7 +184,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date(NaN);
   }
 
-  public isDateInstance(obj: any): boolean {
+  public isDateInstance(obj: unknown): obj is Date {
     return obj instanceof Date;
   }
 
@@ -259,7 +259,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return new Date();
   }
 
-  public format(date: Date, displayFormat: any): string {
+  public format(date: Date, displayFormat: Intl.DateTimeFormatOptions): string {
     if (!this.isValid(date)) {
       throw Error('JSNativeDate: Cannot format invalid date.');
     }

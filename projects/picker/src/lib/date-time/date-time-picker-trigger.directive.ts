@@ -11,10 +11,11 @@ import {
   OnDestroy,
   SimpleChanges
 } from '@angular/core';
-import { Subscription, merge, of as observableOf } from 'rxjs';
+import { Subscription, merge, of } from 'rxjs';
 import { OwlDateTimeComponent } from './date-time-picker.component';
 
 @Directive({
+  standalone: false,
   selector: '[owlDateTimeTrigger]',
   host: {
     '(click)': 'handleClickOnHost($event)',
@@ -22,19 +23,18 @@ import { OwlDateTimeComponent } from './date-time-picker.component';
   }
 })
 export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentInit, OnDestroy {
-  @Input('owlDateTimeTrigger') dtPicker: OwlDateTimeComponent<T>;
+  @Input('owlDateTimeTrigger') public dtPicker: OwlDateTimeComponent<T>;
 
   private _disabled: boolean;
   @Input()
-  get disabled(): boolean {
+  public get disabled(): boolean {
     return this._disabled === undefined ? this.dtPicker.disabled : !!this._disabled;
   }
-
-  set disabled(value: boolean) {
+  public set disabled(value: boolean) {
     this._disabled = value;
   }
 
-  get owlDTTriggerDisabledClass(): boolean {
+  protected get owlDTTriggerDisabledClass(): boolean {
     return this.disabled;
   }
 
@@ -42,13 +42,13 @@ export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentIn
 
   constructor(protected changeDetector: ChangeDetectorRef) {}
 
-  public ngOnChanges(changes: SimpleChanges) {
+  public ngOnChanges(changes: SimpleChanges): void {
     if (changes.datepicker) {
       this.watchStateChanges();
     }
   }
 
-  public ngAfterContentInit() {
+  public ngAfterContentInit(): void {
     this.watchStateChanges();
   }
 
@@ -66,10 +66,8 @@ export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentIn
   private watchStateChanges(): void {
     this.stateChanges.unsubscribe();
 
-    const inputDisabled =
-      this.dtPicker && this.dtPicker.dtInput ? this.dtPicker.dtInput.disabledChange : observableOf();
-
-    const pickerDisabled = this.dtPicker ? this.dtPicker.disabledChange : observableOf();
+    const inputDisabled = this.dtPicker?.dtInput?.disabledChange ?? of();
+    const pickerDisabled = this.dtPicker?.disabledChange ?? of();
 
     this.stateChanges = merge([pickerDisabled, inputDisabled]).subscribe(() => {
       this.changeDetector.markForCheck();
