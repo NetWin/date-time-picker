@@ -19,14 +19,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Inject,
   Input,
   OnDestroy,
   OnInit,
   Optional,
-  Output,
-  ViewChild
+  ViewChild,
+  output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
@@ -252,18 +251,15 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   /**
    * Callback to invoke when a new date is selected
    */
-  @Output()
-  readonly selectedChange = new EventEmitter<T | null>();
+  public readonly selectedChange = output<T | null>();
 
   /**
    * Callback to invoke when any date is selected.
    */
-  @Output()
-  readonly userSelection = new EventEmitter<void>();
+  public readonly userSelection = output<void>();
 
   /** Emits when any date is activated. */
-  @Output()
-  readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
+  public readonly pickerMomentChange = output<T>();
 
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })

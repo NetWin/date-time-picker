@@ -26,8 +26,8 @@ import {
   NgZone,
   OnDestroy,
   Optional,
-  Output,
-  ViewContainerRef
+  ViewContainerRef,
+  output
 } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -200,40 +200,34 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * Callback when the picker is closed
    */
-  @Output()
-  public readonly afterPickerClosed = new EventEmitter<any>();
+  public readonly afterPickerClosed = output<T | Array<T> | null>();
 
   /**
    * Callback before the picker is open
    */
-  @Output()
-  public readonly beforePickerOpen = new EventEmitter<any>();
+  public readonly beforePickerOpen = output<void>();
 
   /**
    * Callback when the picker is open
    */
-  @Output()
-  public readonly afterPickerOpen = new EventEmitter<any>();
+  public readonly afterPickerOpen = output<void>();
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
    */
-  @Output()
-  public readonly yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = output<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
    */
-  @Output()
-  public readonly monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = output<T>();
 
   /**
    * Emits selected date
    */
-  @Output()
-  public readonly dateSelected = new EventEmitter<T>();
+  public readonly dateSelected = output<T>();
 
   /**
    * Emit when the selected value has been confirmed
@@ -254,9 +248,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   private confirmSelectedStreamSub = Subscription.EMPTY;
   private pickerOpenedStreamSub = Subscription.EMPTY;
   private pickerBeforeOpenedStreamSub = Subscription.EMPTY;
-
-  /** The element that was focused before the date time picker was opened. */
-  private focusedElementBeforeOpen: HTMLElement | null = null;
 
   private _dtInput: OwlDateTimeInputDirective<T>;
   get dtInput() {
@@ -364,10 +355,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       throw Error('Attempted to open an DateTimePicker with no associated input.');
     }
 
-    if (this.document) {
-      this.focusedElementBeforeOpen = this.document.activeElement;
-    }
-
     // reset the picker selected value
     if (this.isInSingleMode) {
       this.selected = this._dtInput.value;
@@ -467,14 +454,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       return;
     }
 
-    if (this.popupRef?.hasAttached()) {
-      this.popupRef.detach();
-    }
-
-    if (this.pickerContainerPortal?.isAttached) {
-      this.pickerContainerPortal.detach();
-    }
-
     if (this.hidePickerStreamSub) {
       this.hidePickerStreamSub.unsubscribe();
       this.hidePickerStreamSub = null;
@@ -495,31 +474,23 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.pickerOpenedStreamSub = null;
     }
 
+    const selected = this.selected || this.selecteds;
+    this.afterPickerClosed.emit(selected);
+
+    if (this.popupRef?.hasAttached()) {
+      this.popupRef.detach();
+    }
+
+    if (this.pickerContainerPortal?.isAttached) {
+      this.pickerContainerPortal.detach();
+    }
+
     if (this.dialogRef) {
       this.dialogRef.close();
       this.dialogRef = null;
     }
 
-    const completeClose = (): void => {
-      if (this._opened) {
-        this._opened = false;
-        const selected = this.selected || this.selecteds;
-        this.afterPickerClosed.emit(selected);
-        this.focusedElementBeforeOpen = null;
-      }
-    };
-
-    if (this.focusedElementBeforeOpen && typeof this.focusedElementBeforeOpen.focus === 'function') {
-      // Because IE moves focus asynchronously, we can't count on it being restored before we've
-      // marked the datepicker as closed. If the event fires out of sequence and the element that
-      // we're refocusing opens the datepicker on focus, the user could be stuck with not being
-      // able to close the calendar at all. We work around it by making the logic, that marks
-      // the datepicker as closed, async as well.
-      this.focusedElementBeforeOpen.focus();
-      setTimeout(completeClose);
-    } else {
-      completeClose();
-    }
+    this._opened = false;
   }
 
   /**
@@ -551,10 +522,10 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     this.pickerContainer = this.dialogRef.componentInstance;
 
     this.dialogRef.beforeOpen().subscribe(() => {
-      this.beforePickerOpen.emit(null);
+      this.beforePickerOpen.emit();
     });
     this.dialogRef.afterOpen().subscribe(() => {
-      this.afterPickerOpen.emit(null);
+      this.afterPickerOpen.emit();
       this._opened = true;
     });
     this.dialogRef.afterClosed().subscribe(() => this.close());
@@ -590,12 +561,12 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
         });
 
       this.pickerBeforeOpenedStreamSub = this.pickerContainer.beforePickerOpenedStream.pipe(take(1)).subscribe(() => {
-        this.beforePickerOpen.emit(null);
+        this.beforePickerOpen.emit();
       });
 
       // emit open stream
       this.pickerOpenedStreamSub = this.pickerContainer.pickerOpenedStream.pipe(take(1)).subscribe(() => {
-        this.afterPickerOpen.emit(null);
+        this.afterPickerOpen.emit();
         this._opened = true;
       });
     }

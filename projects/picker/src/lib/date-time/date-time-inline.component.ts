@@ -8,14 +8,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   forwardRef,
   Inject,
   Input,
   OnInit,
   Optional,
-  Output,
-  ViewChild
+  output,
+  ViewChild,
+  type Provider
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
@@ -23,7 +23,7 @@ import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-f
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
 import { OwlDateTime, PickerMode, PickerType, SelectMode } from './date-time.class';
 
-export const OWL_DATETIME_VALUE_ACCESSOR: any = {
+export const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => OwlDateTimeInlineComponent),
   multi: true
@@ -212,21 +212,18 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
    */
-  @Output()
-  public readonly yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = output<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
    */
-  @Output()
-  public readonly monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = output<T>();
 
   /**
    * Emits selected date
    */
-  @Output()
-  public readonly dateSelected = new EventEmitter<T>();
+  public readonly dateSelected = output<T>();
 
   private _selected: T | null;
   public get selected(): T | null {

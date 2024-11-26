@@ -7,11 +7,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   NgZone,
   Optional,
-  Output
+  output
 } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
@@ -96,8 +95,7 @@ export class OwlTimerComponent<T> {
   @Input()
   public stepSecond = 1;
 
-  @Output()
-  public readonly selectedChange = new EventEmitter<T>();
+  public readonly selectedChange = output<T>();
 
   protected get hourValue(): number {
     return this.dateTimeAdapter.getHours(this.pickerMoment);

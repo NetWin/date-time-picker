@@ -9,13 +9,12 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Inject,
   Input,
   NgZone,
   OnDestroy,
   Optional,
-  Output
+  output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -252,38 +251,32 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   /**
    * Emits when the currently picker moment changes.
    */
-  @Output()
-  public readonly pickerMomentChange = new EventEmitter<T>();
+  public readonly pickerMomentChange = output<T>();
 
   /**
    * Emits when the selected date changes.
    */
-  @Output()
-  public readonly dateClicked = new EventEmitter<T>();
+  public readonly dateClicked = output<T>();
 
   /**
    * Emits when the currently selected date changes.
    */
-  @Output()
-  public readonly selectedChange = new EventEmitter<T>();
+  public readonly selectedChange = output<T>();
 
   /**
    * Emits when any date is selected.
    */
-  @Output()
-  public readonly userSelection = new EventEmitter<void>();
+  public readonly userSelection = output<void>();
 
   /**
    * Emits the selected year. This doesn't imply a change on the selected date
    */
-  @Output()
-  public readonly yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = output<T>();
 
   /**
    * Emits the selected month. This doesn't imply a change on the selected date
    */
-  @Output()
-  public readonly monthSelected = new EventEmitter<T>();
+  public readonly monthSelected = output<T>();
 
   private _currentView: DateViewType;
 

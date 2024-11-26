@@ -1,9 +1,12 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OwlDateTimeModule, OwlNativeDateTimeModule, type PickerType, type SelectMode } from 'dist/picker';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, type PickerType, type SelectMode } from 'picker';
 
 type SingleDate = Date | null;
 type DateRange = [from: Date | null, to: Date | null];
+
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 @Component({
   standalone: true,
@@ -11,7 +14,7 @@ type DateRange = [from: Date | null, to: Date | null];
   templateUrl: './date-time-inline-demo.component.html',
   styleUrl: './date-time-inline-demo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
+  imports: [DatePipe, FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
 })
 export class DateTimeInlineDemoComponent {
   protected readonly value = signal<SingleDate | DateRange>(null);
@@ -37,7 +40,7 @@ export class DateTimeInlineDemoComponent {
       if (this.selectMode() === 'single') {
         this.value.set(new Date());
       } else {
-        this.value.set([new Date(), new Date()]);
+        this.value.set([new Date(Date.now() - 3 * ONE_DAY_IN_MS), new Date()]);
       }
     });
   }
