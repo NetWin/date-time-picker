@@ -1,10 +1,7 @@
-<div
-  [@fadeInPicker]="picker.pickerMode === 'inline' ? '' : 'enter'"
-  [cdkTrapFocus]="picker.pickerMode !== 'inline'"
-  class="owl-dt-container-inner">
+<div class="owl-dt-container-inner">
   @if (pickerType === 'both' || pickerType === 'calendar') {
     <owl-date-time-calendar
-      [dateFilter]="picker.dateTimeFilter"
+      [dateFilter]="picker.dateFilter"
       [firstDayOfWeek]="picker.firstDayOfWeek"
       [hideOtherMonths]="picker.hideOtherMonths"
       [maxDate]="picker.maxDateTime"
@@ -13,7 +10,7 @@
       [selectMode]="picker.selectMode"
       [selected]="picker.selected"
       [selecteds]="picker.selecteds"
-      [showTodayButton]="showTodayButton"
+      [showTodayButton]="picker.showTodayButton"
       [startView]="picker.startView"
       [yearOnly]="picker.yearOnly"
       [(pickerMoment)]="pickerMoment"
@@ -21,7 +18,8 @@
       (monthSelected)="picker.selectMonth($event)"
       (selectedChange)="dateSelected($event)"
       (yearSelected)="picker.selectYear($event)"
-      class="owl-dt-container-row"></owl-date-time-calendar>
+      class="owl-dt-container-row">
+    </owl-date-time-calendar>
   }
 
   @if (pickerType === 'both' || pickerType === 'timer') {
@@ -74,33 +72,6 @@
           <span class="owl-dt-container-info-value">{{ toFormattedValue }}</span>
         </span>
       </div>
-    </div>
-  }
-
-  @if (showControlButtons) {
-    <div class="owl-dt-container-buttons owl-dt-container-row">
-      <button
-        (click)="onCancelClicked($event)"
-        class="owl-dt-control owl-dt-control-button owl-dt-container-control-button"
-        tabindex="0"
-        type="button">
-        <span
-          class="owl-dt-control-content owl-dt-control-button-content"
-          tabindex="-1">
-          {{ cancelLabel }}
-        </span>
-      </button>
-      <button
-        (click)="onSetClicked($event)"
-        class="owl-dt-control owl-dt-control-button owl-dt-container-control-button"
-        tabindex="0"
-        type="button">
-        <span
-          class="owl-dt-control-content owl-dt-control-button-content"
-          tabindex="-1">
-          {{ setLabel }}
-        </span>
-      </button>
     </div>
   }
 </div>

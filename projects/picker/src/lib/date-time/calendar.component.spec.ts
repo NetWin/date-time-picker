@@ -1,12 +1,8 @@
-/**
- * calendar.component.spec
- */
-
-import { ENTER, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, NgZone } from '@angular/core';
 import { ComponentFixture, inject, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchFakeEvent, dispatchKeyboardEvent, dispatchMouseEvent, MockNgZone } from '../../test-helpers';
+import { KeyboardKeys } from '../utils/keys';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
@@ -66,7 +62,7 @@ describe('OwlCalendarComponent', () => {
     });
 
     it('should be in month view with specified month active', () => {
-      expect(calendarInstance.currentView).toBe(DateView.MONTH);
+      expect(calendarInstance['currentView']).toBe(DateView.MONTH);
       expect(calendarInstance.pickerMoment).toEqual(new Date(2018, JAN, 31));
     });
 
@@ -75,7 +71,7 @@ describe('OwlCalendarComponent', () => {
       (monthCell as HTMLElement).click();
 
       fixture.detectChanges();
-      expect(calendarInstance.currentView).toBe(DateView.MONTH);
+      expect(calendarInstance['currentView']).toBe(DateView.MONTH);
       expect(testComponent.selected).toEqual(new Date(2018, JAN, 31));
     });
 
@@ -83,14 +79,14 @@ describe('OwlCalendarComponent', () => {
       periodButton.click();
       fixture.detectChanges();
 
-      expect(calendarInstance.currentView).toBe(DateView.MULTI_YEARS);
+      expect(calendarInstance['currentView']).toBe(DateView.MULTI_YEARS);
       expect(calendarInstance.pickerMoment).toEqual(new Date(2018, JAN, 31));
 
       (calendarElement.querySelector('.owl-dt-calendar-cell-active') as HTMLElement).click();
 
       fixture.detectChanges();
 
-      expect(calendarInstance.currentView).toBe(DateView.YEAR);
+      expect(calendarInstance['currentView']).toBe(DateView.YEAR);
 
       (calendarElement.querySelector('.owl-dt-calendar-cell-active') as HTMLElement).click();
 
@@ -102,7 +98,7 @@ describe('OwlCalendarComponent', () => {
       periodButton.click();
       fixture.detectChanges();
 
-      expect(calendarInstance.currentView).toBe(DateView.MULTI_YEARS);
+      expect(calendarInstance['currentView']).toBe(DateView.MULTI_YEARS);
       expect(calendarInstance.pickerMoment).toEqual(new Date(2018, JAN, 31));
       (calendarElement.querySelector('.owl-dt-calendar-cell-active') as HTMLElement).click();
 
@@ -168,7 +164,7 @@ describe('OwlCalendarComponent', () => {
 
           expect(activeCell.focus).not.toHaveBeenCalled();
 
-          calendarInstance.currentView = DateView.MULTI_YEARS;
+          calendarInstance['currentView'] = DateView.MULTI_YEARS;
           fixture.detectChanges();
           zone.simulateZoneExit();
 
@@ -180,24 +176,24 @@ describe('OwlCalendarComponent', () => {
             dispatchMouseEvent(periodButton, 'click');
             fixture.detectChanges();
 
-            expect(calendarInstance.currentView).toBe(DateView.MULTI_YEARS);
+            expect(calendarInstance['currentView']).toBe(DateView.MULTI_YEARS);
 
             (calendarMainEl.querySelector('.owl-dt-calendar-cell-active') as HTMLElement).click();
             fixture.detectChanges();
 
-            expect(calendarInstance.currentView).toBe(DateView.YEAR);
+            expect(calendarInstance['currentView']).toBe(DateView.YEAR);
           });
 
           it('should return to month view on enter', () => {
             const tableBodyEl = calendarMainEl.querySelector('.owl-dt-calendar-body') as HTMLElement;
 
-            dispatchKeyboardEvent(tableBodyEl, 'keydown', RIGHT_ARROW);
+            dispatchKeyboardEvent(tableBodyEl, 'keydown', KeyboardKeys.RIGHT_ARROW);
             fixture.detectChanges();
 
-            dispatchKeyboardEvent(tableBodyEl, 'keydown', ENTER);
+            dispatchKeyboardEvent(tableBodyEl, 'keydown', KeyboardKeys.ENTER);
             fixture.detectChanges();
 
-            expect(calendarInstance.currentView).toBe(DateView.MONTH);
+            expect(calendarInstance['currentView']).toBe(DateView.MONTH);
             expect(calendarInstance.pickerMoment).toEqual(new Date(2018, FEB, 28));
             expect(testComponent.selected).toBeUndefined();
           });
@@ -208,19 +204,19 @@ describe('OwlCalendarComponent', () => {
             dispatchMouseEvent(periodButton, 'click');
             fixture.detectChanges();
 
-            expect(calendarInstance.currentView).toBe(DateView.MULTI_YEARS);
+            expect(calendarInstance['currentView']).toBe(DateView.MULTI_YEARS);
           });
 
           it('should return to year view on enter', () => {
             const tableBodyEl = calendarMainEl.querySelector('.owl-dt-calendar-body') as HTMLElement;
 
-            dispatchKeyboardEvent(tableBodyEl, 'keydown', RIGHT_ARROW);
+            dispatchKeyboardEvent(tableBodyEl, 'keydown', KeyboardKeys.RIGHT_ARROW);
             fixture.detectChanges();
 
-            dispatchKeyboardEvent(tableBodyEl, 'keydown', ENTER);
+            dispatchKeyboardEvent(tableBodyEl, 'keydown', KeyboardKeys.ENTER);
             fixture.detectChanges();
 
-            expect(calendarInstance.currentView).toBe(DateView.YEAR);
+            expect(calendarInstance['currentView']).toBe(DateView.YEAR);
             expect(calendarInstance.pickerMoment).toEqual(new Date(2019, JAN, 31));
             expect(testComponent.selected).toBeUndefined();
           });
@@ -376,7 +372,8 @@ describe('OwlCalendarComponent', () => {
       [selectMode]="selectMode"
       [(selected)]="selected"
       (monthSelected)="selectedMonth = $event"
-      (yearSelected)="selectedYear = $event"></owl-date-time-calendar>
+      (yearSelected)="selectedYear = $event">
+    </owl-date-time-calendar>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })
@@ -395,7 +392,8 @@ class StandardCalendarComponent {
       [maxDate]="maxDate"
       [minDate]="minDate"
       [pickerMoment]="pickerMoment"
-      [selectMode]="selectMode"></owl-date-time-calendar>
+      [selectMode]="selectMode">
+    </owl-date-time-calendar>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })
@@ -414,7 +412,8 @@ class CalendarWithMinMaxComponent {
       [dateFilter]="dateFilter"
       [pickerMoment]="pickerMoment"
       [selectMode]="selectMode"
-      [(selected)]="selected"></owl-date-time-calendar>
+      [(selected)]="selected">
+    </owl-date-time-calendar>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })

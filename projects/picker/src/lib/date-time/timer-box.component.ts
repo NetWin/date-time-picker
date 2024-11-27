@@ -1,8 +1,3 @@
-/**
- * timer-box.component
- */
-
-import { coerceNumberProperty } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  numberAttribute,
   output
 } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
@@ -89,7 +85,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.inputStreamSub = this.inputStream.pipe(debounceTime(750)).subscribe((val: string) => {
       if (val) {
-        const inputValue = coerceNumberProperty(val, 0);
+        const inputValue = numberAttribute(val, 0);
         this.updateValueViaInput(inputValue);
       }
     });
@@ -120,7 +116,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   public focusOut(value: string): void {
     this.hasFocus = false;
     if (value) {
-      const inputValue = coerceNumberProperty(value, 0);
+      const inputValue = numberAttribute(value, 0);
       this.updateValueViaInput(inputValue);
     }
   }
@@ -149,11 +145,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (event.preventDefault) {
-      event.preventDefault();
-    } else {
-      event.returnValue = false;
-    }
+    event.preventDefault();
   }
 
   private bindValueInputMouseWheel(): void {
