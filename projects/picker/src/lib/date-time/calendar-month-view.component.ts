@@ -1,33 +1,19 @@
-/**
- * calendar-month-view.component
- */
-
-import {
-  DOWN_ARROW,
-  END,
-  ENTER,
-  HOME,
-  LEFT_ARROW,
-  PAGE_DOWN,
-  PAGE_UP,
-  RIGHT_ARROW,
-  UP_ARROW
-} from '@angular/cdk/keycodes';
 import { getLocaleFirstDayOfWeek } from '@angular/common';
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Inject,
+  DestroyRef,
   Input,
-  OnDestroy,
   OnInit,
-  Optional,
   ViewChild,
+  inject,
   output
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import type { Maybe, Nullable } from '../types';
+import { KeyboardKeys } from '../utils/keys';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
@@ -42,13 +28,16 @@ const WEEKS_PER_VIEW = 6;
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
   styleUrls: ['./calendar-month-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
+  host: { 'class': 'owl-dt-calendar-view' },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
+export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit {
+  readonly #cdRef = inject(ChangeDetectorRef);
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+  readonly #dateTimeFormats = inject<OwlDateTimeFormats>(OWL_DATE_TIME_FORMATS, { optional: true });
+  readonly #destroyRef = inject(DestroyRef);
+
   /**
    * Whether to hide dates in other months at the start or end of the current month.
    */
@@ -57,17 +46,17 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   private isDefaultFirstDayOfWeek = true;
 
-  /**
-   * Define the first day of a week
-   * Sunday: 0 - Saturday: 6
-   */
   private _firstDayOfWeek: number;
-
+  /**
+   * Set the first day of week.
+   * Must be a number between `0` and `6` where:
+   * - `0` = Sunday
+   * - `6` = Saturday
+   */
   @Input()
   public get firstDayOfWeek(): number {
     return this._firstDayOfWeek;
   }
-
   public set firstDayOfWeek(val: number) {
     if (val >= 0 && val <= 6 && val !== this._firstDayOfWeek) {
       this._firstDayOfWeek = val;
@@ -76,7 +65,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
       if (this.initiated) {
         this.generateWeekDays();
         this.generateCalendar();
-        this.cdRef.markForCheck();
+        this.#cdRef.markForCheck();
       }
     }
   }
@@ -89,28 +78,28 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   public get selectMode(): SelectMode {
     return this._selectMode;
   }
-
   public set selectMode(val: SelectMode) {
     this._selectMode = val;
     if (this.initiated) {
       this.generateCalendar();
-      this.cdRef.markForCheck();
+      this.#cdRef.markForCheck();
     }
   }
 
-  /** The currently selected date. */
-  private _selected: T | null;
+  /**
+   * The currently selected date.
+   */
+  private _selected: Nullable<T>;
   @Input()
-  public get selected(): T | null {
+  public get selected(): Nullable<T> {
     return this._selected;
   }
-
-  public set selected(value: T | null) {
+  public set selected(value: Nullable<T>) {
     const oldSelected = this._selected;
-    value = this.dateTimeAdapter.deserialize(value);
+    value = this.#dateTimeAdapter.deserialize(value);
     this._selected = this.getValidDate(value);
 
-    if (!this.dateTimeAdapter.isSameDay(oldSelected, this._selected)) {
+    if (!this.#dateTimeAdapter.isSameDay(oldSelected, this._selected)) {
       this.setSelectedDates();
     }
   }
@@ -120,11 +109,10 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   public get selecteds(): Array<T> {
     return this._selecteds;
   }
-
   public set selecteds(values: Array<T>) {
-    this._selecteds = values.map((v) => {
-      v = this.dateTimeAdapter.deserialize(v);
-      return this.getValidDate(v);
+    this._selecteds = values.map((value) => {
+      value = this.#dateTimeAdapter.deserialize(value);
+      return this.getValidDate(value);
     });
     this.setSelectedDates();
   }
@@ -134,15 +122,14 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   public get pickerMoment(): T {
     return this._pickerMoment;
   }
-
   public set pickerMoment(value: T) {
     const oldMoment = this._pickerMoment;
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment = this.getValidDate(value) || this.dateTimeAdapter.now();
+    value = this.#dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(value) || this.#dateTimeAdapter.now();
 
-    this.firstDateOfMonth = this.dateTimeAdapter.createDate(
-      this.dateTimeAdapter.getYear(this._pickerMoment),
-      this.dateTimeAdapter.getMonth(this._pickerMoment),
+    this.firstDateOfMonth = this.#dateTimeAdapter.createDate(
+      this.#dateTimeAdapter.getYear(this._pickerMoment),
+      this.#dateTimeAdapter.getMonth(this._pickerMoment),
       1
     );
 
@@ -159,85 +146,82 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   public get dateFilter(): (date: T) => boolean {
     return this._dateFilter;
   }
-
   public set dateFilter(filter: (date: T) => boolean) {
     this._dateFilter = filter;
     if (this.initiated) {
       this.generateCalendar();
-      this.cdRef.markForCheck();
+      this.#cdRef.markForCheck();
     }
   }
 
-  /** The minimum selectable date. */
-  private _minDate: T | null;
+  /**
+   *  The minimum selectable date.
+   */
+  private _minDate: Nullable<T>;
   @Input()
-  public get minDate(): T | null {
+  public get minDate(): Nullable<T> {
     return this._minDate;
   }
-
-  public set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set minDate(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     this._minDate = this.getValidDate(value);
     if (this.initiated) {
       this.generateCalendar();
-      this.cdRef.markForCheck();
+      this.#cdRef.markForCheck();
     }
   }
 
-  /** The maximum selectable date. */
-  private _maxDate: T | null;
+  /**
+   *  The maximum selectable date.
+   */
+  private _maxDate: Nullable<T>;
   @Input()
-  get maxDate(): T | null {
+  public get maxDate(): Nullable<T> {
     return this._maxDate;
   }
-
-  set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set maxDate(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     this._maxDate = this.getValidDate(value);
 
     if (this.initiated) {
       this.generateCalendar();
-      this.cdRef.markForCheck();
+      this.#cdRef.markForCheck();
     }
   }
 
   private _weekdays: Array<{ long: string; short: string; narrow: string }>;
-  get weekdays() {
+  protected get weekdays(): Array<{ long: string; short: string; narrow: string }> {
     return this._weekdays;
   }
 
   private _days: Array<Array<CalendarCell>>;
-  get days() {
+  protected get days(): Array<Array<CalendarCell>> {
     return this._days;
   }
 
-  get activeCell(): number {
+  protected get activeCell(): Maybe<number> {
     if (this.pickerMoment) {
-      return this.dateTimeAdapter.getDate(this.pickerMoment) + this.firstRowOffset - 1;
+      return this.#dateTimeAdapter.getDate(this.pickerMoment) + this.firstRowOffset - 1;
     }
     return undefined;
   }
 
-  get isInSingleMode(): boolean {
+  protected get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  protected get isInRangeMode(): boolean {
     return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
   private firstDateOfMonth: T;
 
-  private localeSub: Subscription = Subscription.EMPTY;
-
   private initiated = false;
-
-  private dateNames: Array<string>;
 
   /**
    * The date of the month that today falls on.
    */
-  public todayDate: number | null;
+  public todayDate: Nullable<number>;
 
   /**
    * An array to hold all selectedDates' value
@@ -245,57 +229,47 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    */
   public selectedDates: Array<number> = [];
 
-  // the index of cell that contains the first date of the month
+  /**
+   * the index of cell that contains the first date of the month
+   */
   public firstRowOffset: number;
 
   /**
    * Callback to invoke when a new date is selected
    */
-  public readonly selectedChange = output<T | null>();
+  public readonly selectedChange = output<Nullable<T>>();
 
   /**
    * Callback to invoke when any date is selected.
    */
   public readonly userSelection = output<void>();
 
-  /** Emits when any date is activated. */
+  /**
+   *  Emits when any date is activated.
+   */
   public readonly pickerMomentChange = output<T>();
 
-  /** The body of calendar table */
+  /**
+   *  The body of calendar table
+   */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
-  calendarBodyElm: OwlCalendarBodyComponent;
+  protected calendarBodyElm: OwlCalendarBodyComponent;
 
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    private dateTimeFormats: OwlDateTimeFormats
-  ) {}
-
-  public ngOnInit() {
-    this.updateFirstDayOfWeek(this.dateTimeAdapter.getLocale());
+  public ngOnInit(): void {
+    this.updateFirstDayOfWeek(this.#dateTimeAdapter.getLocale());
     this.generateWeekDays();
 
-    this.localeSub = this.dateTimeAdapter.localeChanges.subscribe((locale) => {
+    this.#dateTimeAdapter.localeChanges$.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((locale) => {
       this.updateFirstDayOfWeek(locale);
       this.generateWeekDays();
       this.generateCalendar();
-      this.cdRef.markForCheck();
+      this.#cdRef.markForCheck();
     });
   }
 
   public ngAfterContentInit(): void {
     this.generateCalendar();
     this.initiated = true;
-  }
-
-  public ngOnDestroy(): void {
-    this.localeSub.unsubscribe();
   }
 
   /**
@@ -317,7 +291,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    */
   private selectDate(date: number): void {
     const daysDiff = date - 1;
-    const selected = this.dateTimeAdapter.addCalendarDays(this.firstDateOfMonth, daysDiff);
+    const selected = this.#dateTimeAdapter.addCalendarDays(this.firstDateOfMonth, daysDiff);
 
     this.selectedChange.emit(selected);
     this.userSelection.emit();
@@ -328,71 +302,71 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    */
   public handleCalendarKeydown(event: KeyboardEvent): void {
     let moment;
-    switch (event.keyCode) {
+    switch (event.key) {
       // minus 1 day
-      case LEFT_ARROW:
-        moment = this.dateTimeAdapter.addCalendarDays(this.pickerMoment, -1);
+      case KeyboardKeys.LEFT_ARROW:
+        moment = this.#dateTimeAdapter.addCalendarDays(this.pickerMoment, -1);
         this.pickerMomentChange.emit(moment);
         break;
 
       // add 1 day
-      case RIGHT_ARROW:
-        moment = this.dateTimeAdapter.addCalendarDays(this.pickerMoment, 1);
+      case KeyboardKeys.RIGHT_ARROW:
+        moment = this.#dateTimeAdapter.addCalendarDays(this.pickerMoment, 1);
         this.pickerMomentChange.emit(moment);
         break;
 
       // minus 1 week
-      case UP_ARROW:
-        moment = this.dateTimeAdapter.addCalendarDays(this.pickerMoment, -7);
+      case KeyboardKeys.UP_ARROW:
+        moment = this.#dateTimeAdapter.addCalendarDays(this.pickerMoment, -7);
         this.pickerMomentChange.emit(moment);
         break;
 
       // add 1 week
-      case DOWN_ARROW:
-        moment = this.dateTimeAdapter.addCalendarDays(this.pickerMoment, 7);
+      case KeyboardKeys.DOWN_ARROW:
+        moment = this.#dateTimeAdapter.addCalendarDays(this.pickerMoment, 7);
         this.pickerMomentChange.emit(moment);
         break;
 
       // move to first day of current month
-      case HOME:
-        moment = this.dateTimeAdapter.addCalendarDays(
+      case KeyboardKeys.HOME:
+        moment = this.#dateTimeAdapter.addCalendarDays(
           this.pickerMoment,
-          1 - this.dateTimeAdapter.getDate(this.pickerMoment)
+          1 - this.#dateTimeAdapter.getDate(this.pickerMoment)
         );
         this.pickerMomentChange.emit(moment);
         break;
 
       // move to last day of current month
-      case END:
-        moment = this.dateTimeAdapter.addCalendarDays(
+      case KeyboardKeys.END:
+        moment = this.#dateTimeAdapter.addCalendarDays(
           this.pickerMoment,
-          this.dateTimeAdapter.getNumDaysInMonth(this.pickerMoment) - this.dateTimeAdapter.getDate(this.pickerMoment)
+          this.#dateTimeAdapter.getNumDaysInMonth(this.pickerMoment) - this.#dateTimeAdapter.getDate(this.pickerMoment)
         );
         this.pickerMomentChange.emit(moment);
         break;
 
       // minus 1 month (or 1 year)
-      case PAGE_UP:
+      case KeyboardKeys.PAGE_UP:
         moment =
           event.altKey ?
-            this.dateTimeAdapter.addCalendarYears(this.pickerMoment, -1)
-          : this.dateTimeAdapter.addCalendarMonths(this.pickerMoment, -1);
+            this.#dateTimeAdapter.addCalendarYears(this.pickerMoment, -1)
+          : this.#dateTimeAdapter.addCalendarMonths(this.pickerMoment, -1);
         this.pickerMomentChange.emit(moment);
         break;
 
       // add 1 month (or 1 year)
-      case PAGE_DOWN:
+      case KeyboardKeys.PAGE_DOWN:
         moment =
           event.altKey ?
-            this.dateTimeAdapter.addCalendarYears(this.pickerMoment, 1)
-          : this.dateTimeAdapter.addCalendarMonths(this.pickerMoment, 1);
+            this.#dateTimeAdapter.addCalendarYears(this.pickerMoment, 1)
+          : this.#dateTimeAdapter.addCalendarMonths(this.pickerMoment, 1);
         this.pickerMomentChange.emit(moment);
         break;
 
       // select the pickerMoment
-      case ENTER:
+      case KeyboardKeys.ENTER:
         if (!this.dateFilter || this.dateFilter(this.pickerMoment)) {
-          this.selectDate(this.dateTimeAdapter.getDate(this.pickerMoment));
+          this.selectDate(this.#dateTimeAdapter.getDate(this.pickerMoment));
         }
         break;
       default:
@@ -407,9 +381,9 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    * Generate the calendar weekdays array
    */
   private generateWeekDays(): void {
-    const longWeekdays = this.dateTimeAdapter.getDayOfWeekNames('long');
-    const shortWeekdays = this.dateTimeAdapter.getDayOfWeekNames('short');
-    const narrowWeekdays = this.dateTimeAdapter.getDayOfWeekNames('narrow');
+    const longWeekdays = this.#dateTimeAdapter.getDayOfWeekNames('long');
+    const shortWeekdays = this.#dateTimeAdapter.getDayOfWeekNames('short');
+    const narrowWeekdays = this.#dateTimeAdapter.getDayOfWeekNames('narrow');
     const firstDayOfWeek = this.firstDayOfWeek;
 
     const weekdays = longWeekdays.map((long, i) => {
@@ -417,8 +391,6 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     });
 
     this._weekdays = weekdays.slice(firstDayOfWeek).concat(weekdays.slice(0, firstDayOfWeek));
-
-    this.dateNames = this.dateTimeAdapter.getDateNames();
 
     return;
   }
@@ -434,7 +406,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     this.todayDate = null;
 
     // the first weekday of the month
-    const startWeekdayOfMonth = this.dateTimeAdapter.getDay(this.firstDateOfMonth);
+    const startWeekdayOfMonth = this.#dateTimeAdapter.getDay(this.firstDateOfMonth);
     const firstDayOfWeek = this.firstDayOfWeek;
 
     // the amount of days from the first date of the month
@@ -448,11 +420,11 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     for (let i = 0; i < WEEKS_PER_VIEW; i++) {
       const week = [];
       for (let j = 0; j < DAYS_PER_WEEK; j++) {
-        const date = this.dateTimeAdapter.addCalendarDays(this.firstDateOfMonth, daysDiff);
+        const date = this.#dateTimeAdapter.addCalendarDays(this.firstDateOfMonth, daysDiff);
         const dateCell = this.createDateCell(date, daysDiff);
 
         // check if the date is today
-        if (this.dateTimeAdapter.isSameDay(this.dateTimeAdapter.now(), date)) {
+        if (this.#dateTimeAdapter.isSameDay(this.#dateTimeAdapter.now(), date)) {
           this.todayDate = daysDiff + 1;
         }
 
@@ -480,11 +452,11 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    */
   private createDateCell(date: T, daysDiff: number): CalendarCell {
     // total days of the month
-    const daysInMonth = this.dateTimeAdapter.getNumDaysInMonth(this.pickerMoment);
-    const dateNum = this.dateTimeAdapter.getDate(date);
+    const daysInMonth = this.#dateTimeAdapter.getNumDaysInMonth(this.pickerMoment);
+    const dateNum = this.#dateTimeAdapter.getDate(date);
     // const dateName = this.dateNames[dateNum - 1];
     const dateName = dateNum.toString();
-    const ariaLabel = this.dateTimeAdapter.format(date, this.dateTimeFormats.dateA11yLabel);
+    const ariaLabel = this.#dateTimeAdapter.format(date, this.#dateTimeFormats.dateA11yLabel);
 
     // check if the date if selectable
     const enabled = this.isDateEnabled(date);
@@ -492,7 +464,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     // check if date is not in current month
     const dayValue = daysDiff + 1;
     const out = dayValue < 1 || dayValue > daysInMonth;
-    const cellClass = `owl-dt-day-${this.dateTimeAdapter.getDay(date)}`;
+    const cellClass = `owl-dt-day-${this.#dateTimeAdapter.getDay(date)}`;
 
     return new CalendarCell(dayValue, dateName, ariaLabel, enabled, out, cellClass);
   }
@@ -504,16 +476,16 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     return (
       !!date &&
       (!this.dateFilter || this.dateFilter(date)) &&
-      (!this.minDate || this.dateTimeAdapter.compare(date, this.minDate) >= 0) &&
-      (!this.maxDate || this.dateTimeAdapter.compare(date, this.maxDate) <= 0)
+      (!this.minDate || this.#dateTimeAdapter.compare(date, this.minDate) >= 0) &&
+      (!this.maxDate || this.#dateTimeAdapter.compare(date, this.maxDate) <= 0)
     );
   }
 
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: any): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
+  private getValidDate(obj: unknown): Nullable<T> {
+    return this.#dateTimeAdapter.isDateInstance(obj) && this.#dateTimeAdapter.isValid(obj) ? obj : null;
   }
 
   /**
@@ -523,10 +495,10 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     return !!(
       dateLeft &&
       dateRight &&
-      this.dateTimeAdapter.isValid(dateLeft) &&
-      this.dateTimeAdapter.isValid(dateRight) &&
-      this.dateTimeAdapter.getYear(dateLeft) === this.dateTimeAdapter.getYear(dateRight) &&
-      this.dateTimeAdapter.getMonth(dateLeft) === this.dateTimeAdapter.getMonth(dateRight)
+      this.#dateTimeAdapter.isValid(dateLeft) &&
+      this.#dateTimeAdapter.isValid(dateRight) &&
+      this.#dateTimeAdapter.getYear(dateLeft) === this.#dateTimeAdapter.getYear(dateRight) &&
+      this.#dateTimeAdapter.getMonth(dateLeft) === this.#dateTimeAdapter.getMonth(dateRight)
     );
   }
 
@@ -543,15 +515,15 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     }
 
     if (this.isInSingleMode && this.selected) {
-      const dayDiff = this.dateTimeAdapter.differenceInCalendarDays(this.selected, this.firstDateOfMonth);
+      const dayDiff = this.#dateTimeAdapter.differenceInCalendarDays(this.selected, this.firstDateOfMonth);
       this.selectedDates[0] = dayDiff + 1;
       return;
     }
 
     if (this.isInRangeMode && this.selecteds) {
       this.selectedDates = this.selecteds.map((selected) => {
-        if (this.dateTimeAdapter.isValid(selected)) {
-          const dayDiff = this.dateTimeAdapter.differenceInCalendarDays(selected, this.firstDateOfMonth);
+        if (this.#dateTimeAdapter.isValid(selected)) {
+          const dayDiff = this.#dateTimeAdapter.differenceInCalendarDays(selected, this.firstDateOfMonth);
           return dayDiff + 1;
         } else {
           return null;

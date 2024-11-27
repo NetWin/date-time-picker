@@ -110,6 +110,9 @@ module.exports = tsEslint.config(
       // https://eslint.org/docs/latest/rules/no-self-assign
       // warn about self-assignment for now (this.foo = this.foo)
       'no-self-assign': 'warn',
+      // https://typescript-eslint.io/rules/no-deprecated/
+      // Disallow using code marked as @deprecated.
+      '@typescript-eslint/no-deprecated': 'warn',
 
       /** #################################################
        *

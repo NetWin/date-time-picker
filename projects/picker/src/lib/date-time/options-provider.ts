@@ -1,18 +1,19 @@
 import { InjectionToken, Provider } from '@angular/core';
 
-export function defaultOptionsFactory() {
-  return DefaultOptions.create();
-}
-export function multiYearOptionsFactory(options: Options) {
-  return options.multiYear;
-}
-
 export interface Options {
   multiYear: {
     yearsPerRow: number;
     yearRows: number;
   };
 }
+
+export function defaultOptionsFactory(): Options {
+  return DefaultOptions.create();
+}
+export function multiYearOptionsFactory(options: Options): Options['multiYear'] {
+  return options.multiYear;
+}
+
 export class DefaultOptions {
   public static create(): Options {
     // Always return new instance

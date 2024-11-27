@@ -1,27 +1,18 @@
-/**
- * unix-timestamp-date-time-adapter.class
- */
-
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
-import { range } from '../../../utils/array.utils';
-import {
-  DEFAULT_DATE_NAMES,
-  DEFAULT_DAY_OF_WEEK_NAMES,
-  DEFAULT_MONTH_NAMES,
-  SUPPORTS_INTL_API
-} from '../../../utils/constants';
-import { createDate, getNumDaysInMonth } from '../../../utils/date.utils';
+import { Injectable, inject } from '@angular/core';
+import type { Nullable } from '../../../types';
+import { createDate, getNumDaysInMonth, range } from '../../../utils';
 import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter.class';
 
+/**
+ * @deprecated Use the `NativeDateTimeAdapter` instead.
+ */
 @Injectable()
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
-  constructor(
-    @Optional()
-    @Inject(OWL_DATE_TIME_LOCALE)
-    private owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  constructor() {
+    const owlDateTimeLocale = inject(OWL_DATE_TIME_LOCALE, { optional: true });
+    const platform = inject(Platform);
+
     super();
     super.setLocale(owlDateTimeLocale);
 
@@ -30,7 +21,9 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     this._clampDate = platform.TRIDENT || platform.EDGE;
   }
 
-  /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
+  /**
+   *  Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors.
+   */
   private readonly _clampDate: boolean;
 
   /**
@@ -146,19 +139,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
 
     const jsDate = new Date(date);
 
-    if (SUPPORTS_INTL_API) {
-      if (this._clampDate && (jsDate.getFullYear() < 1 || jsDate.getFullYear() > 9999)) {
-        jsDate.setFullYear(Math.max(1, Math.min(9999, jsDate.getFullYear())));
-      }
-
-      displayFormat = { ...displayFormat, timeZone: 'utc' };
-      const dtf = new Intl.DateTimeFormat(this.locale, displayFormat);
-      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-        UnixTimestampDateTimeAdapter._format(dtf, jsDate)
-      );
+    if (this._clampDate && (jsDate.getFullYear() < 1 || jsDate.getFullYear() > 9999)) {
+      jsDate.setFullYear(Math.max(1, Math.min(9999, jsDate.getFullYear())));
     }
 
-    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(jsDate.toDateString());
+    displayFormat = { ...displayFormat, timeZone: 'utc' };
+    const dtf = new Intl.DateTimeFormat(this.locale, displayFormat);
+    const formatted = UnixTimestampDateTimeAdapter._format(dtf, jsDate);
+    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(formatted);
   }
 
   public getDate(date: number): number {
@@ -166,18 +154,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   public getDateNames(): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        day: 'numeric',
-        timeZone: 'utc'
-      });
-      return range(31, (i) =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-    return DEFAULT_DATE_NAMES;
+    const dtf = new Intl.DateTimeFormat(this.locale, {
+      day: 'numeric',
+      timeZone: 'utc'
+    });
+    return range(31, (i) => {
+      const formatted = UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1));
+      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(formatted);
+    });
   }
 
   public getDay(date: number): number {
@@ -185,19 +169,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        weekday: style,
-        timeZone: 'utc'
-      });
-      return range(7, (i) =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1))
-        )
-      );
-    }
-
-    return DEFAULT_DAY_OF_WEEK_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.locale, {
+      weekday: style,
+      timeZone: 'utc'
+    });
+    return range(7, (i) => {
+      const formatted = UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, 0, i + 1));
+      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(formatted);
+    });
   }
 
   public getHours(date: number): number {
@@ -213,18 +192,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        month: style,
-        timeZone: 'utc'
-      });
-      return range(12, (i) =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-          UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, i, 1))
-        )
-      );
-    }
-    return DEFAULT_MONTH_NAMES[style];
+    const dtf = new Intl.DateTimeFormat(this.locale, {
+      month: style,
+      timeZone: 'utc'
+    });
+    return range(12, (i) => {
+      const formatted = UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, i, 1));
+      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(formatted);
+    });
   }
 
   public getNumDaysInMonth(date: number): number {
@@ -244,16 +219,12 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   public getYearName(date: number): string {
-    if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        year: 'numeric',
-        timeZone: 'utc'
-      });
-      return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
-        UnixTimestampDateTimeAdapter._format(dtf, new Date(date))
-      );
-    }
-    return String(this.getYear(date));
+    const dtf = new Intl.DateTimeFormat(this.locale, {
+      year: 'numeric',
+      timeZone: 'utc'
+    });
+    const formatted = UnixTimestampDateTimeAdapter._format(dtf, new Date(date));
+    return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(formatted);
   }
 
   public invalid(): number {
@@ -292,7 +263,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date().getTime();
   }
 
-  public parse(value: any, parseFormat: any): number | null {
+  public parse(value: Nullable<string | number>): Nullable<number> {
     // There is no way using the native JS Date to set the parse format or locale
     if (typeof value === 'number') {
       return value;

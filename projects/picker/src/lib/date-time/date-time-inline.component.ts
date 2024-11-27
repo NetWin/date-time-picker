@@ -1,27 +1,21 @@
-/**
- * date-time-inline.component
- */
-
-import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   forwardRef,
-  Inject,
+  inject,
   Input,
   OnInit,
-  Optional,
   output,
   ViewChild,
   type Provider
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import type { Nullable } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { OwlDateTimeContainerComponent } from './date-time-picker-container.component';
-import { OwlDateTime, PickerMode, PickerType, SelectMode } from './date-time.class';
+import { OwlDateTime, PickerType, SelectMode } from './date-time.class';
 
 export const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
@@ -34,14 +28,15 @@ export const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   selector: 'owl-date-time-inline',
   templateUrl: './date-time-inline.component.html',
   styleUrls: ['./date-time-inline.component.scss'],
-  host: {
-    '[class.owl-dt-inline]': 'owlDTInlineClass'
-  },
+  host: { 'class': 'owl-dt-inline' },
   changeDetection: ChangeDetectionStrategy.OnPush,
-  preserveWhitespaces: false,
   providers: [OWL_DATETIME_VALUE_ACCESSOR]
 })
+// TODO: Drop the `OwlDateTime` inheritance
 export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
+  readonly #changeDetector = inject(ChangeDetectorRef);
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
   @ViewChild(OwlDateTimeContainerComponent, { static: true })
   protected container: OwlDateTimeContainerComponent<T>;
 
@@ -51,43 +46,21 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
    *      'calendar' -- show only calendar
    *      'timer' -- show only timer
    */
-  private _pickerType: PickerType = 'both';
   @Input()
-  public get pickerType(): PickerType {
-    return this._pickerType;
-  }
-  public set pickerType(val: PickerType) {
-    if (val !== this._pickerType) {
-      this._pickerType = val;
-    }
-  }
+  public pickerType: PickerType = 'both';
 
-  private _disabled = false;
+  @Input({ transform: booleanAttribute })
+  public override disabled: boolean = false;
+
   @Input()
-  public override get disabled(): boolean {
-    return !!this._disabled;
-  }
-  public override set disabled(value: boolean) {
-    this._disabled = coerceBooleanProperty(value);
-  }
+  public selectMode: SelectMode = 'single';
 
-  private _selectMode: SelectMode = 'single';
+  /**
+   *  The date to open the calendar to initially.
+   */
+  private _startAt: Nullable<T>;
   @Input()
-  public get selectMode(): SelectMode {
-    return this._selectMode;
-  }
-  public set selectMode(mode: SelectMode) {
-    if (mode !== 'single' && mode !== 'range' && mode !== 'rangeFrom' && mode !== 'rangeTo') {
-      throw Error('OwlDateTime Error: invalid selectMode value!');
-    }
-
-    this._selectMode = mode;
-  }
-
-  /** The date to open the calendar to initially. */
-  private _startAt: T | null;
-  @Input()
-  public get startAt(): T | null {
+  public get startAt(): Nullable<T> {
     if (this._startAt) {
       return this._startAt;
     }
@@ -102,14 +75,16 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-  public set startAt(date: T | null) {
-    this._startAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
+  public set startAt(date: Nullable<T>) {
+    this._startAt = this.getValidDate(this.#dateTimeAdapter.deserialize(date));
   }
 
-  /** The date to open for range calendar. */
-  private _endAt: T | null;
+  /**
+   *  The date to open for range calendar.
+   */
+  private _endAt: Nullable<T>;
   @Input()
-  public get endAt(): T | null {
+  public get endAt(): Nullable<T> {
     if (this._endAt) {
       return this._endAt;
     }
@@ -122,50 +97,48 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
       return null;
     }
   }
-  public set endAt(date: T | null) {
-    this._endAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
+  public set endAt(date: Nullable<T>) {
+    this._endAt = this.getValidDate(this.#dateTimeAdapter.deserialize(date));
   }
 
-  private _dateTimeFilter: (date: T | null) => boolean;
-  @Input('owlDateTimeFilter')
-  public get dateTimeFilter(): (date: T | null) => boolean {
-    return this._dateTimeFilter;
-  }
-  public set dateTimeFilter(filter: (date: T | null) => boolean) {
-    this._dateTimeFilter = filter;
-  }
+  @Input()
+  public dateFilter?: (date: Nullable<T>) => boolean;
 
-  /** The minimum valid date. */
-  private _min: T | null;
+  /**
+   *  The minimum valid date.
+   */
+  private _min: Nullable<T>;
 
   @Input('min')
-  public get minDateTime(): T | null {
+  public get minDateTime(): Nullable<T> {
     return this._min || null;
   }
-  public set minDateTime(value: T | null) {
-    this._min = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+  public set minDateTime(value: Nullable<T>) {
+    this._min = this.getValidDate(this.#dateTimeAdapter.deserialize(value));
+    this.#changeDetector.markForCheck();
   }
 
-  /** The maximum valid date. */
-  private _max: T | null;
+  /**
+   *  The maximum valid date.
+   */
+  private _max: Nullable<T>;
 
   @Input('max')
-  public get maxDateTime(): T | null {
+  public get maxDateTime(): Nullable<T> {
     return this._max || null;
   }
-  public set maxDateTime(value: T | null) {
-    this._max = this.getValidDate(this.dateTimeAdapter.deserialize(value));
-    this.changeDetector.markForCheck();
+  public set maxDateTime(value: Nullable<T>) {
+    this._max = this.getValidDate(this.#dateTimeAdapter.deserialize(value));
+    this.#changeDetector.markForCheck();
   }
 
-  private _value: T | null;
+  private _value: Nullable<T>;
   @Input()
-  public get value(): T | null {
+  public get value(): Nullable<T> {
     return this._value;
   }
-  public set value(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set value(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     value = this.getValidDate(value);
     this._value = value;
     this.selected = value;
@@ -179,9 +152,9 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   public set values(values: Array<T>) {
     if (values && values.length > 0) {
       values = values.map((v) => {
-        v = this.dateTimeAdapter.deserialize(v);
+        v = this.#dateTimeAdapter.deserialize(v);
         v = this.getValidDate(v);
-        return v ? this.dateTimeAdapter.clone(v) : null;
+        return v ? this.#dateTimeAdapter.clone(v) : null;
       });
       this._values = [...values];
       this.selecteds = [...values];
@@ -195,7 +168,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
    * Limit to the amount of days that can be selected at once.
    */
   @Input()
-  public rangeLimit: number | null = null;
+  public rangeLimit: Nullable<number> = null;
 
   /**
    * Flag to show today button to jump to today's date. Defaults to `false`.
@@ -206,7 +179,7 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   /**
    * Variable to hold the old max date time value for when we override it with rangeLimit
    */
-  private _initialMaxDateTime: T | null;
+  private _initialMaxDateTime: Nullable<T>;
 
   /**
    * Emits selected year in multi-year view
@@ -225,13 +198,13 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
    */
   public readonly dateSelected = output<T>();
 
-  private _selected: T | null;
-  public get selected(): T | null {
+  private _selected: Nullable<T>;
+  public get selected(): Nullable<T> {
     return this._selected;
   }
-  public set selected(value: T | null) {
+  public set selected(value: Nullable<T>) {
     this._selected = value;
-    this.changeDetector.markForCheck();
+    this.#changeDetector.markForCheck();
   }
 
   private _selecteds: Array<T> = [];
@@ -241,27 +214,15 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
   public set selecteds(values: Array<T>) {
     this._selecteds = values;
-    this.changeDetector.markForCheck();
-  }
-
-  public get opened(): boolean {
-    return true;
-  }
-
-  public get pickerMode(): PickerMode {
-    return 'inline';
+    this.#changeDetector.markForCheck();
   }
 
   public get isInSingleMode(): boolean {
-    return this._selectMode === 'single';
+    return this.selectMode === 'single';
   }
 
   public get isInRangeMode(): boolean {
-    return this._selectMode === 'range' || this._selectMode === 'rangeFrom' || this._selectMode === 'rangeTo';
-  }
-
-  public get owlDTInlineClass(): boolean {
-    return true;
+    return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
   private onModelChange: (v: T | Array<T>) => void = () => {
@@ -272,39 +233,30 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     /* noop */
   };
 
-  constructor(
-    protected changeDetector: ChangeDetectorRef,
-    @Optional() protected override dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional() @Inject(OWL_DATE_TIME_FORMATS) protected override dateTimeFormats: OwlDateTimeFormats
-  ) {
-    super(dateTimeAdapter, dateTimeFormats);
-  }
-
   public ngOnInit(): void {
     this.container.picker = this;
   }
 
-  public writeValue(value: any): void {
+  public writeValue(value: unknown): void {
     if (this.isInSingleMode) {
-      this.value = value;
-      this.container.pickerMoment = value;
+      this.container.pickerMoment = this.value = value as Nullable<T>;
     } else {
-      this.values = value;
+      this.values = value as [Nullable<T>, Nullable<T>];
       this.container.pickerMoment = this._values[this.container.activeSelectedIndex];
     }
   }
 
-  public registerOnChange(fn: any): void {
+  public registerOnChange(fn: (v: Nullable<T> | Array<Nullable<T>>) => void): void {
     this.onModelChange = fn;
   }
 
-  public registerOnTouched(fn: any): void {
+  public registerOnTouched(fn: () => void): void {
     this.onModelTouched = fn;
   }
 
-  public setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
+  // public setDisabledState(isDisabled: boolean): void {
+  //   this.disabled = isDisabled;
+  // }
 
   public select(date: Array<T> | T): void {
     if (this.disabled) {
@@ -319,8 +271,8 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
     // If range limit is set, we need to set the max date time to the range limit, so days after the max range are not selectable
     if (this.rangeLimit && !this.values[1] && this.values[0]) {
-      const rangeLimitDate = this.dateTimeAdapter.addCalendarDays(this.values[0], this.rangeLimit - 1);
-      if (!this.maxDateTime || this.dateTimeAdapter.compare(this.maxDateTime, rangeLimitDate) > 0) {
+      const rangeLimitDate = this.#dateTimeAdapter.addCalendarDays(this.values[0], this.rangeLimit - 1);
+      if (!this.maxDateTime || this.#dateTimeAdapter.compare(this.maxDateTime, rangeLimitDate) > 0) {
         this._initialMaxDateTime = this.maxDateTime;
         this.maxDateTime = rangeLimitDate;
       }

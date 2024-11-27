@@ -1,7 +1,3 @@
-/**
- * timer.component.spec
- */
-
 import { ChangeDetectionStrategy, Component, DebugElement, EventEmitter, NgZone } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -315,7 +311,8 @@ describe('OwlTimerComponent', () => {
       [stepHour]="stepHour"
       [stepMinute]="stepMinute"
       [stepSecond]="stepSecond"
-      (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
+      (selectedChange)="handleSelectedChange($event)">
+    </owl-date-time-timer>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })
