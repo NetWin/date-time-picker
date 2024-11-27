@@ -1,7 +1,8 @@
-<div
-  *ngIf="showDivider"
-  aria-hidden="true"
-  class="owl-dt-timer-divider"></div>
+@if (showDivider) {
+  <div
+    aria-hidden="true"
+    class="owl-dt-timer-divider"></div>
+}
 <button
   [attr.aria-label]="upBtnAriaLabel"
   [disabled]="upBtnDisabled"

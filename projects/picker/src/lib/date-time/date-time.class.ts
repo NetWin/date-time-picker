@@ -2,7 +2,7 @@
  * date-time.class
  */
 import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
-import { Directive, EventEmitter, Inject, Input, Optional } from '@angular/core';
+import { Directive, Inject, Input, Optional, type OutputRef } from '@angular/core';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 
@@ -171,11 +171,11 @@ export abstract class OwlDateTime<T> {
 
   abstract select(date: T | Array<T>): void;
 
-  abstract yearSelected: EventEmitter<T>;
+  abstract yearSelected: OutputRef<T>;
 
-  abstract monthSelected: EventEmitter<T>;
+  abstract monthSelected: OutputRef<T>;
 
-  abstract dateSelected: EventEmitter<T>;
+  abstract dateSelected: OutputRef<T>;
 
   abstract selectYear(normalizedYear: T): void;
 

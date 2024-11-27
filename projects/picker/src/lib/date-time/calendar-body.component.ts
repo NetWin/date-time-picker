@@ -2,7 +2,7 @@
  * calendar-body.component
  */
 
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, NgZone, output } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { SelectMode } from './date-time.class';
 
@@ -75,8 +75,7 @@ export class OwlCalendarBodyComponent {
   /**
    * Emit when a calendar cell is selected
    */
-  @Output()
-  public readonly select = new EventEmitter<CalendarCell>();
+  public readonly select = output<CalendarCell>();
 
   get owlDTCalendarBodyClass(): boolean {
     return true;

@@ -15,7 +15,7 @@ import {
   OnDestroy,
   OnInit,
   Optional,
-  Output,
+  output,
   Renderer2
 } from '@angular/core';
 import {
@@ -224,14 +224,20 @@ export class OwlDateTimeInputDirective<T>
   /**
    * Callback to invoke when `change` event is fired on this `<input>`
    */
-  @Output()
-  public readonly dateTimeChange = new EventEmitter<any>();
+  public readonly dateTimeChange = output<{
+    source: OwlDateTimeInputDirective<T>;
+    value: T | Array<T | null> | null;
+    input: HTMLInputElement;
+  }>();
 
   /**
    * Callback to invoke when an `input` event is fired on this `<input>`.
    */
-  @Output()
-  public readonly dateTimeInput = new EventEmitter<any>();
+  public readonly dateTimeInput = output<{
+    source: OwlDateTimeInputDirective<T>;
+    value: T | Array<T | null> | null;
+    input: HTMLInputElement;
+  }>();
 
   get elementRef(): ElementRef {
     return this.elmRef;

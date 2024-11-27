@@ -38,8 +38,8 @@ const JAN = 0,
   DEC = 11;
 
 describe('OwlMonthViewComponent', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardMonthViewComponent, MonthViewWithDateFilterComponent],
       providers: [OwlDateTimeIntl]

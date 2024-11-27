@@ -43,7 +43,7 @@ export class OwlDateTimeTriggerDirective<T> implements OnChanges, AfterContentIn
   constructor(protected changeDetector: ChangeDetectorRef) {}
 
   public ngOnChanges(changes: SimpleChanges): void {
-    if (changes.datepicker) {
+    if ('datepicker' in changes) {
       this.watchStateChanges();
     }
   }

@@ -18,12 +18,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Inject,
   Input,
   Optional,
-  Output,
-  ViewChild
+  ViewChild,
+  output
 } from '@angular/core';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
@@ -204,18 +203,18 @@ export class OwlMultiYearViewComponent<T> implements AfterContentInit {
   /**
    * Callback to invoke when a new month is selected
    */
-  @Output() readonly change = new EventEmitter<T>();
+  public readonly change = output<T>();
 
   /**
    * Emits the selected year. This doesn't imply a change on the selected date
    */
-  @Output() readonly yearSelected = new EventEmitter<T>();
+  public readonly yearSelected = output<T>();
 
   /** Emits when any date is activated. */
-  @Output() readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
+  public readonly pickerMomentChange = output<T>();
 
   /** Emits when use keyboard enter to select a calendar cell */
-  @Output() readonly keyboardEnter: EventEmitter<any> = new EventEmitter<any>();
+  public readonly keyboardEnter = output<void>();
 
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })

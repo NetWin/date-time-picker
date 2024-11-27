@@ -7,12 +7,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  ViewChild
+  ViewChild,
+  output
 } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -56,9 +55,9 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
 
   @Input() public inputLabel: string;
 
-  @Output() public readonly valueChange = new EventEmitter<number>();
+  public readonly valueChange = output<number>();
 
-  @Output() public readonly inputChange = new EventEmitter<number>();
+  public readonly inputChange = output<number>();
 
   private inputStream = new Subject<string>();
 
