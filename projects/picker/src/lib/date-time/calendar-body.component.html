@@ -16,7 +16,7 @@
         [style.paddingTop.%]="(50 * cellRatio) / numCols"
         [style.width.%]="100 / numCols"
         [tabindex]="isActiveCell(rowIndex, colIndex) ? 0 : -1"
-        (click)="selectCell(item)">
+        (click)="selectCell.emit(item)">
         <span
           [class.owl-dt-calendar-cell-out]="item.out"
           [class.owl-dt-calendar-cell-selected]="isSelected(item.value)"

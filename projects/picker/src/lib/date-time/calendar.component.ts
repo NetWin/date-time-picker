@@ -1,7 +1,3 @@
-/**
- * calendar.component
- */
-
 import {
   AfterContentInit,
   AfterViewChecked,
@@ -9,15 +5,15 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
+  inject,
   Input,
   NgZone,
   OnDestroy,
-  Optional,
   output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
+import type { Nullable } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
@@ -29,163 +25,145 @@ import { DateView, DateViewType, SelectMode } from './date-time.class';
   exportAs: 'owlDateTimeCalendar',
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
-  host: {
-    '[class.owl-dt-calendar]': 'owlDTCalendarClass'
-  },
+  host: { 'class': 'owl-dt-calendar' },
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked, OnDestroy {
-  DateView = DateView;
+  readonly #elmRef = inject(ElementRef);
+  readonly #pickerIntl = inject(OwlDateTimeIntl);
+  readonly #ngZone = inject(NgZone);
+  readonly #cdRef = inject(ChangeDetectorRef);
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+  readonly #dateTimeFormats = inject<OwlDateTimeFormats>(OWL_DATE_TIME_FORMATS, { optional: true });
+
+  protected readonly DateView = DateView;
 
   @Input()
-  get minDate(): T | null {
+  public get minDate(): Nullable<T> {
     return this._minDate;
   }
-
-  set minDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set minDate(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     value = this.getValidDate(value);
 
     this._minDate =
       value ?
-        this.dateTimeAdapter.createDate(
-          this.dateTimeAdapter.getYear(value),
-          this.dateTimeAdapter.getMonth(value),
-          this.dateTimeAdapter.getDate(value)
+        this.#dateTimeAdapter.createDate(
+          this.#dateTimeAdapter.getYear(value),
+          this.#dateTimeAdapter.getMonth(value),
+          this.#dateTimeAdapter.getDate(value)
         )
       : null;
   }
 
   @Input()
-  get maxDate(): T | null {
+  public get maxDate(): Nullable<T> {
     return this._maxDate;
   }
-
-  set maxDate(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set maxDate(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     value = this.getValidDate(value);
 
     this._maxDate =
       value ?
-        this.dateTimeAdapter.createDate(
-          this.dateTimeAdapter.getYear(value),
-          this.dateTimeAdapter.getMonth(value),
-          this.dateTimeAdapter.getDate(value)
+        this.#dateTimeAdapter.createDate(
+          this.#dateTimeAdapter.getYear(value),
+          this.#dateTimeAdapter.getMonth(value),
+          this.#dateTimeAdapter.getDate(value)
         )
       : null;
   }
 
   @Input()
-  get pickerMoment() {
+  public get pickerMoment(): Nullable<T> {
     return this._pickerMoment;
   }
-
-  set pickerMoment(value: T) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment = this.getValidDate(value) || this.dateTimeAdapter.now();
+  public set pickerMoment(value: T) {
+    value = this.#dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(value) || this.#dateTimeAdapter.now();
   }
 
   @Input()
-  get selected(): T | null {
+  public get selected(): Nullable<T> {
     return this._selected;
   }
-
-  set selected(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set selected(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     this._selected = this.getValidDate(value);
   }
 
   @Input()
-  get selecteds(): Array<T> {
+  public get selecteds(): Array<T> {
     return this._selecteds;
   }
-
-  set selecteds(values: Array<T>) {
-    this._selecteds = values.map((v) => {
-      v = this.dateTimeAdapter.deserialize(v);
-      return this.getValidDate(v);
+  public set selecteds(values: Array<T>) {
+    this._selecteds = values.map((value) => {
+      value = this.#dateTimeAdapter.deserialize(value);
+      return this.getValidDate(value);
     });
   }
 
-  get periodButtonText(): string {
+  protected get periodButtonText(): string {
     return this.isMonthView ?
-        this.dateTimeAdapter.format(this.pickerMoment, this.dateTimeFormats.monthYearLabel)
-      : this.dateTimeAdapter.getYearName(this.pickerMoment);
+        this.#dateTimeAdapter.format(this.pickerMoment, this.#dateTimeFormats.monthYearLabel)
+      : this.#dateTimeAdapter.getYearName(this.pickerMoment);
+  }
+  protected get periodButtonLabel(): string {
+    return this.isMonthView ? this.#pickerIntl.switchToMultiYearViewLabel : this.#pickerIntl.switchToMonthViewLabel;
   }
 
-  get periodButtonLabel(): string {
-    return this.isMonthView ? this.pickerIntl.switchToMultiYearViewLabel : this.pickerIntl.switchToMonthViewLabel;
+  protected get todayButtonLabel(): string {
+    return this.#pickerIntl.todayButtonLabel;
   }
 
-  get todayButtonLabel(): string {
-    return this.pickerIntl.todayButtonLabel;
-  }
-
-  get prevButtonLabel(): string {
+  protected get prevButtonLabel(): string {
     if (this._currentView === DateView.MONTH) {
-      return this.pickerIntl.prevMonthLabel;
+      return this.#pickerIntl.prevMonthLabel;
     } else if (this._currentView === DateView.YEAR) {
-      return this.pickerIntl.prevYearLabel;
+      return this.#pickerIntl.prevYearLabel;
     } else {
       return null;
     }
   }
 
-  get nextButtonLabel(): string {
+  protected get nextButtonLabel(): string {
     if (this._currentView === DateView.MONTH) {
-      return this.pickerIntl.nextMonthLabel;
+      return this.#pickerIntl.nextMonthLabel;
     } else if (this._currentView === DateView.YEAR) {
-      return this.pickerIntl.nextYearLabel;
+      return this.#pickerIntl.nextYearLabel;
     } else {
       return null;
     }
   }
 
-  get currentView(): DateViewType {
+  protected get currentView(): DateViewType {
     return this._currentView;
   }
-
-  set currentView(view: DateViewType) {
+  protected set currentView(view: DateViewType) {
     this._currentView = view;
     this.moveFocusOnNextTick = true;
   }
 
-  get isInSingleMode(): boolean {
+  protected get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  protected get isInRangeMode(): boolean {
     return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
   }
 
-  get showControlArrows(): boolean {
+  protected get showControlArrows(): boolean {
     return this._currentView !== DateView.MULTI_YEARS;
   }
 
-  get isMonthView() {
+  protected get isMonthView(): boolean {
     return this._currentView === DateView.MONTH;
   }
 
-  /**
-   * Bind class 'owl-dt-calendar' to host
-   */
-  get owlDTCalendarClass(): boolean {
-    return true;
-  }
-
-  constructor(
-    private elmRef: ElementRef,
-    private pickerIntl: OwlDateTimeIntl,
-    private ngZone: NgZone,
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    private dateTimeFormats: OwlDateTimeFormats
-  ) {
-    this.intlChangesSub = this.pickerIntl.changes.subscribe(() => {
-      this.cdRef.markForCheck();
+  constructor() {
+    this.intlChangesSub = this.#pickerIntl.changes.subscribe(() => {
+      this.#cdRef.markForCheck();
     });
   }
 
@@ -196,27 +174,16 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   public dateFilter: (date: T) => boolean;
 
   /**
-   * Set the first day of week
+   * Set the first day of week.
+   * Must be a number between `0` and `6` where:
+   * - `0` = Sunday
+   * - `6` = Saturday
    */
   @Input()
   public firstDayOfWeek: number;
 
-  /** The minimum selectable date. */
-  private _minDate: T | null;
-
-  /** The maximum selectable date. */
-  private _maxDate: T | null;
-
-  /** The current picker moment */
-  private _pickerMoment: T;
-
   @Input()
   public selectMode: SelectMode;
-
-  /** The currently selected moment. */
-  private _selected: T | null;
-
-  private _selecteds: Array<T> = [];
 
   /**
    * The view that the calendar should start in.
@@ -247,6 +214,28 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
    */
   @Input()
   public showTodayButton: boolean = false;
+
+  /**
+   *  The minimum selectable date.
+   */
+  private _minDate: Nullable<T>;
+
+  /**
+   *  The maximum selectable date.
+   */
+  private _maxDate: Nullable<T>;
+
+  /**
+   *  The current picker moment
+   */
+  private _pickerMoment: T;
+
+  /**
+   *  The currently selected moment.
+   */
+  private _selected: Nullable<T>;
+
+  private _selecteds: Array<T> = [];
 
   /**
    * Emits when the currently picker moment changes.
@@ -292,12 +281,12 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   /**
    * Date filter for the month and year view
    */
-  public dateFilterForViews: (date: T | null) => boolean = (date: T) => {
+  public dateFilterForViews: (date: Nullable<T>) => boolean = (date: T) => {
     return (
       !!date &&
       (!this.dateFilter || this.dateFilter(date)) &&
-      (!this.minDate || this.dateTimeAdapter.compare(date, this.minDate) >= 0) &&
-      (!this.maxDate || this.dateTimeAdapter.compare(date, this.maxDate) <= 0)
+      (!this.minDate || this.#dateTimeAdapter.compare(date, this.minDate) >= 0) &&
+      (!this.maxDate || this.#dateTimeAdapter.compare(date, this.maxDate) <= 0)
     );
   };
 
@@ -341,8 +330,8 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   public previousClicked(): void {
     this.pickerMoment =
       this.isMonthView ?
-        this.dateTimeAdapter.addCalendarMonths(this.pickerMoment, -1)
-      : this.dateTimeAdapter.addCalendarYears(this.pickerMoment, -1);
+        this.#dateTimeAdapter.addCalendarMonths(this.pickerMoment, -1)
+      : this.#dateTimeAdapter.addCalendarYears(this.pickerMoment, -1);
 
     this.pickerMomentChange.emit(this.pickerMoment);
   }
@@ -353,17 +342,17 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   public nextClicked(): void {
     this.pickerMoment =
       this.isMonthView ?
-        this.dateTimeAdapter.addCalendarMonths(this.pickerMoment, 1)
-      : this.dateTimeAdapter.addCalendarYears(this.pickerMoment, 1);
+        this.#dateTimeAdapter.addCalendarMonths(this.pickerMoment, 1)
+      : this.#dateTimeAdapter.addCalendarYears(this.pickerMoment, 1);
 
     this.pickerMomentChange.emit(this.pickerMoment);
   }
 
   public jumpToToday(): void {
-    const now = this.dateTimeAdapter.now();
-    let today = this.dateTimeAdapter.setHours(now, 0);
-    today = this.dateTimeAdapter.setMinutes(today, 0);
-    today = this.dateTimeAdapter.setSeconds(today, 0);
+    const now = this.#dateTimeAdapter.now();
+    let today = this.#dateTimeAdapter.setHours(now, 0);
+    today = this.#dateTimeAdapter.setMinutes(today, 0);
+    today = this.#dateTimeAdapter.setSeconds(today, 0);
 
     this.handlePickerMomentChange(today);
     this.dateSelected(today);
@@ -402,7 +391,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
    * Change the pickerMoment value
    */
   public handlePickerMomentChange(date: T): void {
-    this.pickerMoment = this.dateTimeAdapter.clampDate(date, this.minDate, this.maxDate);
+    this.pickerMoment = this.#dateTimeAdapter.clampDate(date, this.minDate, this.maxDate);
     this.pickerMomentChange.emit(this.pickerMoment);
     return;
   }
@@ -429,12 +418,12 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
    * Focus to the host element
    */
   public focusActiveCell(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.ngZone.onStable
+    this.#ngZone.runOutsideAngular(() => {
+      this.#ngZone.onStable
         .asObservable()
         .pipe(take(1))
         .subscribe(() => {
-          this.elmRef.nativeElement.querySelector('.owl-dt-calendar-cell-active').focus();
+          this.#elmRef.nativeElement.querySelector('.owl-dt-calendar-cell-active').focus();
         });
     });
   }
@@ -455,11 +444,11 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
       return !!(
         date1 &&
         date2 &&
-        this.dateTimeAdapter.getYear(date1) === this.dateTimeAdapter.getYear(date2) &&
-        this.dateTimeAdapter.getMonth(date1) === this.dateTimeAdapter.getMonth(date2)
+        this.#dateTimeAdapter.getYear(date1) === this.#dateTimeAdapter.getYear(date2) &&
+        this.#dateTimeAdapter.getMonth(date1) === this.#dateTimeAdapter.getMonth(date2)
       );
     } else if (this._currentView === DateView.YEAR) {
-      return !!(date1 && date2 && this.dateTimeAdapter.getYear(date1) === this.dateTimeAdapter.getYear(date2));
+      return !!(date1 && date2 && this.#dateTimeAdapter.getYear(date1) === this.#dateTimeAdapter.getYear(date2));
     } else {
       return false;
     }
@@ -468,7 +457,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: unknown): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
+  private getValidDate(obj: unknown): Nullable<T> {
+    return this.#dateTimeAdapter.isDateInstance(obj) && this.#dateTimeAdapter.isValid(obj) ? obj : null;
   }
 }
