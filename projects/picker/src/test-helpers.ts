@@ -22,7 +22,6 @@ export function dispatchKeyboardEvent(node: Node, type: string, keyCode: number,
 
 export function createKeyboardEvent(type: string, keyCode: number, target?: Element, key?: string) {
   const event = document.createEvent('KeyboardEvent') as any;
-  const originalPreventDefault = event.preventDefault;
 
   // Firefox does not support `initKeyboardEvent`, but supports `initKeyEvent`.
   if (event.initKeyEvent) {
@@ -38,12 +37,6 @@ export function createKeyboardEvent(type: string, keyCode: number, target?: Elem
     key: { get: () => key },
     target: { get: () => target }
   });
-
-  // IE won't set `defaultPrevented` on synthetic events so we need to do it manually.
-  event.preventDefault = function () {
-    Object.defineProperty(event, 'defaultPrevented', { get: () => true });
-    return originalPreventDefault.apply(this, arguments);
-  };
 
   return event;
 }
@@ -88,17 +81,21 @@ export function createMouseEvent(type: string, x = 0, y = 0, button = 0) {
 }
 
 export class MockNgZone extends NgZone {
-  override onStable: EventEmitter<any> = new EventEmitter(false);
+  public override onStable = new EventEmitter<boolean>(false);
+
   constructor() {
     super({ enableLongStackTrace: false });
   }
-  override run(fn: Function): any {
+
+  public override run<T>(fn: () => T): T {
     return fn();
   }
-  override runOutsideAngular(fn: Function): any {
+
+  public override runOutsideAngular<T>(fn: () => T): T {
     return fn();
   }
-  simulateZoneExit(): void {
+
+  public simulateZoneExit(): void {
     this.onStable.emit(null);
   }
 }

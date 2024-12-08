@@ -33,7 +33,7 @@ export const OWL_DIALOG_DATA = new InjectionToken<any>('OwlDialogData');
 
 /**
  * Injection token that determines the scroll handling while the dialog is open.
- * */
+ */
 export const OWL_DIALOG_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrategy>('owl-dialog-scroll-strategy');
 
 export function OWL_DIALOG_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => ScrollStrategy {
@@ -50,7 +50,7 @@ export const OWL_DIALOG_SCROLL_STRATEGY_PROVIDER = {
 
 /**
  * Injection token that can be used to specify default dialog options.
- * */
+ */
 export const OWL_DIALOG_DEFAULT_OPTIONS = new InjectionToken<OwlDialogConfig>('owl-dialog-default-options');
 
 // eslint-disable-next-line @angular-eslint/use-injectable-provided-in

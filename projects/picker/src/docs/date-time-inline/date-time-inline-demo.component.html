@@ -1,0 +1,32 @@
+<owl-date-time-inline
+  [pickerType]="pickerType()"
+  [selectMode]="selectMode()"
+  [showTodayButton]="showTodayButton()"
+  [(ngModel)]="value">
+</owl-date-time-inline>
+
+<div class="value-view">
+  @if (selectMode() === 'range') {
+    @let range = rangeValue();
+    @if (range?.[0]) {
+      <span>{{ range[0] | date: 'medium' }}</span>
+    } @else {
+      <span class="empty">Nothing selected</span>
+    }
+
+    @if (range?.[1]) {
+      <span>{{ range[1] | date: 'medium' }}</span>
+    } @else {
+      <span class="empty">Nothing selected</span>
+    }
+  }
+
+  @if (selectMode() === 'single') {
+    @let single = singleValue();
+    @if (single) {
+      <span>{{ single | date: 'medium' }}</span>
+    } @else {
+      <span class="empty">Nothing selected</span>
+    }
+  }
+</div>

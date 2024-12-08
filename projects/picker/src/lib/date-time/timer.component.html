@@ -24,33 +24,35 @@
   [value]="minuteValue"
   (inputChange)="setMinuteValue($event)"
   (valueChange)="setMinuteValue($event)"></owl-date-time-timer-box>
-<owl-date-time-timer-box
-  *ngIf="showSecondsTimer"
-  [downBtnAriaLabel]="downSecondButtonLabel"
-  [downBtnDisabled]="!downSecondEnabled()"
-  [inputLabel]="'Second'"
-  [max]="59"
-  [min]="0"
-  [showDivider]="true"
-  [step]="stepSecond"
-  [upBtnAriaLabel]="upSecondButtonLabel"
-  [upBtnDisabled]="!upSecondEnabled()"
-  [value]="secondValue"
-  (inputChange)="setSecondValue($event)"
-  (valueChange)="setSecondValue($event)"></owl-date-time-timer-box>
 
-<div
-  *ngIf="hour12Timer"
-  class="owl-dt-timer-hour12">
-  <button
-    (click)="setMeridiem($event)"
-    class="owl-dt-control-button owl-dt-timer-hour12-box"
-    tabindex="0"
-    type="button">
-    <span
-      class="owl-dt-control-button-content"
-      tabindex="-1">
-      {{ hour12ButtonLabel }}
-    </span>
-  </button>
-</div>
+@if (showSecondsTimer) {
+  <owl-date-time-timer-box
+    [downBtnAriaLabel]="downSecondButtonLabel"
+    [downBtnDisabled]="!downSecondEnabled()"
+    [inputLabel]="'Second'"
+    [max]="59"
+    [min]="0"
+    [showDivider]="true"
+    [step]="stepSecond"
+    [upBtnAriaLabel]="upSecondButtonLabel"
+    [upBtnDisabled]="!upSecondEnabled()"
+    [value]="secondValue"
+    (inputChange)="setSecondValue($event)"
+    (valueChange)="setSecondValue($event)"></owl-date-time-timer-box>
+}
+
+@if (hour12Timer) {
+  <div class="owl-dt-timer-hour12">
+    <button
+      (click)="setMeridiem($event)"
+      class="owl-dt-control-button owl-dt-timer-hour12-box"
+      tabindex="0"
+      type="button">
+      <span
+        class="owl-dt-control-button-content"
+        tabindex="-1">
+        {{ hour12ButtonLabel }}
+      </span>
+    </button>
+  </div>
+}

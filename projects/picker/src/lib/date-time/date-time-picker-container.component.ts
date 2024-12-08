@@ -25,6 +25,7 @@ import { OwlDateTime, PickerType } from './date-time.class';
 import { OwlTimerComponent } from './timer.component';
 
 @Component({
+  standalone: false,
   exportAs: 'owlDateTimeContainer',
   selector: 'owl-date-time-container',
   templateUrl: './date-time-picker-container.component.html',
@@ -59,7 +60,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to hide picker
-   * */
+   */
   private hidePicker$ = new Subject<any>();
 
   @Input()
@@ -71,7 +72,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Stream emits when try to confirm the selected value
-   * */
+   */
   private confirmSelected$ = new Subject<any>();
 
   get confirmSelectedStream(): Observable<any> {
@@ -121,21 +122,21 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * The range 'from' label
-   * */
+   */
   get fromLabel(): string {
     return this.pickerIntl.rangeFromLabel;
   }
 
   /**
    * The range 'to' label
-   * */
+   */
   get toLabel(): string {
     return this.pickerIntl.rangeToLabel;
   }
 
   /**
    * The range 'from' formatted value
-   * */
+   */
   get fromFormattedValue(): string {
     const value = this.picker.selecteds[0];
     return value ? this.dateTimeAdapter.format(value, this.picker.formatString) : '';
@@ -143,7 +144,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * The range 'to' formatted value
-   * */
+   */
   get toFormattedValue(): string {
     const value = this.picker.selecteds[1];
     return value ? this.dateTimeAdapter.format(value, this.picker.formatString) : '';
@@ -153,7 +154,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
    * Cases in which the control buttons show in the picker
    * 1) picker mode is 'dialog'
    * 2) picker type is NOT 'calendar' and the picker mode is NOT 'inline'
-   * */
+   */
   get showControlButtons(): boolean {
     return (
       this.picker.pickerMode === 'dialog' ||
@@ -511,7 +512,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   /**
    * Focus to the picker
-   * */
+   */
   private focusPicker(): void {
     if (this.picker.pickerMode === 'inline') {
       return;
