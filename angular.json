@@ -24,17 +24,13 @@
         "build": {
           "builder": "@ng-doc/builder:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "@ng-doc/core"
-            ],
+            "allowedCommonJsDependencies": ["@ng-doc/core"],
             "aot": true,
             "outputPath": {
               "base": "dist/docs"
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
@@ -55,10 +51,7 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-              "node_modules/@ng-doc/app/styles/global.css",
-              "src/styles.scss"
-            ],
+            "styles": ["node_modules/@ng-doc/app/styles/global.css", "src/styles.scss"],
             "scripts": [],
             "browser": "src/main.ts"
           },
@@ -129,30 +122,29 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ],
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"],
             "eslintConfig": "./eslint.config.js"
           }
         }
       }
     },
     "picker": {
+      "projectType": "library",
       "root": "projects/picker",
       "sourceRoot": "projects/picker/src",
-      "projectType": "library",
       "prefix": "owl",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "tsConfig": "projects/picker/tsconfig.lib.json",
             "project": "projects/picker/ng-package.json"
           },
           "configurations": {
             "production": {
               "tsConfig": "projects/picker/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/picker/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -160,18 +152,14 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/picker/src/test.ts",
             "tsConfig": "projects/picker/tsconfig.spec.json",
-            "karmaConfig": "projects/picker/karma.conf.js"
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/picker/src/lib/**/*.ts",
-              "projects/picker/src/lib/**/*.html"
-            ],
+            "lintFilePatterns": ["projects/picker/src/lib/**/*.ts", "projects/picker/src/lib/**/*.html"],
             "eslintConfig": "./eslint.config.js"
           }
         }

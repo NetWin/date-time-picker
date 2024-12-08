@@ -110,50 +110,54 @@
   </button>
 </div>
 <div
-  [ngSwitch]="currentView"
   cdkMonitorSubtreeFocus
   class="owl-dt-calendar-main"
   tabindex="-1">
-  <owl-date-time-month-view
-    *ngSwitchCase="DateView.MONTH"
-    [dateFilter]="dateFilter"
-    [firstDayOfWeek]="firstDayOfWeek"
-    [hideOtherMonths]="hideOtherMonths"
-    [maxDate]="maxDate"
-    [minDate]="minDate"
-    [pickerMoment]="pickerMoment"
-    [selectMode]="selectMode"
-    [selected]="selected"
-    [selecteds]="selecteds"
-    (pickerMomentChange)="handlePickerMomentChange($event)"
-    (selectedChange)="dateSelected($event)"
-    (userSelection)="userSelected()"></owl-date-time-month-view>
+  @switch (currentView) {
+    @case (DateView.MONTH) {
+      <owl-date-time-month-view
+        [dateFilter]="dateFilter"
+        [firstDayOfWeek]="firstDayOfWeek"
+        [hideOtherMonths]="hideOtherMonths"
+        [maxDate]="maxDate"
+        [minDate]="minDate"
+        [pickerMoment]="pickerMoment"
+        [selectMode]="selectMode"
+        [selected]="selected"
+        [selecteds]="selecteds"
+        (pickerMomentChange)="handlePickerMomentChange($event)"
+        (selectedChange)="dateSelected($event)"
+        (userSelection)="userSelected()"></owl-date-time-month-view>
+    }
 
-  <owl-date-time-year-view
-    *ngSwitchCase="DateView.YEAR"
-    [dateFilter]="dateFilter"
-    [maxDate]="maxDate"
-    [minDate]="minDate"
-    [pickerMoment]="pickerMoment"
-    [selectMode]="selectMode"
-    [selected]="selected"
-    [selecteds]="selecteds"
-    (change)="goToDateInView($event, DateView.MONTH)"
-    (keyboardEnter)="focusActiveCell()"
-    (monthSelected)="selectMonthInYearView($event)"
-    (pickerMomentChange)="handlePickerMomentChange($event)"></owl-date-time-year-view>
+    @case (DateView.YEAR) {
+      <owl-date-time-year-view
+        [dateFilter]="dateFilter"
+        [maxDate]="maxDate"
+        [minDate]="minDate"
+        [pickerMoment]="pickerMoment"
+        [selectMode]="selectMode"
+        [selected]="selected"
+        [selecteds]="selecteds"
+        (change)="goToDateInView($event, DateView.MONTH)"
+        (keyboardEnter)="focusActiveCell()"
+        (monthSelected)="selectMonthInYearView($event)"
+        (pickerMomentChange)="handlePickerMomentChange($event)"></owl-date-time-year-view>
+    }
 
-  <owl-date-time-multi-year-view
-    *ngSwitchCase="DateView.MULTI_YEARS"
-    [dateFilter]="dateFilter"
-    [maxDate]="maxDate"
-    [minDate]="minDate"
-    [pickerMoment]="pickerMoment"
-    [selectMode]="selectMode"
-    [selected]="selected"
-    [selecteds]="selecteds"
-    (change)="goToDateInView($event, DateView.YEAR)"
-    (keyboardEnter)="focusActiveCell()"
-    (pickerMomentChange)="handlePickerMomentChange($event)"
-    (yearSelected)="selectYearInMultiYearView($event)"></owl-date-time-multi-year-view>
+    @case (DateView.MULTI_YEARS) {
+      <owl-date-time-multi-year-view
+        [dateFilter]="dateFilter"
+        [maxDate]="maxDate"
+        [minDate]="minDate"
+        [pickerMoment]="pickerMoment"
+        [selectMode]="selectMode"
+        [selected]="selected"
+        [selecteds]="selecteds"
+        (change)="goToDateInView($event, DateView.YEAR)"
+        (keyboardEnter)="focusActiveCell()"
+        (pickerMomentChange)="handlePickerMomentChange($event)"
+        (yearSelected)="selectYearInMultiYearView($event)"></owl-date-time-multi-year-view>
+    }
+  }
 </div>
