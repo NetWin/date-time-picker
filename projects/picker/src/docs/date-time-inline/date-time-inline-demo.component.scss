@@ -1,0 +1,21 @@
+:host {
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+owl-date-time-inline {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.value-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .empty {
+    opacity: 0.7;
+  }
+}

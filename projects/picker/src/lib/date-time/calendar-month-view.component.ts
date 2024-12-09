@@ -19,14 +19,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  EventEmitter,
   Inject,
   Input,
   OnDestroy,
   OnInit,
   Optional,
-  Output,
-  ViewChild
+  ViewChild,
+  output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
@@ -38,6 +37,7 @@ const DAYS_PER_WEEK = 7;
 const WEEKS_PER_VIEW = 6;
 
 @Component({
+  standalone: false,
   selector: 'owl-date-time-month-view',
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
@@ -51,7 +51,7 @@ const WEEKS_PER_VIEW = 6;
 export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
   /**
    * Whether to hide dates in other months at the start or end of the current month.
-   * */
+   */
   @Input()
   public hideOtherMonths = false;
 
@@ -60,7 +60,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   /**
    * Define the first day of a week
    * Sunday: 0 - Saturday: 6
-   * */
+   */
   private _firstDayOfWeek: number;
 
   @Input()
@@ -83,7 +83,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * The select mode of the picker;
-   * */
+   */
   private _selectMode: SelectMode = 'single';
   @Input()
   public get selectMode(): SelectMode {
@@ -153,7 +153,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * A function used to filter which dates are selectable
-   * */
+   */
   private _dateFilter: (date: T) => boolean;
   @Input()
   public get dateFilter(): (date: T) => boolean {
@@ -236,13 +236,13 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * The date of the month that today falls on.
-   * */
+   */
   public todayDate: number | null;
 
   /**
    * An array to hold all selectedDates' value
    * the value is the day number in current month
-   * */
+   */
   public selectedDates: Array<number> = [];
 
   // the index of cell that contains the first date of the month
@@ -250,19 +250,16 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * Callback to invoke when a new date is selected
-   * */
-  @Output()
-  readonly selectedChange = new EventEmitter<T | null>();
+   */
+  public readonly selectedChange = output<T | null>();
 
   /**
    * Callback to invoke when any date is selected.
-   * */
-  @Output()
-  readonly userSelection = new EventEmitter<void>();
+   */
+  public readonly userSelection = output<void>();
 
   /** Emits when any date is activated. */
-  @Output()
-  readonly pickerMomentChange: EventEmitter<T> = new EventEmitter<T>();
+  public readonly pickerMomentChange = output<T>();
 
   /** The body of calendar table */
   @ViewChild(OwlCalendarBodyComponent, { static: true })
@@ -408,7 +405,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * Generate the calendar weekdays array
-   * */
+   */
   private generateWeekDays(): void {
     const longWeekdays = this.dateTimeAdapter.getDayOfWeekNames('long');
     const shortWeekdays = this.dateTimeAdapter.getDayOfWeekNames('short');
@@ -428,7 +425,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
 
   /**
    * Generate the calendar days array
-   * */
+   */
   private generateCalendar(): void {
     if (!this.pickerMoment) {
       return;
@@ -537,7 +534,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
    * Set the selectedDates value.
    * In single mode, it has only one value which represent the selected date
    * In range mode, it would has two values, one for the fromValue and the other for the toValue
-   * */
+   */
   private setSelectedDates(): void {
     this.selectedDates = [];
 
@@ -563,7 +560,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     }
   }
 
-  private focusActiveCell() {
+  private focusActiveCell(): void {
     this.calendarBodyElm.focusActiveCell();
   }
 }

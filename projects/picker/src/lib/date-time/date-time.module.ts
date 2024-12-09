@@ -4,7 +4,6 @@
 
 import { A11yModule } from '@angular/cdk/a11y';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OwlDialogModule } from '../dialog/dialog.module';
 import { OwlCalendarBodyComponent } from './calendar-body.component';
@@ -24,7 +23,7 @@ import { OwlTimerBoxComponent } from './timer-box.component';
 import { OwlTimerComponent } from './timer.component';
 
 @NgModule({
-  imports: [CommonModule, OverlayModule, OwlDialogModule, A11yModule],
+  imports: [OverlayModule, OwlDialogModule, A11yModule],
   exports: [
     OwlCalendarComponent,
     OwlTimerComponent,

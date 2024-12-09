@@ -25,7 +25,7 @@ export class OwlDialogRef<T> {
 
   /**
    * The instance of component opened into modal
-   * */
+   */
   public componentInstance: T;
 
   /** Whether the user is allowed to close the dialog. */
@@ -154,7 +154,7 @@ export class OwlDialogRef<T> {
    * @param width New width of the dialog.
    * @param height New height of the dialog.
    */
-  updateSize(width: string = 'auto', height: string = 'auto'): this {
+  public updateSize(width: string = 'auto', height: string = 'auto'): this {
     this.getPositionStrategy().width(width).height(height);
     this.overlayRef.updatePosition();
     return this;

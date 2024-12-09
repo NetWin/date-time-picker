@@ -2,7 +2,7 @@
  * timer.component.spec
  */
 
-import { Component, DebugElement, EventEmitter, NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, EventEmitter, NgZone } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchFakeEvent } from '../../test-helpers';
@@ -11,18 +11,8 @@ import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 import { OwlTimerComponent } from './timer.component';
 
-const JAN = 0,
-  FEB = 1,
-  MAR = 2,
-  APR = 3,
-  MAY = 4,
-  JUN = 5,
-  JUL = 6,
-  AUG = 7,
-  SEP = 8,
-  OCT = 9,
-  NOV = 10,
-  DEC = 11;
+const JAN = 0;
+const FEB = 1;
 
 class MockNgZone extends NgZone {
   public override onStable = new EventEmitter(false);
@@ -41,17 +31,15 @@ class MockNgZone extends NgZone {
 }
 
 describe('OwlTimerComponent', () => {
-  let zone: MockNgZone;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardTimerComponent],
       providers: [
         OwlDateTimeIntl,
         {
           provide: NgZone,
-          useFactory: () => (zone = new MockNgZone())
+          useFactory: () => new MockNgZone()
         }
       ]
     }).compileComponents();
@@ -316,6 +304,7 @@ describe('OwlTimerComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-timer
       [hour12Timer]="hour12Timer"
@@ -327,19 +316,20 @@ describe('OwlTimerComponent', () => {
       [stepMinute]="stepMinute"
       [stepSecond]="stepSecond"
       (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class StandardTimerComponent {
-  stepHour = 1;
-  stepMinute = 1;
-  stepSecond = 1;
-  hour12Timer = false;
-  showSecondsTimer = false;
-  pickerMoment = new Date(2018, JAN, 31, 12, 30, 30);
-  minDateTime = new Date(2018, JAN, 29, 12, 30, 30);
-  maxDateTime = new Date(2018, FEB, 1, 12, 30, 30);
+  public stepHour = 1;
+  public stepMinute = 1;
+  public stepSecond = 1;
+  public hour12Timer = false;
+  public showSecondsTimer = false;
+  public pickerMoment = new Date(2018, JAN, 31, 12, 30, 30);
+  public minDateTime = new Date(2018, JAN, 29, 12, 30, 30);
+  public maxDateTime = new Date(2018, FEB, 1, 12, 30, 30);
 
-  handleSelectedChange(val: Date) {
+  public handleSelectedChange(val: Date): void {
     this.pickerMoment = val;
   }
 }

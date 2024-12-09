@@ -15,7 +15,16 @@ var config = {
   branches: ['master', { name: 'release/*', channel: 'next', prerelease: 'rc' }],
   tagFormat: '${version}',
   plugins: [
-    '@semantic-release/commit-analyzer',
+    [
+      '@semantic-release/commit-analyzer',
+      {
+        preset: 'angular',
+        releaseRules: [
+          { type: 'build', scope: 'deps', release: 'patch' },
+          { type: 'refactor', release: 'patch' }
+        ]
+      }
+    ],
     '@semantic-release/release-notes-generator',
     '@semantic-release/changelog',
     ['@semantic-release/npm', { npmPublish: false }],
