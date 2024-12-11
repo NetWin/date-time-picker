@@ -3,7 +3,7 @@
  */
 
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
-import { Component, DebugElement } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
@@ -266,13 +266,14 @@ describe('OwlYearViewComponent', () => {
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
       (change)="handleChange($event)"></owl-date-time-year-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class StandardYearViewComponent {
-  selected = new Date(2018, JAN, 10);
-  pickerMoment = new Date(2018, JAN, 5);
+  public selected = new Date(2018, JAN, 10);
+  public pickerMoment = new Date(2018, JAN, 5);
 
-  handleChange(date: Date): void {
+  public handleChange(date: Date): void {
     this.pickerMoment = new Date(date);
   }
 }
@@ -283,11 +284,12 @@ class StandardYearViewComponent {
     <owl-date-time-year-view
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-year-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class YearViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getMonth() !== FEB;
   }
 }
