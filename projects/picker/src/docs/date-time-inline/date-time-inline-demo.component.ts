@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OwlDateTimeModule, OwlNativeDateTimeModule, type PickerType, type SelectMode } from 'picker';
 
@@ -17,13 +17,15 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
   imports: [DatePipe, FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
 })
 export class DateTimeInlineDemoComponent {
-  protected readonly value = signal<SingleDate | DateRange>(null);
-
   public readonly selectMode = input<SelectMode>('range');
 
   public readonly pickerType = input<PickerType>('both');
 
   public readonly showTodayButton = input<boolean>(true);
+
+  protected readonly value = linkedSignal<Date | DateRange>(() => {
+    return this.selectMode() === 'single' ? new Date() : [new Date(Date.now() - 3 * ONE_DAY_IN_MS), new Date()];
+  });
 
   protected rangeValue = computed<DateRange>(() => {
     const value = this.value();
@@ -34,14 +36,4 @@ export class DateTimeInlineDemoComponent {
     const value = this.value();
     return Array.isArray(value) ? undefined : value;
   });
-
-  constructor() {
-    effect(() => {
-      if (this.selectMode() === 'single') {
-        this.value.set(new Date());
-      } else {
-        this.value.set([new Date(Date.now() - 3 * ONE_DAY_IN_MS), new Date()]);
-      }
-    });
-  }
 }
