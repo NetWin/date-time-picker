@@ -26,8 +26,8 @@ import {
   NgZone,
   OnDestroy,
   Optional,
-  Output,
-  ViewContainerRef
+  ViewContainerRef,
+  output
 } from '@angular/core';
 import { Subscription, merge } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
@@ -44,7 +44,7 @@ export const OWL_DTPICKER_SCROLL_STRATEGY = new InjectionToken<() => ScrollStrat
 
 /** @docs-private */
 export function OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER_FACTORY(overlay: Overlay): () => BlockScrollStrategy {
-  const fn = () => overlay.scrollStrategies.block();
+  const fn = (): BlockScrollStrategy => overlay.scrollStrategies.block();
   return fn;
 }
 
@@ -56,6 +56,7 @@ export const OWL_DTPICKER_SCROLL_STRATEGY_PROVIDER = {
 };
 
 @Component({
+  standalone: false,
   selector: 'owl-date-time',
   exportAs: 'owlDateTime',
   templateUrl: './date-time-picker.component.html',
@@ -75,7 +76,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** The date to open the calendar to initially. */
   private _startAt: T | null;
   @Input()
-  get startAt(): T | null {
+  public get startAt(): T | null {
     // If an explicit startAt is set we start there, otherwise we start at whatever the currently
     // selected value is.
     if (this._startAt) {
@@ -95,14 +96,14 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     return null;
   }
 
-  set startAt(date: T | null) {
+  public set startAt(date: T | null) {
     this._startAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
   }
 
   /** The end date to set for range calendar. */
   private _endAt: T | null;
   @Input()
-  get endAt(): T | null {
+  public get endAt(): T | null {
     if (this._endAt) {
       return this._endAt;
     }
@@ -117,7 +118,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     return null;
   }
 
-  set endAt(date: T | null) {
+  public set endAt(date: T | null) {
     this._endAt = this.getValidDate(this.dateTimeAdapter.deserialize(date));
   }
 
@@ -129,11 +130,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
    */
   private _pickerType: PickerType = 'both';
   @Input()
-  get pickerType(): PickerType {
+  public get pickerType(): PickerType {
     return this._pickerType;
   }
 
-  set pickerType(val: PickerType) {
+  public set pickerType(val: PickerType) {
     if (val !== this._pickerType) {
       this._pickerType = val;
       if (this._dtInput) {
@@ -145,13 +146,13 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * Whether the picker open as a dialog
    */
-  _pickerMode: PickerMode = 'popup';
+  private _pickerMode: PickerMode = 'popup';
   @Input()
-  get pickerMode() {
+  public get pickerMode(): PickerMode {
     return this._pickerMode;
   }
 
-  set pickerMode(mode: PickerMode) {
+  public set pickerMode(mode: PickerMode) {
     if (mode === 'popup') {
       this._pickerMode = mode;
     } else {
@@ -162,11 +163,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** Whether the date time picker should be disabled. */
   private _disabled: boolean;
   @Input()
-  override get disabled(): boolean {
+  public override get disabled(): boolean {
     return this._disabled === undefined && this._dtInput ? this._dtInput.disabled : !!this._disabled;
   }
 
-  override set disabled(value: boolean) {
+  public override set disabled(value: boolean) {
     value = coerceBooleanProperty(value);
     if (value !== this._disabled) {
       this._disabled = value;
@@ -177,11 +178,11 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /** Whether the calendar is open. */
   private _opened = false;
   @Input()
-  get opened(): boolean {
+  public get opened(): boolean {
     return this._opened;
   }
 
-  set opened(val: boolean) {
+  public set opened(val: boolean) {
     if (val) {
       this.open();
     } else {
@@ -192,56 +193,50 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   /**
    * The scroll strategy when the picker is open
    * Learn more this from https://material.angular.io/cdk/overlay/overview#scroll-strategies
-   * */
+   */
   @Input()
   public scrollStrategy: ScrollStrategy;
 
   /**
    * Callback when the picker is closed
-   * */
-  @Output()
-  afterPickerClosed = new EventEmitter<any>();
+   */
+  public readonly afterPickerClosed = output<T | Array<T> | null>();
 
   /**
    * Callback before the picker is open
-   * */
-  @Output()
-  beforePickerOpen = new EventEmitter<any>();
+   */
+  public readonly beforePickerOpen = output<void>();
 
   /**
    * Callback when the picker is open
-   * */
-  @Output()
-  afterPickerOpen = new EventEmitter<any>();
+   */
+  public readonly afterPickerOpen = output<void>();
 
   /**
    * Emits selected year in multi-year view
    * This doesn't imply a change on the selected date.
-   * */
-  @Output()
-  yearSelected = new EventEmitter<T>();
+   */
+  public readonly yearSelected = output<T>();
 
   /**
    * Emits selected month in year view
    * This doesn't imply a change on the selected date.
-   * */
-  @Output()
-  monthSelected = new EventEmitter<T>();
+   */
+  public readonly monthSelected = output<T>();
 
   /**
    * Emits selected date
-   * */
-  @Output()
-  dateSelected = new EventEmitter<T>();
+   */
+  public readonly dateSelected = output<T>();
 
   /**
    * Emit when the selected value has been confirmed
-   * */
+   */
   public confirmSelectedChange = new EventEmitter<Array<T> | T>();
 
   /**
    * Emits when the date time picker is disabled.
-   * */
+   */
   public disabledChange = new EventEmitter<boolean>();
 
   private pickerContainerPortal: ComponentPortal<OwlDateTimeContainerComponent<T>>;
@@ -253,9 +248,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   private confirmSelectedStreamSub = Subscription.EMPTY;
   private pickerOpenedStreamSub = Subscription.EMPTY;
   private pickerBeforeOpenedStreamSub = Subscription.EMPTY;
-
-  /** The element that was focused before the date time picker was opened. */
-  private focusedElementBeforeOpen: HTMLElement | null = null;
 
   private _dtInput: OwlDateTimeInputDirective<T>;
   get dtInput() {
@@ -363,10 +355,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       throw Error('Attempted to open an DateTimePicker with no associated input.');
     }
 
-    if (this.document) {
-      this.focusedElementBeforeOpen = this.document.activeElement;
-    }
-
     // reset the picker selected value
     if (this.isInSingleMode) {
       this.selected = this._dtInput.value;
@@ -401,8 +389,8 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     });
 
     // Listen to picker container's confirmSelectedStream
-    this.confirmSelectedStreamSub = this.pickerContainer.confirmSelectedStream.subscribe((event: any) => {
-      this.confirmSelect(event);
+    this.confirmSelectedStreamSub = this.pickerContainer.confirmSelectedStream.subscribe(() => {
+      this.confirmSelect();
     });
   }
 
@@ -424,7 +412,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
      *    the 'selecteds' has 'from'(selecteds[0]) and 'to'(selecteds[1]) values.
      * 4) selectMode is 'rangeFrom' and selecteds[0] has value.
      * 5) selectMode is 'rangeTo' and selecteds[1] has value.
-     * */
+     */
     if (
       this.pickerMode !== 'dialog' &&
       this.pickerType === 'calendar' &&
@@ -439,21 +427,21 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   /**
    * Emits the selected year in multi-year view
-   * */
+   */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
   /**
    * Emits selected month in year view
-   * */
+   */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
   /**
    * Emits the selected date
-   * */
+   */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }
@@ -464,14 +452,6 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
   public close(): void {
     if (!this._opened) {
       return;
-    }
-
-    if (this.popupRef && this.popupRef.hasAttached()) {
-      this.popupRef.detach();
-    }
-
-    if (this.pickerContainerPortal && this.pickerContainerPortal.isAttached) {
-      this.pickerContainerPortal.detach();
     }
 
     if (this.hidePickerStreamSub) {
@@ -494,37 +474,29 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
       this.pickerOpenedStreamSub = null;
     }
 
+    const selected = this.selected || this.selecteds;
+    this.afterPickerClosed.emit(selected);
+
+    if (this.popupRef?.hasAttached()) {
+      this.popupRef.detach();
+    }
+
+    if (this.pickerContainerPortal?.isAttached) {
+      this.pickerContainerPortal.detach();
+    }
+
     if (this.dialogRef) {
       this.dialogRef.close();
       this.dialogRef = null;
     }
 
-    const completeClose = () => {
-      if (this._opened) {
-        this._opened = false;
-        const selected = this.selected || this.selecteds;
-        this.afterPickerClosed.emit(selected);
-        this.focusedElementBeforeOpen = null;
-      }
-    };
-
-    if (this.focusedElementBeforeOpen && typeof this.focusedElementBeforeOpen.focus === 'function') {
-      // Because IE moves focus asynchronously, we can't count on it being restored before we've
-      // marked the datepicker as closed. If the event fires out of sequence and the element that
-      // we're refocusing opens the datepicker on focus, the user could be stuck with not being
-      // able to close the calendar at all. We work around it by making the logic, that marks
-      // the datepicker as closed, async as well.
-      this.focusedElementBeforeOpen.focus();
-      setTimeout(completeClose);
-    } else {
-      completeClose();
-    }
+    this._opened = false;
   }
 
   /**
    * Confirm the selected value
    */
-  public confirmSelect(event?: any): void {
+  public confirmSelect(): void {
     if (this.isInSingleMode) {
       const selected = this.selected || this.startAt || this.dateTimeAdapter.now();
       this.confirmSelectedChange.emit(selected);
@@ -550,10 +522,10 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
     this.pickerContainer = this.dialogRef.componentInstance;
 
     this.dialogRef.beforeOpen().subscribe(() => {
-      this.beforePickerOpen.emit(null);
+      this.beforePickerOpen.emit();
     });
     this.dialogRef.afterOpen().subscribe(() => {
-      this.afterPickerOpen.emit(null);
+      this.afterPickerOpen.emit();
       this._opened = true;
     });
     this.dialogRef.afterClosed().subscribe(() => this.close());
@@ -589,12 +561,12 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
         });
 
       this.pickerBeforeOpenedStreamSub = this.pickerContainer.beforePickerOpenedStream.pipe(take(1)).subscribe(() => {
-        this.beforePickerOpen.emit(null);
+        this.beforePickerOpen.emit();
       });
 
       // emit open stream
       this.pickerOpenedStreamSub = this.pickerContainer.pickerOpenedStream.pipe(take(1)).subscribe(() => {
-        this.afterPickerOpen.emit(null);
+        this.afterPickerOpen.emit();
         this._opened = true;
       });
     }
@@ -624,7 +596,7 @@ export class OwlDateTimeComponent<T> extends OwlDateTime<T> implements OnDestroy
 
   /**
    * Create the popup PositionStrategy.
-   * */
+   */
   private createPopupPositionStrategy(): PositionStrategy {
     return this.overlay
       .position()

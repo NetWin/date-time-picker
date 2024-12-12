@@ -1,13 +1,13 @@
 {
   "*.ts": [
-    "eslint --fix",
-    "prettier --write"
+    "eslint --fix --cache",
+    "prettier --write --cache"
   ],
   "*.html": [
-    "eslint --fix",
-    "prettier --write"
+    "eslint --fix --cache",
+    "prettier --write --cache"
   ],
   "*.scss": [
-    "prettier --write"
+    "prettier --write --cache"
   ]
 }

@@ -7,17 +7,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
-  Output,
-  ViewChild
+  ViewChild,
+  output
 } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
+  standalone: false,
   exportAs: 'owlDateTimeTimerBox',
   selector: 'owl-date-time-timer-box',
   templateUrl: './timer-box.component.html',
@@ -29,35 +29,35 @@ import { debounceTime } from 'rxjs/operators';
   }
 })
 export class OwlTimerBoxComponent implements OnInit, OnDestroy {
-  @Input() showDivider = false;
+  @Input() public showDivider = false;
 
-  @Input() upBtnAriaLabel: string;
+  @Input() public upBtnAriaLabel: string;
 
-  @Input() upBtnDisabled: boolean;
+  @Input() public upBtnDisabled: boolean;
 
-  @Input() downBtnAriaLabel: string;
+  @Input() public downBtnAriaLabel: string;
 
-  @Input() downBtnDisabled: boolean;
+  @Input() public downBtnDisabled: boolean;
 
   /**
    * Value would be displayed in the box
    * If it is null, the box would display [value]
-   * */
-  @Input() boxValue: number;
+   */
+  @Input() public boxValue: number;
 
-  @Input() value: number;
+  @Input() public value: number;
 
-  @Input() min: number;
+  @Input() public min: number;
 
-  @Input() max: number;
+  @Input() public max: number;
 
-  @Input() step = 1;
+  @Input() public step = 1;
 
-  @Input() inputLabel: string;
+  @Input() public inputLabel: string;
 
-  @Output() valueChange = new EventEmitter<number>();
+  public readonly valueChange = output<number>();
 
-  @Output() inputChange = new EventEmitter<number>();
+  public readonly inputChange = output<number>();
 
   private inputStream = new Subject<string>();
 
@@ -65,7 +65,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
 
   private hasFocus = false;
 
-  get displayValue(): string {
+  protected get displayValue(): string {
     if (this.hasFocus) {
       // Don't try to reformat the value that user is currently editing
       return this.valueInput.nativeElement.value;
@@ -80,15 +80,13 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
     return value < 10 ? `0${value.toString()}` : value.toString();
   }
 
-  get owlDTTimerBoxClass(): boolean {
-    return true;
-  }
+  protected readonly owlDTTimerBoxClass = true;
 
   @ViewChild('valueInput', { static: true })
   private valueInput: ElementRef<HTMLInputElement>;
   private onValueInputMouseWheelBind = this.onValueInputMouseWheel.bind(this);
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.inputStreamSub = this.inputStream.pipe(debounceTime(750)).subscribe((val: string) => {
       if (val) {
         const inputValue = coerceNumberProperty(val, 0);
@@ -138,9 +136,8 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
     this.inputChange.emit(value);
   }
 
-  private onValueInputMouseWheel(event: any): void {
-    event = event || window.event;
-    const delta = event.wheelDelta || -event.deltaY || -event.detail;
+  private onValueInputMouseWheel(event: WheelEvent): void {
+    const delta = -event.deltaY || -event.detail;
 
     if (delta > 0) {
       if (!this.upBtnDisabled) {

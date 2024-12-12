@@ -3,7 +3,7 @@
  */
 
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
-import { Component, DebugElement } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
@@ -13,25 +13,13 @@ import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 import { Options, OptionsTokens } from './options-provider';
 
-const JAN = 0,
-  FEB = 1,
-  MAR = 2,
-  APR = 3,
-  MAY = 4,
-  JUN = 5,
-  JUL = 6,
-  AUG = 7,
-  SEP = 8,
-  OCT = 9,
-  NOV = 10,
-  DEC = 11;
-
+const JAN = 0;
 const YEAR_ROWS = 7;
 const YEARS_PER_ROW = 3;
 
 describe('OwlMultiYearViewComponent', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardMultiYearViewComponent, MultiYearViewWithDateFilterComponent],
       providers: [
@@ -231,32 +219,36 @@ describe('OwlMultiYearViewComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-multi-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
       (change)="handleChange($event)"></owl-date-time-multi-year-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class StandardMultiYearViewComponent {
-  selected = new Date(2020, JAN, 10);
-  pickerMoment = new Date(2018, JAN, 5);
+  public selected = new Date(2020, JAN, 10);
+  public pickerMoment = new Date(2018, JAN, 5);
 
-  handleChange(date: Date): void {
+  public handleChange(date: Date): void {
     this.pickerMoment = new Date(date);
   }
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-multi-year-view
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-multi-year-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class MultiYearViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getFullYear() !== 2018;
   }
 }

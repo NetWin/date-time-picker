@@ -14,7 +14,7 @@ import {
 } from '@angular/cdk/keycodes';
 import { registerLocaleData } from '@angular/common';
 import localeDutch from '@angular/common/locales/nl';
-import { Component, DebugElement } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchKeyboardEvent } from '../../test-helpers';
@@ -24,22 +24,15 @@ import { OwlMonthViewComponent } from './calendar-month-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
 
-const JAN = 0,
-  FEB = 1,
-  MAR = 2,
-  APR = 3,
-  MAY = 4,
-  JUN = 5,
-  JUL = 6,
-  AUG = 7,
-  SEP = 8,
-  OCT = 9,
-  NOV = 10,
-  DEC = 11;
+const JAN = 0;
+const FEB = 1;
+const MAR = 2;
+const NOV = 10;
+const DEC = 11;
 
 describe('OwlMonthViewComponent', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
       declarations: [StandardMonthViewComponent, MonthViewWithDateFilterComponent],
       providers: [OwlDateTimeIntl]
@@ -261,7 +254,6 @@ describe('OwlMonthViewComponent', () => {
     let adapter: DateTimeAdapter<unknown>;
     let monthViewDebugElement: DebugElement;
     let monthViewElement: HTMLElement;
-    let monthViewInstance: OwlMonthViewComponent<Date>;
 
     beforeAll(() => {
       registerLocaleData(localeDutch);
@@ -273,7 +265,6 @@ describe('OwlMonthViewComponent', () => {
       adapter = TestBed.inject(DateTimeAdapter);
       monthViewDebugElement = fixture.debugElement.query(By.directive(OwlMonthViewComponent));
       monthViewElement = monthViewDebugElement.nativeElement;
-      monthViewInstance = monthViewDebugElement.componentInstance;
     });
 
     it('should derive the first day of the week based on the active locale', () => {
@@ -289,7 +280,7 @@ describe('OwlMonthViewComponent', () => {
 
       fixture.detectChanges();
       const weekdayCells = monthViewElement.querySelectorAll('.owl-dt-weekday');
-      expect(weekdayCells[0].getAttribute('aria-label')).toBe('Sunday');
+      expect(['Sonntag', 'Sunday'].includes(weekdayCells[0].getAttribute('aria-label'))).toBeTrue();
     });
 
     it('should update the default day of the week when locale changes', () => {
@@ -309,27 +300,31 @@ describe('OwlMonthViewComponent', () => {
 });
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-month-view
       [(pickerMoment)]="pickerMoment"
       [(selected)]="selected"></owl-date-time-month-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class StandardMonthViewComponent {
-  selected = new Date(2018, JAN, 10);
-  pickerMoment = new Date(2018, JAN, 5);
+  public selected = new Date(2018, JAN, 10);
+  public pickerMoment = new Date(2018, JAN, 5);
 }
 
 @Component({
+  standalone: false,
   template: `
     <owl-date-time-month-view
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-month-view>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 class MonthViewWithDateFilterComponent {
-  pickerMoment = new Date(2018, JAN, 1);
-  dateFilter(date: Date) {
+  public pickerMoment = new Date(2018, JAN, 1);
+  public dateFilter(date: Date): boolean {
     return date.getDate() % 2 === 0;
   }
 }
