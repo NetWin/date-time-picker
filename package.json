@@ -1,6 +1,6 @@
 {
   "name": "@netwin/angular-datetime-picker",
-  "version": "19.0.0-rc.6",
+  "version": "19.0.0",
   "description": "Angular Date Time Picker",
   "keywords": [
     "Angular",

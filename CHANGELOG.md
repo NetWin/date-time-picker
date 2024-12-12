@@ -1,3 +1,20 @@
+# [19.0.0](https://github.com/netwin/date-time-picker/compare/18.4.0...19.0.0) (2024-12-12)
+
+
+### Bug Fixes
+
+* update Angular version in library package.json ([3fcbc47](https://github.com/netwin/date-time-picker/commit/3fcbc4723e571d292f439d13f984ee878e5d1d92))
+
+
+### Features
+
+* update Angular to version 19 ([47765e8](https://github.com/netwin/date-time-picker/commit/47765e837dd1ada3f75a0bd6d84a941941139f11))
+
+
+### BREAKING CHANGES
+
+* Clients need to update their Angular version to use this library.
+
 # [18.4.0](https://github.com/netwin/date-time-picker/compare/18.3.0...18.4.0) (2024-11-13)
 
 
