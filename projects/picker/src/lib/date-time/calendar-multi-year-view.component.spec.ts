@@ -1,12 +1,8 @@
-/**
- * calendar-multi-year-view.component.spec
- */
-
-import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
+import { KeyboardKeys } from '../utils/keys';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
@@ -94,12 +90,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should decrement year on left arrow press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', LEFT_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.LEFT_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2017, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', LEFT_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.LEFT_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2016, JAN, 5));
@@ -107,12 +103,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should increment year on right arrow press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', RIGHT_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.RIGHT_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2019, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', RIGHT_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.RIGHT_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2020, JAN, 5));
@@ -120,12 +116,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go up a row on up arrow press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', UP_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.UP_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', UP_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.UP_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * 2, JAN, 5));
@@ -133,12 +129,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go down a row on down arrow press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', DOWN_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.DOWN_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', DOWN_ARROW);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.DOWN_ARROW);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * 2, JAN, 5));
@@ -146,12 +142,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go to first year in current range on home press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', HOME);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.HOME);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2016, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', HOME);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.HOME);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2016, JAN, 5));
@@ -159,12 +155,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go to last year in current range on end press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', END);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.END);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2036, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', END);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.END);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2036, JAN, 5));
@@ -172,12 +168,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go to same index in previous year range page up press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_UP);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.PAGE_UP);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * YEAR_ROWS, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_UP);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.PAGE_UP);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5));
@@ -185,12 +181,12 @@ describe('OwlMultiYearViewComponent', () => {
 
     it('should go to same index in next year range on page down press', () => {
       const calendarBodyEl = multiYearViewElement.querySelector('.owl-dt-calendar-body');
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_DOWN);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.PAGE_DOWN);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * YEAR_ROWS, JAN, 5));
 
-      dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_DOWN);
+      dispatchKeyboardEvent(calendarBodyEl, 'keydown', KeyboardKeys.PAGE_DOWN);
       fixture.detectChanges();
 
       expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5));
@@ -224,7 +220,8 @@ describe('OwlMultiYearViewComponent', () => {
     <owl-date-time-multi-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)"></owl-date-time-multi-year-view>
+      (yearChanged)="handleChange($event)">
+    </owl-date-time-multi-year-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })
@@ -242,7 +239,8 @@ class StandardMultiYearViewComponent {
   template: `
     <owl-date-time-multi-year-view
       [dateFilter]="dateFilter"
-      [(pickerMoment)]="pickerMoment"></owl-date-time-multi-year-view>
+      [(pickerMoment)]="pickerMoment">
+    </owl-date-time-multi-year-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })

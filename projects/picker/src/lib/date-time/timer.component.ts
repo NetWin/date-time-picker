@@ -1,18 +1,15 @@
-/**
- * timer.component
- */
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   Input,
   NgZone,
-  Optional,
   output
 } from '@angular/core';
 import { take } from 'rxjs/operators';
+import type { Nullable } from '../types';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 
@@ -25,41 +22,53 @@ import { OwlDateTimeIntl } from './date-time-picker-intl.service';
   preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.owl-dt-timer]': 'owlDTTimerClass',
-    '[attr.tabindex]': 'owlDTTimeTabIndex'
+    'class': 'owl-dt-timer',
+    '[attr.tabindex]': '-1'
   }
 })
 export class OwlTimerComponent<T> {
-  /** The current picker moment */
+  readonly #ngZone = inject(NgZone);
+  readonly #elmRef = inject(ElementRef);
+  readonly #pickerIntl = inject(OwlDateTimeIntl);
+  readonly #cdRef = inject(ChangeDetectorRef);
+  readonly #dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
+  /**
+   *  The current picker moment
+   */
   private _pickerMoment: T;
   @Input()
   public get pickerMoment(): T {
     return this._pickerMoment;
   }
   public set pickerMoment(value: T) {
-    value = this.dateTimeAdapter.deserialize(value);
-    this._pickerMoment = this.getValidDate(value) || this.dateTimeAdapter.now();
+    value = this.#dateTimeAdapter.deserialize(value);
+    this._pickerMoment = this.getValidDate(value) || this.#dateTimeAdapter.now();
   }
 
-  /** The minimum selectable date time. */
-  private _minDateTime: T | null;
+  /**
+   *  The minimum selectable date time.
+   */
+  private _minDateTime: Nullable<T>;
   @Input()
-  public get minDateTime(): T | null {
+  public get minDateTime(): Nullable<T> {
     return this._minDateTime;
   }
-  public set minDateTime(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set minDateTime(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     this._minDateTime = this.getValidDate(value);
   }
 
-  /** The maximum selectable date time. */
-  private _maxDateTime: T | null;
+  /**
+   *  The maximum selectable date time.
+   */
+  private _maxDateTime: Nullable<T>;
   @Input()
-  public get maxDateTime(): T | null {
+  public get maxDateTime(): Nullable<T> {
     return this._maxDateTime;
   }
-  public set maxDateTime(value: T | null) {
-    value = this.dateTimeAdapter.deserialize(value);
+  public set maxDateTime(value: Nullable<T>) {
+    value = this.#dateTimeAdapter.deserialize(value);
     this._maxDateTime = this.getValidDate(value);
   }
 
@@ -98,7 +107,7 @@ export class OwlTimerComponent<T> {
   public readonly selectedChange = output<T>();
 
   protected get hourValue(): number {
-    return this.dateTimeAdapter.getHours(this.pickerMoment);
+    return this.#dateTimeAdapter.getHours(this.pickerMoment);
   }
 
   /**
@@ -129,67 +138,51 @@ export class OwlTimerComponent<T> {
   }
 
   protected get minuteValue(): number {
-    return this.dateTimeAdapter.getMinutes(this.pickerMoment);
+    return this.#dateTimeAdapter.getMinutes(this.pickerMoment);
   }
 
   protected get secondValue(): number {
-    return this.dateTimeAdapter.getSeconds(this.pickerMoment);
+    return this.#dateTimeAdapter.getSeconds(this.pickerMoment);
   }
 
   protected get upHourButtonLabel(): string {
-    return this.pickerIntl.upHourLabel;
+    return this.#pickerIntl.upHourLabel;
   }
 
   protected get downHourButtonLabel(): string {
-    return this.pickerIntl.downHourLabel;
+    return this.#pickerIntl.downHourLabel;
   }
 
   protected get upMinuteButtonLabel(): string {
-    return this.pickerIntl.upMinuteLabel;
+    return this.#pickerIntl.upMinuteLabel;
   }
 
   protected get downMinuteButtonLabel(): string {
-    return this.pickerIntl.downMinuteLabel;
+    return this.#pickerIntl.downMinuteLabel;
   }
 
   protected get upSecondButtonLabel(): string {
-    return this.pickerIntl.upSecondLabel;
+    return this.#pickerIntl.upSecondLabel;
   }
 
   protected get downSecondButtonLabel(): string {
-    return this.pickerIntl.downSecondLabel;
+    return this.#pickerIntl.downSecondLabel;
   }
 
   protected get hour12ButtonLabel(): string {
-    return this.isPM ? this.pickerIntl.hour12PMLabel : this.pickerIntl.hour12AMLabel;
+    return this.isPM ? this.#pickerIntl.hour12PMLabel : this.#pickerIntl.hour12AMLabel;
   }
-
-  protected get owlDTTimerClass(): boolean {
-    return true;
-  }
-
-  protected get owlDTTimeTabIndex(): number {
-    return -1;
-  }
-
-  constructor(
-    private ngZone: NgZone,
-    private elmRef: ElementRef,
-    private pickerIntl: OwlDateTimeIntl,
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>
-  ) {}
 
   /**
    * Focus to the host element
    */
   public focus(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.ngZone.onStable
+    this.#ngZone.runOutsideAngular(() => {
+      this.#ngZone.onStable
         .asObservable()
         .pipe(take(1))
         .subscribe(() => {
-          this.elmRef.nativeElement.focus();
+          this.#elmRef.nativeElement.focus();
         });
     });
   }
@@ -209,21 +202,21 @@ export class OwlTimerComponent<T> {
   }
 
   public setHourValue(hours: number): void {
-    const m = this.dateTimeAdapter.setHours(this.pickerMoment, hours);
+    const m = this.#dateTimeAdapter.setHours(this.pickerMoment, hours);
     this.selectedChange.emit(m);
-    this.cdRef.markForCheck();
+    this.#cdRef.markForCheck();
   }
 
   public setMinuteValue(minutes: number): void {
-    const m = this.dateTimeAdapter.setMinutes(this.pickerMoment, minutes);
+    const m = this.#dateTimeAdapter.setMinutes(this.pickerMoment, minutes);
     this.selectedChange.emit(m);
-    this.cdRef.markForCheck();
+    this.#cdRef.markForCheck();
   }
 
   public setSecondValue(seconds: number): void {
-    const m = this.dateTimeAdapter.setSeconds(this.pickerMoment, seconds);
+    const m = this.#dateTimeAdapter.setSeconds(this.pickerMoment, seconds);
     this.selectedChange.emit(m);
-    this.cdRef.markForCheck();
+    this.#cdRef.markForCheck();
   }
 
   public setMeridiem(event: Event): void {
@@ -240,7 +233,7 @@ export class OwlTimerComponent<T> {
       this.setHourValue(hours);
     }
 
-    this.cdRef.markForCheck();
+    this.#cdRef.markForCheck();
     event.preventDefault();
   }
 
@@ -293,9 +286,9 @@ export class OwlTimerComponent<T> {
    * 0 is equal the comparedDate
    */
   private compareHours(amount: number, comparedDate: T): number {
-    const hours = this.dateTimeAdapter.getHours(this.pickerMoment) + amount;
-    const result = this.dateTimeAdapter.setHours(this.pickerMoment, hours);
-    return this.dateTimeAdapter.compare(result, comparedDate);
+    const hours = this.#dateTimeAdapter.getHours(this.pickerMoment) + amount;
+    const result = this.#dateTimeAdapter.setHours(this.pickerMoment, hours);
+    return this.#dateTimeAdapter.compare(result, comparedDate);
   }
 
   /**
@@ -305,9 +298,9 @@ export class OwlTimerComponent<T> {
    * 0 is equal the comparedDate
    */
   private compareMinutes(amount: number, comparedDate: T): number {
-    const minutes = this.dateTimeAdapter.getMinutes(this.pickerMoment) + amount;
-    const result = this.dateTimeAdapter.setMinutes(this.pickerMoment, minutes);
-    return this.dateTimeAdapter.compare(result, comparedDate);
+    const minutes = this.#dateTimeAdapter.getMinutes(this.pickerMoment) + amount;
+    const result = this.#dateTimeAdapter.setMinutes(this.pickerMoment, minutes);
+    return this.#dateTimeAdapter.compare(result, comparedDate);
   }
 
   /**
@@ -317,15 +310,15 @@ export class OwlTimerComponent<T> {
    * 0 is equal the comparedDate
    */
   private compareSeconds(amount: number, comparedDate: T): number {
-    const seconds = this.dateTimeAdapter.getSeconds(this.pickerMoment) + amount;
-    const result = this.dateTimeAdapter.setSeconds(this.pickerMoment, seconds);
-    return this.dateTimeAdapter.compare(result, comparedDate);
+    const seconds = this.#dateTimeAdapter.getSeconds(this.pickerMoment) + amount;
+    const result = this.#dateTimeAdapter.setSeconds(this.pickerMoment, seconds);
+    return this.#dateTimeAdapter.compare(result, comparedDate);
   }
 
   /**
    * Get a valid date object
    */
-  private getValidDate(obj: unknown): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
+  private getValidDate(obj: unknown): Nullable<T> {
+    return this.#dateTimeAdapter.isDateInstance(obj) && this.#dateTimeAdapter.isValid(obj) ? obj : null;
   }
 }
