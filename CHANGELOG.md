@@ -1,3 +1,11 @@
+# [19.1.0](https://github.com/netwin/date-time-picker/compare/19.0.0...19.1.0) (2025-05-15)
+
+
+### Features
+
+* add logic to disable Today button when it is not selectable ([5a3202d](https://github.com/netwin/date-time-picker/commit/5a3202de1eba3423e539cd482ef176163b8f5af8))
+* improve scss ([9d6e18c](https://github.com/netwin/date-time-picker/commit/9d6e18c304bd33925a6e1f07557d36471932c03a))
+
 # [19.0.0](https://github.com/netwin/date-time-picker/compare/18.4.0...19.0.0) (2024-12-12)
 
 
