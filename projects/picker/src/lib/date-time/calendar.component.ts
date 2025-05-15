@@ -189,6 +189,29 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
     });
   }
 
+  public get isTodayAllowed(): boolean {
+    if (!this.dateTimeAdapter) {
+      return false;
+    }
+    const now = this.dateTimeAdapter.now();
+    // Normalize 'today' to the start of the day, how minDate and maxDate are stored
+    const today = this.dateTimeAdapter.createDate(
+      this.dateTimeAdapter.getYear(now),
+      this.dateTimeAdapter.getMonth(now),
+      this.dateTimeAdapter.getDate(now)
+    );
+
+    if (this.minDate && this.dateTimeAdapter.compare(today, this.minDate) < 0) {
+      return false;
+    }
+
+    if (this.maxDate && this.dateTimeAdapter.compare(today, this.maxDate) > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * Date filter for the month and year view
    */
