@@ -40,6 +40,7 @@
     </button>
     @if (currentView === DateView.MONTH && showTodayButton) {
       <button
+        [disabled]="!isTodayAllowed"
         (click)="jumpToToday()"
         class="owl-dt-control owl-dt-control-button owl-dt-control-today-button"
         type="button">

@@ -532,6 +532,15 @@ $theme-color: #3f51b5;
   &:hover {
     background-color: rgba(0, 0, 0, 0.12);
   }
+
+  &:disabled {
+    color: rgb(0 0 0 / 0.4);
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
 }
 
 .owl-dt-control-arrow-button {
