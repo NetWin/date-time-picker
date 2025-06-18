@@ -7,6 +7,9 @@ const stylistic = require('@stylistic/eslint-plugin');
 
 module.exports = tsEslint.config(
   {
+    ignores: ['**/node_modules/', '**/dist/', '**/.angular/', '**/ng-doc/']
+  },
+  {
     files: ['**/*.ts'],
     extends: [
       js.configs.recommended,
@@ -69,11 +72,10 @@ module.exports = tsEslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       // https://typescript-eslint.io/rules/prefer-optional-chain
       // Prefer `a?.b?.c` over `a && a.b && a.b.c`
-      '@typescript-eslint/prefer-optional-chain': 'warn',
+      '@typescript-eslint/prefer-optional-chain': 'error',
       // https://typescript-eslint.io/rules/consistent-type-definitions
       // Disables the rule that enforces consistent usage of either "type" or "interface" for type definitions
-      // TODO: enable again
-      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       // https://typescript-eslint.io/rules/explicit-function-return-type
       // Require explicit return types on functions and class methods
       '@typescript-eslint/explicit-function-return-type': ['warn', { 'allowExpressions': true }],
@@ -85,7 +87,7 @@ module.exports = tsEslint.config(
       ],
       // https://typescript-eslint.io/rules/no-empty-object-type
       // Disallow the `{}` type in object type annotations
-      '@typescript-eslint/no-empty-object-type': 'warn',
+      '@typescript-eslint/no-empty-object-type': 'error',
       // https://typescript-eslint.io/rules/consistent-indexed-object-style
       // Disables the rule that enforces consistent usage of either index signature or record types
       '@typescript-eslint/consistent-indexed-object-style': 'off',
@@ -97,7 +99,7 @@ module.exports = tsEslint.config(
       '@typescript-eslint/no-misused-promises': 'error',
       // https://typescript-eslint.io/rules/no-floating-promises
       // Disallow floating (unused / unawaited) promises
-      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-floating-promises': 'error',
       // https://typescript-eslint.io/rules/no-unused-vars
       // Disallow unused variables
       '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],

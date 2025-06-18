@@ -1,7 +1,3 @@
-/**
- * calendar-year-view.component.spec
- */
-
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -265,7 +261,7 @@ describe('OwlYearViewComponent', () => {
     <owl-date-time-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)"></owl-date-time-year-view>
+      (changeMonth)="handleChange($event)"></owl-date-time-year-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })

@@ -1,189 +1,183 @@
 /**
  * date-time.class
  */
-import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
-import { Directive, Inject, Input, Optional, type OutputRef } from '@angular/core';
+import { booleanAttribute, Directive, inject, Input, numberAttribute, type OutputRef } from '@angular/core';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
 
 let nextUniqueId = 0;
 
-export type PickerType = 'both' | 'calendar' | 'timer';
+export const PickerType = {
+  /**
+   * Shows both calendar and timer views.
+   */
+  Both: 'both',
+  /**
+   * Shows only the calendar view.
+   */
+  Calendar: 'calendar',
+  /**
+   * Shows only the timer view.
+   */
+  Timer: 'timer'
+} as const;
 
-export type PickerMode = 'popup' | 'dialog' | 'inline';
+export type PickerType = (typeof PickerType)[keyof typeof PickerType];
 
-export type SelectMode = 'single' | 'range' | 'rangeFrom' | 'rangeTo';
+export const SelectMode = {
+  /**
+   * Selects a single date.
+   */
+  Single: 'single',
+  /**
+   * Selects a date range.
+   */
+  Range: 'range',
+  /**
+   * Selects a date range from a specific date.
+   * The end date (range[1]) will always be `null` in this mode.
+   */
+  RangeFrom: 'rangeFrom',
+  /**
+   * Selects a date range up to a specific date.
+   * The start date (range[0]) will always be `null` in this mode.
+   */
+  RangeTo: 'rangeTo'
+} as const;
 
-export enum DateView {
-  MONTH = 'month',
-  YEAR = 'year',
-  MULTI_YEARS = 'multi-years'
-}
+export type SelectMode = (typeof SelectMode)[keyof typeof SelectMode];
 
-export type DateViewType = DateView.MONTH | DateView.YEAR | DateView.MULTI_YEARS;
+export const DateView = {
+  /**
+   * Shows all days of a month in a grid.
+   */
+  MONTH: 'month',
+  /**
+   * Shows all months of a year in a grid.
+   */
+  YEAR: 'year',
+  /**
+   * Shows a list of years.
+   */
+  MULTI_YEARS: 'multi-years'
+} as const;
+
+export type DateViewType = (typeof DateView)[keyof typeof DateView];
 
 @Directive()
 export abstract class OwlDateTime<T> {
+  protected readonly dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter, { optional: true });
+
+  protected readonly dateTimeFormats = inject<OwlDateTimeFormats>(OWL_DATE_TIME_FORMATS, { optional: true });
+
   /**
    * Whether to show the second's timer
    */
-  private _showSecondsTimer = false;
-  @Input()
-  get showSecondsTimer(): boolean {
-    return this._showSecondsTimer;
-  }
-
-  set showSecondsTimer(val: boolean) {
-    this._showSecondsTimer = coerceBooleanProperty(val);
-  }
+  @Input({ transform: booleanAttribute })
+  public showSecondsTimer: boolean = false;
 
   /**
    * Whether the timer is in hour12 format
    */
-  private _hour12Timer = false;
-  @Input()
-  get hour12Timer(): boolean {
-    return this._hour12Timer;
-  }
-
-  set hour12Timer(val: boolean) {
-    this._hour12Timer = coerceBooleanProperty(val);
-  }
+  @Input({ transform: booleanAttribute })
+  public hour12Timer: boolean = false;
 
   /**
    * The view that the calendar should start in.
    */
   @Input()
-  startView: DateViewType = DateView.MONTH;
+  public startView: DateViewType = DateView.MONTH;
 
   /**
    * Whether to should only the year and multi-year views.
    */
   @Input()
-  yearOnly = false;
+  public yearOnly = false;
 
   /**
    * Whether to should only the multi-year view.
    */
   @Input()
-  multiyearOnly = false;
+  public multiyearOnly = false;
 
   /**
    * Hours to change per step
    */
-  private _stepHour = 1;
-  @Input()
-  get stepHour(): number {
-    return this._stepHour;
-  }
-
-  set stepHour(val: number) {
-    this._stepHour = coerceNumberProperty(val, 1);
-  }
+  @Input({ transform: (v: unknown) => numberAttribute(v, 1) })
+  public stepHour: number = 1;
 
   /**
    * Minutes to change per step
    */
-  private _stepMinute = 1;
-  @Input()
-  get stepMinute(): number {
-    return this._stepMinute;
-  }
-
-  set stepMinute(val: number) {
-    this._stepMinute = coerceNumberProperty(val, 1);
-  }
+  @Input({ transform: (v: unknown) => numberAttribute(v, 1) })
+  public stepMinute: number = 1;
 
   /**
    * Seconds to change per step
    */
-  private _stepSecond = 1;
-  @Input()
-  get stepSecond(): number {
-    return this._stepSecond;
-  }
-
-  set stepSecond(val: number) {
-    this._stepSecond = coerceNumberProperty(val, 1);
-  }
+  @Input({ transform: (v: unknown) => numberAttribute(v, 1) })
+  public stepSecond: number = 1;
 
   /**
    * Set the first day of week
    */
-  private _firstDayOfWeek: number;
-  @Input()
-  get firstDayOfWeek() {
-    return this._firstDayOfWeek;
-  }
-
-  set firstDayOfWeek(value: number) {
-    value = coerceNumberProperty(value);
-    if (value > 6 || value < 0) {
-      this._firstDayOfWeek = undefined;
-    } else {
-      this._firstDayOfWeek = value;
+  @Input({
+    transform: (v: unknown) => {
+      const value = numberAttribute(v);
+      return value >= 0 && value <= 6 ? value : undefined;
     }
-  }
+  })
+  public firstDayOfWeek: number | undefined;
 
   /**
    * Whether to hide dates in other months at the start or end of the current month.
    */
-  private _hideOtherMonths = false;
-  @Input()
-  get hideOtherMonths(): boolean {
-    return this._hideOtherMonths;
-  }
+  @Input({ transform: booleanAttribute })
+  public hideOtherMonths: boolean = false;
 
-  set hideOtherMonths(val: boolean) {
-    this._hideOtherMonths = coerceBooleanProperty(val);
-  }
+  public readonly id = `owl-dt-picker-${nextUniqueId++}`;
 
-  private readonly _id: string;
-  get id(): string {
-    return this._id;
-  }
+  public abstract disabled: boolean;
 
-  abstract get selected(): T | null;
+  public abstract get selected(): T | null;
 
-  abstract get selecteds(): Array<T> | null;
+  public abstract get selecteds(): Array<T> | null;
 
-  abstract get dateTimeFilter(): (date: T | null) => boolean;
+  public abstract get dateTimeFilter(): (date: T | null) => boolean;
 
-  abstract get maxDateTime(): T | null;
+  public abstract get maxDateTime(): T | null;
 
-  abstract get minDateTime(): T | null;
+  public abstract get minDateTime(): T | null;
 
-  abstract get selectMode(): SelectMode;
+  public abstract get selectMode(): SelectMode;
 
-  abstract get startAt(): T | null;
+  public abstract get startAt(): T | null;
 
-  abstract get endAt(): T | null;
+  public abstract get endAt(): T | null;
 
-  abstract get opened(): boolean;
+  public abstract get opened(): boolean;
 
-  abstract get pickerMode(): PickerMode;
+  public abstract get pickerType(): PickerType;
 
-  abstract get pickerType(): PickerType;
+  public abstract get isInSingleMode(): boolean;
 
-  abstract get isInSingleMode(): boolean;
+  public abstract get isInRangeMode(): boolean;
 
-  abstract get isInRangeMode(): boolean;
+  public abstract select(date: T | Array<T>): void;
 
-  abstract select(date: T | Array<T>): void;
+  public abstract yearSelected: OutputRef<T>;
 
-  abstract yearSelected: OutputRef<T>;
+  public abstract monthSelected: OutputRef<T>;
 
-  abstract monthSelected: OutputRef<T>;
+  public abstract dateSelected: OutputRef<T>;
 
-  abstract dateSelected: OutputRef<T>;
+  public abstract selectYear(normalizedYear: T): void;
 
-  abstract selectYear(normalizedYear: T): void;
+  public abstract selectMonth(normalizedMonth: T): void;
 
-  abstract selectMonth(normalizedMonth: T): void;
+  public abstract selectDate(normalizedDate: T): void;
 
-  abstract selectDate(normalizedDate: T): void;
-
-  get formatString(): string {
+  public get displayFormat(): Partial<Intl.DateTimeFormatOptions> {
     if (this.pickerType === 'both') {
       return this.dateTimeFormats.fullPickerInput;
     }
@@ -198,7 +192,7 @@ export abstract class OwlDateTime<T> {
   /**
    * Date Time Checker to check if the give dateTime is selectable
    */
-  public dateTimeChecker = (dateTime: T) => {
+  public dateTimeChecker = (dateTime: T): boolean => {
     return (
       !!dateTime &&
       (!this.dateTimeFilter || this.dateTimeFilter(dateTime)) &&
@@ -207,16 +201,7 @@ export abstract class OwlDateTime<T> {
     );
   };
 
-  get disabled(): boolean {
-    return false;
-  }
-
-  protected constructor(
-    @Optional() protected dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    protected dateTimeFormats: OwlDateTimeFormats
-  ) {
+  constructor() {
     if (!this.dateTimeAdapter) {
       throw Error(
         `OwlDateTimePicker: No provider found for DateTimeAdapter. You must import one of the following ` +
@@ -232,11 +217,9 @@ export abstract class OwlDateTime<T> {
           `custom implementation.`
       );
     }
-
-    this._id = `owl-dt-picker-${nextUniqueId++}`;
   }
 
-  protected getValidDate(obj: any): T | null {
+  protected getValidDate(obj: unknown): T | null {
     return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
   }
 }

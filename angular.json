@@ -1,36 +1,55 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "cli": {
-    "cache": {
-      "enabled": true,
-      "path": ".cache",
-      "environment": "all"
+  "newProjectRoot": "projects",
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component",
+      "style": "css"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
-  "newProjectRoot": "projects",
   "projects": {
     "docs": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
       "prefix": "owl",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
       "architect": {
         "build": {
           "builder": "@ng-doc/builder:application",
           "options": {
-            "allowedCommonJsDependencies": ["@ng-doc/core"],
+            "allowedCommonJsDependencies": [
+              "@ng-doc/core"
+            ],
             "aot": true,
             "outputPath": {
               "base": "dist/docs"
             },
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
@@ -51,7 +70,10 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": ["node_modules/@ng-doc/app/styles/global.css", "src/styles.scss"],
+            "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
+              "src/styles.css"
+            ],
             "scripts": [],
             "browser": "src/main.ts"
           },
@@ -92,7 +114,7 @@
               "outputHashing": "none",
               "sourceMap": true,
               "namedChunks": true,
-              "aot": false,
+              "aot": true,
               "extractLicenses": false
             }
           }
@@ -114,7 +136,7 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "docs:build"
           }
@@ -122,7 +144,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"],
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ],
             "eslintConfig": "./eslint.config.js"
           }
         }
@@ -135,7 +160,7 @@
       "prefix": "owl",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "builder": "@angular/build:ng-packagr",
           "options": {
             "project": "projects/picker/ng-package.json"
           },
@@ -150,16 +175,22 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/picker/tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"]
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/picker/src/lib/**/*.ts", "projects/picker/src/lib/**/*.html"],
+            "lintFilePatterns": [
+              "projects/picker/src/lib/**/*.ts",
+              "projects/picker/src/lib/**/*.html"
+            ],
             "eslintConfig": "./eslint.config.js"
           }
         }

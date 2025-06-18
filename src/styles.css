@@ -1,4 +1,4 @@
-@use '../projects/picker/src/sass/picker.scss';
+@import '../projects/picker/src/styles/picker.css';
 
 body,
 html {

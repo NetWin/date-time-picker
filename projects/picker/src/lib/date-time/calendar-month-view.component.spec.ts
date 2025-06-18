@@ -1,6 +1,3 @@
-/**
- * calendar-month-view.component.spec
- */
 import {
   DOWN_ARROW,
   END,
@@ -304,7 +301,8 @@ describe('OwlMonthViewComponent', () => {
   template: `
     <owl-date-time-month-view
       [(pickerMoment)]="pickerMoment"
-      [(selected)]="selected"></owl-date-time-month-view>
+      [(selected)]="selected">
+    </owl-date-time-month-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })

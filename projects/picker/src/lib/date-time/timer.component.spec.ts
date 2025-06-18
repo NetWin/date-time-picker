@@ -1,7 +1,3 @@
-/**
- * timer.component.spec
- */
-
 import { ChangeDetectionStrategy, Component, DebugElement, EventEmitter, NgZone } from '@angular/core';
 import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -64,7 +60,7 @@ describe('OwlTimerComponent', () => {
 
     it('should have two timer boxes if showSecondsTimer set to false', () => {
       const timerBoxes = timerElement.querySelectorAll('owl-date-time-timer-box');
-      expect(timerInstance.showSecondsTimer).toBeFalsy();
+      expect(timerInstance.showSecondsTimer()).toBeFalsy();
       expect(timerBoxes.length).toBe(2);
     });
 
@@ -73,13 +69,13 @@ describe('OwlTimerComponent', () => {
       fixture.detectChanges();
 
       const timerBoxes = timerElement.querySelectorAll('owl-date-time-timer-box');
-      expect(timerInstance.showSecondsTimer).toBeTruthy();
+      expect(timerInstance.showSecondsTimer()).toBeTruthy();
       expect(timerBoxes.length).toBe(3);
     });
 
     it('should NOT have the hour12 toggle button if hour12Timer set to false', () => {
       const toggleBtn = timerElement.querySelector('button.owl-dt-timer-hour12-box');
-      expect(timerInstance.hour12Timer).toBeFalsy();
+      expect(timerInstance.hour12Timer()).toBeFalsy();
       expect(toggleBtn).toBeFalsy();
     });
 
@@ -88,7 +84,7 @@ describe('OwlTimerComponent', () => {
       fixture.detectChanges();
 
       const toggleBtn = timerElement.querySelector('button.owl-dt-timer-hour12-box');
-      expect(timerInstance.hour12Timer).toBeTruthy();
+      expect(timerInstance.hour12Timer()).toBeTruthy();
       expect(toggleBtn).toBeTruthy();
     });
 
@@ -128,7 +124,7 @@ describe('OwlTimerComponent', () => {
     }));
 
     it('should add or minus stepHour hours when hour arrow button clicked', fakeAsync(() => {
-      expect(timerInstance.stepHour).toBe(1);
+      expect(timerInstance.stepHour()).toBe(1);
 
       const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
       expect(arrowBtns.length).toBe(4);
@@ -145,7 +141,7 @@ describe('OwlTimerComponent', () => {
 
       testComponent.stepHour = 2;
       fixture.detectChanges();
-      expect(timerInstance.stepHour).toBe(2);
+      expect(timerInstance.stepHour()).toBe(2);
 
       arrowBtns[0].click();
       fixture.detectChanges();
@@ -159,7 +155,7 @@ describe('OwlTimerComponent', () => {
     }));
 
     it('should add or minus stepMinute minutes when minute arrow button clicked', fakeAsync(() => {
-      expect(timerInstance.stepMinute).toBe(1);
+      expect(timerInstance.stepMinute()).toBe(1);
 
       const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
       expect(arrowBtns.length).toBe(4);
@@ -176,7 +172,7 @@ describe('OwlTimerComponent', () => {
 
       testComponent.stepMinute = 2;
       fixture.detectChanges();
-      expect(timerInstance.stepMinute).toBe(2);
+      expect(timerInstance.stepMinute()).toBe(2);
 
       arrowBtns[2].click();
       fixture.detectChanges();
@@ -190,7 +186,7 @@ describe('OwlTimerComponent', () => {
     }));
 
     it('should add or minus stepSecond seconds when second arrow button clicked', fakeAsync(() => {
-      expect(timerInstance.stepSecond).toBe(1);
+      expect(timerInstance.stepSecond()).toBe(1);
 
       testComponent.showSecondsTimer = true;
       fixture.detectChanges();
@@ -209,7 +205,7 @@ describe('OwlTimerComponent', () => {
 
       testComponent.stepSecond = 2;
       fixture.detectChanges();
-      expect(timerInstance.stepSecond).toBe(2);
+      expect(timerInstance.stepSecond()).toBe(2);
 
       arrowBtns[4].click();
       fixture.detectChanges();

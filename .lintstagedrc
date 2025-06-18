@@ -7,7 +7,7 @@
     "eslint --fix --cache",
     "prettier --write --cache"
   ],
-  "*.scss": [
+  "*.css": [
     "prettier --write --cache"
   ]
 }

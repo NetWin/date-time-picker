@@ -1,0 +1,32 @@
+:host {
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.value-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .empty {
+    opacity: 0.5;
+    font-style: italic;
+  }
+}
+
+code {
+  display: block;
+  padding: 0.5rem;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  color: #333;
+
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font-size: 0.9rem;
+}

@@ -6,7 +6,7 @@ import { NgDocNavbarComponent, NgDocRootComponent, NgDocSidebarComponent } from 
   standalone: true,
   selector: 'owl-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, NgDocRootComponent, NgDocNavbarComponent, NgDocSidebarComponent]
 })

@@ -6,7 +6,7 @@ Just checkout the pages on the left for documentation and examples.
 <br>
 
 > The documentation is currently under construction.<br>
-> Examples will come soon. 🚧👷🛠️
+> More examples will come soon. 🚧👷🛠️
 
 ### Attributions
 

@@ -27,6 +27,7 @@
     "strictTemplates": true,
     "fullTemplateTypeCheck": true,
     // TODO: enable when possible
-    "strictStandalone": false
+    "strictStandalone": false,
+    "typeCheckHostBindings": true
   }
 }

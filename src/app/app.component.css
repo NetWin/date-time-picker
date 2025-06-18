@@ -1,0 +1,32 @@
+ng-doc-navbar {
+  font-family: 'Playwrite IT Moderna', cursive;
+  font-optical-sizing: auto;
+  background: linear-gradient(150deg, #278b97, #1a6068) !important;
+}
+
+/* Logo link */
+ng-doc-navbar ::ng-deep a {
+  color: #fff;
+  text-decoration: none;
+}
+
+ng-doc-navbar ::ng-deep [ng-doc-button-icon] ng-doc-icon {
+  color: #fff;
+}
+
+.github-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 100%;
+
+  margin-left: calc(var(--ng-doc-base-gutter) * 2);
+  width: calc(var(--ng-doc-base-gutter) * 5);
+  height: calc(var(--ng-doc-base-gutter) * 5);
+}
+
+/* Responsive buttons within the right nav */
+ng-doc-navbar ::ng-deep :is([ng-doc-button-icon], .github-icon):hover {
+  background-color: rgb(0 0 0 / 0.2);
+}

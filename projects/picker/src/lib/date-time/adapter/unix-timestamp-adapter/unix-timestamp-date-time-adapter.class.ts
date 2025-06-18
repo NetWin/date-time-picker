@@ -3,7 +3,7 @@
  */
 
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { range } from '../../../utils/array.utils';
 import {
   DEFAULT_DATE_NAMES,
@@ -16,18 +16,16 @@ import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from '../date-time-adapter.clas
 
 @Injectable()
 export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
-  constructor(
-    @Optional()
-    @Inject(OWL_DATE_TIME_LOCALE)
-    private owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  private readonly owlDateTimeLocale = inject(OWL_DATE_TIME_LOCALE, { optional: true });
+  private readonly platform = inject(Platform);
+
+  constructor() {
     super();
-    super.setLocale(owlDateTimeLocale);
+    super.setLocale(this.owlDateTimeLocale);
 
     // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !platform.TRIDENT;
-    this._clampDate = platform.TRIDENT || platform.EDGE;
+    this.useUtcForDisplay = !this.platform.TRIDENT;
+    this._clampDate = this.platform.TRIDENT || this.platform.EDGE;
   }
 
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
@@ -184,7 +182,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date(date).getDay();
   }
 
-  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getDayOfWeekNames(style: Intl.DateTimeFormatOptions['weekday']): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.locale, {
         weekday: style,
@@ -212,17 +210,14 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date(date).getMonth();
   }
 
-  public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getMonthNames(style: Intl.DateTimeFormatOptions['month']): Array<string> {
     if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.locale, {
-        month: style,
-        timeZone: 'utc'
-      });
-      return range(12, (i) =>
-        UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
+      const dtf = new Intl.DateTimeFormat(this.locale, { month: style, timeZone: 'utc' });
+      return range(12, (i) => {
+        return UnixTimestampDateTimeAdapter.stripDirectionalityCharacters(
           UnixTimestampDateTimeAdapter._format(dtf, new Date(2017, i, 1))
-        )
-      );
+        );
+      });
     }
     return DEFAULT_MONTH_NAMES[style];
   }
@@ -292,7 +287,7 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
     return new Date().getTime();
   }
 
-  public parse(value: any, parseFormat: any): number | null {
+  public parse(value: number | string | null): number {
     // There is no way using the native JS Date to set the parse format or locale
     if (typeof value === 'number') {
       return value;

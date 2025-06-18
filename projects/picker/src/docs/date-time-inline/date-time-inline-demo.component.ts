@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OwlDateTimeModule, OwlNativeDateTimeModule, type PickerType, type SelectMode } from 'picker';
@@ -12,9 +12,9 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
   standalone: true,
   selector: 'owl-date-time-inline-demo',
   templateUrl: './date-time-inline-demo.component.html',
-  styleUrl: './date-time-inline-demo.component.scss',
+  styleUrl: './date-time-inline-demo.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
+  imports: [JsonPipe, FormsModule, OwlDateTimeModule, OwlNativeDateTimeModule]
 })
 export class DateTimeInlineDemoComponent {
   public readonly selectMode = input<SelectMode>('range');
@@ -24,7 +24,24 @@ export class DateTimeInlineDemoComponent {
   public readonly showTodayButton = input<boolean>(true);
 
   protected readonly value = linkedSignal<Date | DateRange>(() => {
-    return this.selectMode() === 'single' ? new Date() : [new Date(Date.now() - 3 * ONE_DAY_IN_MS), new Date()];
+    if (!this.selectMode() || this.selectMode() === 'single') {
+      return new Date();
+    }
+
+    const range: DateRange = [new Date(Date.now() - 3 * ONE_DAY_IN_MS), new Date()];
+    if (this.selectMode() === 'range') {
+      return range;
+    }
+
+    if (this.selectMode() === 'rangeFrom') {
+      return [range[0], null];
+    }
+
+    if (this.selectMode() === 'rangeTo') {
+      return [null, range[1]];
+    }
+
+    throw new Error(`Unsupported select mode: ${this.selectMode()}`);
   });
 
   protected rangeValue = computed<DateRange>(() => {

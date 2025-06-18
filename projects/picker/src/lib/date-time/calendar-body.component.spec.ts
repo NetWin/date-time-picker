@@ -1,6 +1,3 @@
-/**
- * calendar-body.component.spec
- */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -94,14 +91,16 @@ describe('OwlCalendarBodyComponent', () => {
 
 @Component({
   standalone: false,
-  template: ` <table
-    [activeCell]="activeCell"
-    [rows]="rows"
-    [selectMode]="'single'"
-    [selectedValues]="selectedValues"
-    [todayValue]="todayValue"
-    (select)="handleSelect()"
-    owl-date-time-calendar-body></table>`,
+  template: `
+    <table
+      [activeCell]="activeCell"
+      [rows]="rows"
+      [selectMode]="'single'"
+      [selectedValues]="selectedValues"
+      [todayValue]="todayValue"
+      (selectCell)="handleSelect()"
+      owl-date-time-calendar-body></table>
+  `,
   changeDetection: ChangeDetectionStrategy.Default
 })
 class StandardCalendarBodyComponent {
