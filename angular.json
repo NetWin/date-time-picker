@@ -39,17 +39,13 @@
         "build": {
           "builder": "@ng-doc/builder:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "@ng-doc/core"
-            ],
+            "allowedCommonJsDependencies": ["@ng-doc/core"],
             "aot": true,
             "outputPath": {
               "base": "dist/docs"
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
@@ -70,10 +66,7 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
-              "node_modules/@ng-doc/app/styles/global.css",
-              "src/styles.css"
-            ],
+            "styles": ["node_modules/@ng-doc/app/styles/global.css", "src/styles.css"],
             "scripts": [],
             "browser": "src/main.ts"
           },
@@ -144,10 +137,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ],
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"],
             "eslintConfig": "./eslint.config.js"
           }
         }
@@ -178,19 +168,13 @@
           "builder": "@angular/build:karma",
           "options": {
             "tsConfig": "projects/picker/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "projects/picker/src/lib/**/*.ts",
-              "projects/picker/src/lib/**/*.html"
-            ],
+            "lintFilePatterns": ["projects/picker/src/lib/**/*.ts", "projects/picker/src/lib/**/*.html"],
             "eslintConfig": "./eslint.config.js"
           }
         }

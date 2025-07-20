@@ -29,8 +29,7 @@ class MockNgZone extends NgZone {
 describe('OwlTimerComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardTimerComponent],
+      imports: [OwlNativeDateTimeModule, OwlDateTimeModule, StandardTimerComponent],
       providers: [
         OwlDateTimeIntl,
         {
@@ -300,7 +299,6 @@ describe('OwlTimerComponent', () => {
 });
 
 @Component({
-  standalone: false,
   template: `
     <owl-date-time-timer
       [hour12Timer]="hour12Timer"
@@ -313,7 +311,8 @@ describe('OwlTimerComponent', () => {
       [stepSecond]="stepSecond"
       (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlTimerComponent]
 })
 class StandardTimerComponent {
   public stepHour = 1;

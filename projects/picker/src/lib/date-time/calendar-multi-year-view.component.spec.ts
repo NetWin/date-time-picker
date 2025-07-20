@@ -15,8 +15,12 @@ const YEARS_PER_ROW = 3;
 describe('OwlMultiYearViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardMultiYearViewComponent, MultiYearViewWithDateFilterComponent],
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardMultiYearViewComponent,
+        MultiYearViewWithDateFilterComponent
+      ],
       providers: [OwlDateTimeIntl]
     }).compileComponents();
   });
@@ -205,7 +209,7 @@ describe('OwlMultiYearViewComponent', () => {
 });
 
 @Component({
-  standalone: false,
+  imports: [OwlMultiYearViewComponent],
   template: `
     <owl-date-time-multi-year-view
       [selected]="selected"
@@ -225,7 +229,7 @@ class StandardMultiYearViewComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlMultiYearViewComponent],
   template: `
     <owl-date-time-multi-year-view
       [dateFilter]="dateFilter"

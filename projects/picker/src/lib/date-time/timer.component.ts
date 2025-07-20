@@ -12,13 +12,13 @@ import {
 import { take } from 'rxjs/operators';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
+import { OwlTimerBoxComponent } from './timer-box.component';
 
 @Component({
-  standalone: false,
   exportAs: 'owlDateTimeTimer',
   selector: 'owl-date-time-timer',
   templateUrl: './timer.component.html',
-  preserveWhitespaces: false,
+  imports: [OwlTimerBoxComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.tabindex]': '-1',

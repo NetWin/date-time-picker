@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import {
   AfterContentInit,
   AfterViewChecked,
@@ -14,17 +15,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OWL_DATE_TIME_FORMATS } from './adapter/date-time-format.class';
+import { OwlMonthViewComponent } from './calendar-month-view.component';
+import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
+import { OwlYearViewComponent } from './calendar-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { DateView, DateViewType, SelectMode } from './date-time.class';
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-calendar',
   exportAs: 'owlDateTimeCalendar',
   templateUrl: './calendar.component.html',
-  host: { 'class': 'owl-dt-calendar' },
-  preserveWhitespaces: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [A11yModule, OwlMonthViewComponent, OwlYearViewComponent, OwlMultiYearViewComponent],
+  host: { 'class': 'owl-dt-calendar' }
 })
 export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked {
   private readonly elmRef = inject(ElementRef);
@@ -34,7 +37,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   private readonly dateTimeAdapter = inject(DateTimeAdapter<T>, { optional: true });
   private readonly dateTimeFormats = inject(OWL_DATE_TIME_FORMATS, { optional: true });
 
-  DateView = DateView;
+  protected readonly DateView = DateView;
 
   @Input()
   get minDate(): T | null {

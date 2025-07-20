@@ -32,12 +32,11 @@ const DAYS_PER_WEEK = 7;
 const WEEKS_PER_VIEW = 6;
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-month-view',
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
+  imports: [OwlCalendarBodyComponent],
   host: { 'class': 'owl-dt-calendar-view' },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {

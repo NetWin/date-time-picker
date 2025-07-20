@@ -14,7 +14,7 @@
     "material",
     "ngx"
   ],
-  "author": "Maintained and updated by Daniel Moncada, original implementatiom by Daniel Pan",
+  "author": "Maintained and updated by Daniel Moncada, original implementation by Daniel Pan",
   "license": "MIT",
   "scripts": {
     "start": "npm run start:docs",
@@ -27,7 +27,7 @@
     "build:lib": "ng build picker && npm run minify:css && npm run copy:readme",
     "minify:css": "lightningcss --minify --targets \">= 0.25%\" projects/picker/src/styles/picker.css -o dist/picker/assets/style/picker.min.css",
     "copy:readme": "cp README.md dist/picker",
-    "prettier": "prettier --cache --write \"projects/**/*.{ts,html,css}\" \"src/**/*.{ts,html,css}\"",
+    "prettier": "prettier --write !CHANGELOG.md \"**/*.{ts,html,css,md,json}\"",
     "prepare": "husky"
   },
   "repository": {

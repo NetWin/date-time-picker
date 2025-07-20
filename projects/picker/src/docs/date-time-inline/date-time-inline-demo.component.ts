@@ -9,7 +9,6 @@ type DateRange = [from: Date | null, to: Date | null];
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 @Component({
-  standalone: true,
   selector: 'owl-date-time-inline-demo',
   templateUrl: './date-time-inline-demo.component.html',
   styleUrl: './date-time-inline-demo.component.css',

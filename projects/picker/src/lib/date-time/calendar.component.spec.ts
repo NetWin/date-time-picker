@@ -30,8 +30,13 @@ describe('OwlCalendarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardCalendarComponent, CalendarWithMinMaxComponent, CalendarWithDateFilterComponent],
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardCalendarComponent,
+        CalendarWithMinMaxComponent,
+        CalendarWithDateFilterComponent
+      ],
       providers: [
         OwlDateTimeIntl,
         {
@@ -363,7 +368,7 @@ describe('OwlCalendarComponent', () => {
 });
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [pickerMoment]="pickerMoment"
@@ -383,7 +388,7 @@ class StandardCalendarComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [maxDate]="maxDate"
@@ -402,7 +407,7 @@ class CalendarWithMinMaxComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [dateFilter]="dateFilter"

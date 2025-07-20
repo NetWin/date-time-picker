@@ -17,12 +17,11 @@ import { OwlDateTime, PickerType } from './date-time.class';
 import { OwlTimerComponent } from './timer.component';
 
 @Component({
-  standalone: false,
-  exportAs: 'owlDateTimeContainer',
   selector: 'owl-date-time-container',
+  exportAs: 'owlDateTimeContainer',
   templateUrl: './date-time-picker-container.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  preserveWhitespaces: false,
+  imports: [OwlCalendarComponent, OwlTimerComponent],
   host: {
     '[attr.id]': 'picker.id',
     '[class.owl-dt-container-disabled]': 'picker.disabled',

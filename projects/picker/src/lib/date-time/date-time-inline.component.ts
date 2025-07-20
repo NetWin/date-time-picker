@@ -22,13 +22,12 @@ const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
 };
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-inline',
   templateUrl: './date-time-inline.component.html',
-  host: { 'class': 'owl-dt-inline' },
   changeDetection: ChangeDetectionStrategy.OnPush,
-  preserveWhitespaces: false,
-  providers: [OWL_DATETIME_VALUE_ACCESSOR]
+  providers: [OWL_DATETIME_VALUE_ACCESSOR],
+  imports: [OwlDateTimeContainerComponent],
+  host: { 'class': 'owl-dt-inline' }
 })
 export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
   readonly #changeDetector = inject(ChangeDetectorRef);

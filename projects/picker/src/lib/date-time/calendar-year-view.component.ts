@@ -31,12 +31,11 @@ const MONTHS_PER_YEAR = 12;
 const MONTHS_PER_ROW = 3;
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarBodyComponent],
   selector: 'owl-date-time-year-view',
   exportAs: 'owlMonthView',
   templateUrl: './calendar-year-view.component.html',
   host: { 'class': 'owl-dt-calendar-view' },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {

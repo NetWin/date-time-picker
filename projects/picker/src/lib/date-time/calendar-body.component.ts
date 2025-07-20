@@ -14,12 +14,10 @@ export class CalendarCell {
 }
 
 @Component({
-  standalone: false,
   selector: '[owl-date-time-calendar-body]',
   exportAs: 'owlDateTimeCalendarBody',
   templateUrl: './calendar-body.component.html',
   host: { 'class': 'owl-dt-calendar-body' },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlCalendarBodyComponent {

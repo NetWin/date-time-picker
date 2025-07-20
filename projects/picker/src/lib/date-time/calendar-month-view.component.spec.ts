@@ -30,8 +30,12 @@ const DEC = 11;
 describe('OwlMonthViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardMonthViewComponent, MonthViewWithDateFilterComponent],
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardMonthViewComponent,
+        MonthViewWithDateFilterComponent
+      ],
       providers: [OwlDateTimeIntl]
     }).compileComponents();
   });
@@ -297,14 +301,14 @@ describe('OwlMonthViewComponent', () => {
 });
 
 @Component({
-  standalone: false,
   template: `
     <owl-date-time-month-view
       [(pickerMoment)]="pickerMoment"
       [(selected)]="selected">
     </owl-date-time-month-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlMonthViewComponent]
 })
 class StandardMonthViewComponent {
   public selected = new Date(2018, JAN, 10);
@@ -312,13 +316,13 @@ class StandardMonthViewComponent {
 }
 
 @Component({
-  standalone: false,
   template: `
     <owl-date-time-month-view
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-month-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlMonthViewComponent]
 })
 class MonthViewWithDateFilterComponent {
   public pickerMoment = new Date(2018, JAN, 1);

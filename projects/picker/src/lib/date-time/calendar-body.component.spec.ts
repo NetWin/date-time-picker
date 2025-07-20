@@ -6,12 +6,7 @@ import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.componen
 describe('OwlCalendarBodyComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        OwlCalendarBodyComponent,
-
-        // Test components
-        StandardCalendarBodyComponent
-      ]
+      imports: [OwlCalendarBodyComponent, StandardCalendarBodyComponent]
     }).compileComponents();
   });
 
@@ -90,7 +85,6 @@ describe('OwlCalendarBodyComponent', () => {
 });
 
 @Component({
-  standalone: false,
   template: `
     <table
       [activeCell]="activeCell"
@@ -101,7 +95,8 @@ describe('OwlCalendarBodyComponent', () => {
       (selectCell)="handleSelect()"
       owl-date-time-calendar-body></table>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlCalendarBodyComponent]
 })
 class StandardCalendarBodyComponent {
   public rows = [

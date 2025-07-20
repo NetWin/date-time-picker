@@ -1,8 +1,3 @@
-/**
- * date-time.module
- */
-
-import { A11yModule } from '@angular/cdk/a11y';
 import { NgModule } from '@angular/core';
 import { OwlCalendarBodyComponent } from './calendar-body.component';
 import { OwlMonthViewComponent } from './calendar-month-view.component';
@@ -17,16 +12,7 @@ import { OwlTimerBoxComponent } from './timer-box.component';
 import { OwlTimerComponent } from './timer.component';
 
 @NgModule({
-  imports: [A11yModule],
-  exports: [
-    OwlCalendarComponent,
-    OwlDateTimeInlineComponent,
-    OwlMonthViewComponent,
-    OwlMultiYearViewComponent,
-    OwlTimerComponent,
-    OwlYearViewComponent
-  ],
-  declarations: [
+  imports: [
     OwlCalendarBodyComponent,
     OwlCalendarComponent,
     OwlDateTimeContainerComponent,
@@ -34,6 +20,14 @@ import { OwlTimerComponent } from './timer.component';
     OwlMonthViewComponent,
     OwlMultiYearViewComponent,
     OwlTimerBoxComponent,
+    OwlTimerComponent,
+    OwlYearViewComponent
+  ],
+  exports: [
+    OwlCalendarComponent,
+    OwlDateTimeInlineComponent,
+    OwlMonthViewComponent,
+    OwlMultiYearViewComponent,
     OwlTimerComponent,
     OwlYearViewComponent
   ],

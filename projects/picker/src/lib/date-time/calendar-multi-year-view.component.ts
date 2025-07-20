@@ -26,11 +26,10 @@ import { SelectMode } from './date-time.class';
 import { OptionsTokens } from './options-provider';
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-multi-year-view',
   templateUrl: './calendar-multi-year-view.component.html',
+  imports: [OwlCalendarBodyComponent],
   host: { 'class': 'owl-dt-calendar-view owl-dt-calendar-multi-year-view' },
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlMultiYearViewComponent<T> implements AfterContentInit {
