@@ -1,7 +1,4 @@
-/**
- * calendar.component
- */
-
+import { A11yModule } from '@angular/cdk/a11y';
 import {
   AfterContentInit,
   AfterViewChecked,
@@ -9,34 +6,38 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Inject,
+  inject,
   Input,
   NgZone,
-  OnDestroy,
-  Optional,
   output
 } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
+import { OWL_DATE_TIME_FORMATS } from './adapter/date-time-format.class';
+import { OwlMonthViewComponent } from './calendar-month-view.component';
+import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
+import { OwlYearViewComponent } from './calendar-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { DateView, DateViewType, SelectMode } from './date-time.class';
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-calendar',
   exportAs: 'owlDateTimeCalendar',
   templateUrl: './calendar.component.html',
-  styleUrls: ['./calendar.component.scss'],
-  host: {
-    '[class.owl-dt-calendar]': 'owlDTCalendarClass'
-  },
-  preserveWhitespaces: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [A11yModule, OwlMonthViewComponent, OwlYearViewComponent, OwlMultiYearViewComponent],
+  host: { 'class': 'owl-dt-calendar' }
 })
-export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked, OnDestroy {
-  DateView = DateView;
+export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewChecked {
+  private readonly elmRef = inject(ElementRef);
+  private readonly pickerIntl = inject(OwlDateTimeIntl);
+  private readonly ngZone = inject(NgZone);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly dateTimeAdapter = inject(DateTimeAdapter<T>, { optional: true });
+  private readonly dateTimeFormats = inject(OWL_DATE_TIME_FORMATS, { optional: true });
+
+  protected readonly DateView = DateView;
 
   @Input()
   get minDate(): T | null {
@@ -77,7 +78,7 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
   }
 
   @Input()
-  get pickerMoment() {
+  get pickerMoment(): T {
     return this._pickerMoment;
   }
 
@@ -163,30 +164,8 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
     return this._currentView !== DateView.MULTI_YEARS;
   }
 
-  get isMonthView() {
+  get isMonthView(): boolean {
     return this._currentView === DateView.MONTH;
-  }
-
-  /**
-   * Bind class 'owl-dt-calendar' to host
-   */
-  get owlDTCalendarClass(): boolean {
-    return true;
-  }
-
-  constructor(
-    private elmRef: ElementRef,
-    private pickerIntl: OwlDateTimeIntl,
-    private ngZone: NgZone,
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    private dateTimeFormats: OwlDateTimeFormats
-  ) {
-    this.intlChangesSub = this.pickerIntl.changes.subscribe(() => {
-      this.cdRef.markForCheck();
-    });
   }
 
   public get isTodayAllowed(): boolean {
@@ -303,7 +282,11 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
 
   private _currentView: DateViewType;
 
-  private intlChangesSub = Subscription.EMPTY;
+  constructor() {
+    this.pickerIntl.changes.pipe(takeUntilDestroyed()).subscribe(() => {
+      this.cdRef.markForCheck();
+    });
+  }
 
   /**
    * Used for scheduling that focus should be moved to the active cell on the next tick.
@@ -333,10 +316,6 @@ export class OwlCalendarComponent<T> implements AfterContentInit, AfterViewCheck
       this.moveFocusOnNextTick = false;
       this.focusActiveCell();
     }
-  }
-
-  public ngOnDestroy(): void {
-    this.intlChangesSub.unsubscribe();
   }
 
   /**

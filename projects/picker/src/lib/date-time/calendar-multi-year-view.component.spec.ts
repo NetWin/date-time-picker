@@ -1,7 +1,3 @@
-/**
- * calendar-multi-year-view.component.spec
- */
-
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -11,7 +7,6 @@ import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
 import { OwlDateTimeModule } from './date-time.module';
-import { Options, OptionsTokens } from './options-provider';
 
 const JAN = 0;
 const YEAR_ROWS = 7;
@@ -20,19 +15,13 @@ const YEARS_PER_ROW = 3;
 describe('OwlMultiYearViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardMultiYearViewComponent, MultiYearViewWithDateFilterComponent],
-      providers: [
-        OwlDateTimeIntl,
-        {
-          provide: OptionsTokens.multiYear,
-          useFactory: () =>
-            ({
-              yearRows: YEAR_ROWS,
-              yearsPerRow: YEARS_PER_ROW
-            }) as Options['multiYear']
-        }
-      ]
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardMultiYearViewComponent,
+        MultiYearViewWithDateFilterComponent
+      ],
+      providers: [OwlDateTimeIntl]
     }).compileComponents();
   });
 
@@ -83,6 +72,7 @@ describe('OwlMultiYearViewComponent', () => {
       const selectedElContent = multiYearViewElement.querySelector(
         '.owl-dt-calendar-cell-active .owl-dt-calendar-cell-content'
       );
+      console.info(selectedElContent);
       expect(selectedElContent.innerHTML.trim()).toBe('2030');
     });
 
@@ -219,12 +209,13 @@ describe('OwlMultiYearViewComponent', () => {
 });
 
 @Component({
-  standalone: false,
+  imports: [OwlMultiYearViewComponent],
   template: `
     <owl-date-time-multi-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)"></owl-date-time-multi-year-view>
+      (changeYear)="handleChange($event)">
+    </owl-date-time-multi-year-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })
@@ -238,11 +229,12 @@ class StandardMultiYearViewComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlMultiYearViewComponent],
   template: `
     <owl-date-time-multi-year-view
       [dateFilter]="dateFilter"
-      [(pickerMoment)]="pickerMoment"></owl-date-time-multi-year-view>
+      [(pickerMoment)]="pickerMoment">
+    </owl-date-time-multi-year-view>
   `,
   changeDetection: ChangeDetectionStrategy.Default
 })

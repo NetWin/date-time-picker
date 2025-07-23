@@ -1,7 +1,3 @@
-/**
- * calendar-month-view.component
- */
-
 import {
   DOWN_ARROW,
   END,
@@ -19,17 +15,16 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Inject,
   Input,
   OnDestroy,
   OnInit,
-  Optional,
   ViewChild,
+  inject,
   output
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
-import { OWL_DATE_TIME_FORMATS, OwlDateTimeFormats } from './adapter/date-time-format.class';
+import { OWL_DATE_TIME_FORMATS } from './adapter/date-time-format.class';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
 import { SelectMode } from './date-time.class';
 
@@ -37,18 +32,18 @@ const DAYS_PER_WEEK = 7;
 const WEEKS_PER_VIEW = 6;
 
 @Component({
-  standalone: false,
   selector: 'owl-date-time-month-view',
   exportAs: 'owlYearView',
   templateUrl: './calendar-month-view.component.html',
-  styleUrls: ['./calendar-month-view.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-view]': 'owlDTCalendarView'
-  },
-  preserveWhitespaces: false,
+  imports: [OwlCalendarBodyComponent],
+  host: { 'class': 'owl-dt-calendar-view' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly dateTimeAdapter = inject(DateTimeAdapter<T>, { optional: true });
+  private readonly dateTimeFormats = inject(OWL_DATE_TIME_FORMATS, { optional: true });
+
   /**
    * Whether to hide dates in other months at the start or end of the current month.
    */
@@ -187,11 +182,11 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   /** The maximum selectable date. */
   private _maxDate: T | null;
   @Input()
-  get maxDate(): T | null {
+  public get maxDate(): T | null {
     return this._maxDate;
   }
 
-  set maxDate(value: T | null) {
+  public set maxDate(value: T | null) {
     value = this.dateTimeAdapter.deserialize(value);
     this._maxDate = this.getValidDate(value);
 
@@ -201,13 +196,13 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
     }
   }
 
-  private _weekdays: Array<{ long: string; short: string; narrow: string }>;
-  get weekdays() {
+  private _weekdays: Array<Record<Intl.DateTimeFormatOptions['weekday'], string>>;
+  get weekdays(): Array<Record<Intl.DateTimeFormatOptions['weekday'], string>> {
     return this._weekdays;
   }
 
   private _days: Array<Array<CalendarCell>>;
-  get days() {
+  get days(): Array<Array<CalendarCell>> {
     return this._days;
   }
 
@@ -265,19 +260,7 @@ export class OwlMonthViewComponent<T> implements OnInit, AfterContentInit, OnDes
   @ViewChild(OwlCalendarBodyComponent, { static: true })
   calendarBodyElm: OwlCalendarBodyComponent;
 
-  get owlDTCalendarView(): boolean {
-    return true;
-  }
-
-  constructor(
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>,
-    @Optional()
-    @Inject(OWL_DATE_TIME_FORMATS)
-    private dateTimeFormats: OwlDateTimeFormats
-  ) {}
-
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.updateFirstDayOfWeek(this.dateTimeAdapter.getLocale());
     this.generateWeekDays();
 

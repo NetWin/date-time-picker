@@ -1,7 +1,3 @@
-/**
- * timer-box.component
- */
-
 import { coerceNumberProperty } from '@angular/cdk/coercion';
 import {
   ChangeDetectionStrategy,
@@ -17,16 +13,11 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
-  standalone: false,
   exportAs: 'owlDateTimeTimerBox',
   selector: 'owl-date-time-timer-box',
   templateUrl: './timer-box.component.html',
-  styleUrls: ['./timer-box.component.scss'],
-  preserveWhitespaces: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '[class.owl-dt-timer-box]': 'owlDTTimerBoxClass'
-  }
+  host: { 'class': 'owl-dt-timer-box' }
 })
 export class OwlTimerBoxComponent implements OnInit, OnDestroy {
   @Input() public showDivider = false;
@@ -79,8 +70,6 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
 
     return value < 10 ? `0${value.toString()}` : value.toString();
   }
-
-  protected readonly owlDTTimerBoxClass = true;
 
   @ViewChild('valueInput', { static: true })
   private valueInput: ElementRef<HTMLInputElement>;

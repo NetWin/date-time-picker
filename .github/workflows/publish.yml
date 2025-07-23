@@ -40,8 +40,7 @@ jobs:
 
       - name: Build library
         run: |
-          npm run build:lib:linux
-          npm run build:css:linux
+          npm run build
 
       - name: Release
         env:

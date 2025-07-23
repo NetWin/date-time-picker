@@ -15,7 +15,6 @@
         <span
           [style.transform]="'rotate(' + (isMonthView ? 0 : 180) + 'deg)'"
           class="owl-dt-control-button-arrow">
-          <!-- <editor-fold desc="SVG Arrow"> -->
           <svg
             xml:space="preserve"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -34,7 +33,6 @@
                                 s9.233-1.811,12.847-5.428L286.935,95.074c3.613-3.617,5.427-7.898,5.427-12.847C292.362,77.279,290.548,72.998,286.935,69.377z" />
             </g>
           </svg>
-          <!-- </editor-fold> -->
         </span>
       </span>
     </button>
@@ -59,7 +57,6 @@
     <span
       class="owl-dt-control-content owl-dt-control-button-content"
       tabindex="-1">
-      <!-- <editor-fold desc="SVG Arrow Left"> -->
       <svg
         xml:space="preserve"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -75,7 +72,6 @@
           d="M96.633,125.369l95.053-94.533c7.101-7.055,7.101-18.492,0-25.546   c-7.1-7.054-18.613-7.054-25.714,0L58.989,111.689c-3.784,3.759-5.487,8.759-5.238,13.68c-0.249,4.922,1.454,9.921,5.238,13.681   l106.983,106.398c7.101,7.055,18.613,7.055,25.714,0c7.101-7.054,7.101-18.491,0-25.544L96.633,125.369z"
           style="fill-rule: evenodd; clip-rule: evenodd" />
       </svg>
-      <!-- </editor-fold> -->
     </span>
   </button>
   <button
@@ -89,7 +85,6 @@
     <span
       class="owl-dt-control-content owl-dt-control-button-content"
       tabindex="-1">
-      <!-- <editor-fold desc="SVG Arrow Right"> -->
       <svg
         xml:space="preserve"
         xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -106,7 +101,6 @@
                     C197.237,120.447,195.534,115.448,191.75,111.689z"
           style="fill-rule: evenodd; clip-rule: evenodd" />
       </svg>
-      <!-- </editor-fold> -->
     </span>
   </button>
 </div>
@@ -140,7 +134,7 @@
         [selectMode]="selectMode"
         [selected]="selected"
         [selecteds]="selecteds"
-        (change)="goToDateInView($event, DateView.MONTH)"
+        (changeMonth)="goToDateInView($event, DateView.MONTH)"
         (keyboardEnter)="focusActiveCell()"
         (monthSelected)="selectMonthInYearView($event)"
         (pickerMomentChange)="handlePickerMomentChange($event)"></owl-date-time-year-view>
@@ -155,7 +149,7 @@
         [selectMode]="selectMode"
         [selected]="selected"
         [selecteds]="selecteds"
-        (change)="goToDateInView($event, DateView.YEAR)"
+        (changeYear)="goToDateInView($event, DateView.YEAR)"
         (keyboardEnter)="focusActiveCell()"
         (pickerMomentChange)="handlePickerMomentChange($event)"
         (yearSelected)="selectYearInMultiYearView($event)"></owl-date-time-multi-year-view>

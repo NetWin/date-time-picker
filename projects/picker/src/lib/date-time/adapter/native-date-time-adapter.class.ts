@@ -3,7 +3,7 @@
  */
 
 import { Platform } from '@angular/cdk/platform';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { range } from '../../utils/array.utils';
 import {
   DEFAULT_DATE_NAMES,
@@ -23,6 +23,9 @@ const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?
 
 @Injectable()
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
+  private readonly owlDateTimeLocale = inject(OWL_DATE_TIME_LOCALE, { optional: true });
+  private readonly platform = inject(Platform);
+
   /** Whether to clamp the date between 1 and 9999 to avoid IE and Edge errors. */
   private readonly _clampDate: boolean;
 
@@ -34,18 +37,13 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    */
   public useUtcForDisplay: boolean;
 
-  constructor(
-    @Optional()
-    @Inject(OWL_DATE_TIME_LOCALE)
-    private owlDateTimeLocale: string,
-    platform: Platform
-  ) {
+  constructor() {
     super();
-    super.setLocale(owlDateTimeLocale);
+    super.setLocale(this.owlDateTimeLocale);
 
     // IE does its own time zone correction, so we disable this on IE.
-    this.useUtcForDisplay = !platform.TRIDENT;
-    this._clampDate = platform.TRIDENT || platform.EDGE;
+    this.useUtcForDisplay = !this.platform.TRIDENT;
+    this._clampDate = this.platform.TRIDENT || this.platform.EDGE;
   }
 
   public getYear(date: Date): number {
@@ -118,23 +116,17 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return String(this.getYear(date));
   }
 
-  public getMonthNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getMonthNames(style: Intl.DateTimeFormatOptions['month']): Array<string> {
     if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        month: style,
-        timeZone: 'utc'
-      });
+      const dtf = new Intl.DateTimeFormat(this.getLocale(), { month: style, timeZone: 'utc' });
       return range(12, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, i, 1))));
     }
     return DEFAULT_MONTH_NAMES[style];
   }
 
-  public getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): Array<string> {
+  public getDayOfWeekNames(style: Intl.DateTimeFormatOptions['weekday']): Array<string> {
     if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        weekday: style,
-        timeZone: 'utc'
-      });
+      const dtf = new Intl.DateTimeFormat(this.getLocale(), { weekday: style, timeZone: 'utc' });
       return range(7, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1))));
     }
 
@@ -143,10 +135,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
 
   public getDateNames(): Array<string> {
     if (SUPPORTS_INTL_API) {
-      const dtf = new Intl.DateTimeFormat(this.getLocale(), {
-        day: 'numeric',
-        timeZone: 'utc'
-      });
+      const dtf = new Intl.DateTimeFormat(this.getLocale(), { day: 'numeric', timeZone: 'utc' });
       return range(31, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1))));
     }
     return DEFAULT_DATE_NAMES;
@@ -159,9 +148,8 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   public isEqual(dateLeft: Date, dateRight: Date): boolean {
     if (this.isValid(dateLeft) && this.isValid(dateRight)) {
       return dateLeft.getTime() === dateRight.getTime();
-    } else {
-      return false;
     }
+    return false;
   }
 
   public isSameDay(dateLeft: Date, dateRight: Date): boolean {
@@ -171,9 +159,8 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
       dateLeftStartOfDay.setHours(0, 0, 0, 0);
       dateRightStartOfDay.setHours(0, 0, 0, 0);
       return dateLeftStartOfDay.getTime() === dateRightStartOfDay.getTime();
-    } else {
-      return false;
     }
+    return false;
   }
 
   public isValid(date: Date): boolean {
@@ -278,7 +265,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
     return this.stripDirectionalityCharacters(date.toDateString());
   }
 
-  public parse(value: any, parseFormat: any): Date | null {
+  public parse(value: number | string): Date | null {
     // There is no way using the native JS Date to set the parse format or locale
     if (typeof value === 'number') {
       return new Date(value);
@@ -291,7 +278,7 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
    * (https://www.ietf.org/rfc/rfc3339.txt) into valid Dates and empty string into null. Returns an
    * invalid date for all other values.
    */
-  public override deserialize(value: any): Date | null {
+  public override deserialize(value: Date | null): Date | null {
     if (typeof value === 'string') {
       if (!value) {
         return null;

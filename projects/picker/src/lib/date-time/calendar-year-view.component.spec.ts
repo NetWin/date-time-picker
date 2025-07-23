@@ -1,7 +1,3 @@
-/**
- * calendar-year-view.component.spec
- */
-
 import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -26,8 +22,7 @@ const DEC = 11;
 describe('OwlYearViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardYearViewComponent, YearViewWithDateFilterComponent],
+      imports: [OwlNativeDateTimeModule, OwlDateTimeModule, StandardYearViewComponent, YearViewWithDateFilterComponent],
       providers: [OwlDateTimeIntl]
     }).compileComponents();
   });
@@ -260,14 +255,14 @@ describe('OwlYearViewComponent', () => {
 });
 
 @Component({
-  standalone: false,
   template: `
     <owl-date-time-year-view
       [selected]="selected"
       [(pickerMoment)]="pickerMoment"
-      (change)="handleChange($event)"></owl-date-time-year-view>
+      (changeMonth)="handleChange($event)"></owl-date-time-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlYearViewComponent]
 })
 class StandardYearViewComponent {
   public selected = new Date(2018, JAN, 10);
@@ -279,13 +274,13 @@ class StandardYearViewComponent {
 }
 
 @Component({
-  standalone: false,
   template: `
     <owl-date-time-year-view
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlYearViewComponent]
 })
 class YearViewWithDateFilterComponent {
   public pickerMoment = new Date(2018, JAN, 1);

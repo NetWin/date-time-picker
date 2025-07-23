@@ -1,35 +1,37 @@
-/**
- * timer.component
- */
-
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
+  inject,
   Input,
+  input,
   NgZone,
-  Optional,
   output
 } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
+import { OwlTimerBoxComponent } from './timer-box.component';
 
 @Component({
-  standalone: false,
   exportAs: 'owlDateTimeTimer',
   selector: 'owl-date-time-timer',
   templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.scss'],
-  preserveWhitespaces: false,
+  imports: [OwlTimerBoxComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class.owl-dt-timer]': 'owlDTTimerClass',
-    '[attr.tabindex]': 'owlDTTimeTabIndex'
+    '[attr.tabindex]': '-1',
+    'class': 'owl-dt-timer'
   }
 })
 export class OwlTimerComponent<T> {
+  private readonly ngZone = inject(NgZone);
+  private readonly elmRef = inject(ElementRef);
+  private readonly pickerIntl = inject(OwlDateTimeIntl);
+  private readonly cdRef = inject(ChangeDetectorRef);
+  private readonly dateTimeAdapter = inject(DateTimeAdapter<T>, { optional: true });
+
   /** The current picker moment */
   private _pickerMoment: T;
   @Input()
@@ -68,32 +70,27 @@ export class OwlTimerComponent<T> {
   /**
    * Whether to show the second's timer
    */
-  @Input()
-  public showSecondsTimer: boolean;
+  public readonly showSecondsTimer = input<boolean>(undefined);
 
   /**
    * Whether the timer is in hour12 format
    */
-  @Input()
-  public hour12Timer: boolean;
+  public readonly hour12Timer = input<boolean>(undefined);
 
   /**
    * Hours to change per step
    */
-  @Input()
-  public stepHour = 1;
+  public readonly stepHour = input(1);
 
   /**
    * Minutes to change per step
    */
-  @Input()
-  public stepMinute = 1;
+  public readonly stepMinute = input(1);
 
   /**
    * Seconds to change per step
    */
-  @Input()
-  public stepSecond = 1;
+  public readonly stepSecond = input(1);
 
   public readonly selectedChange = output<T>();
 
@@ -109,7 +106,7 @@ export class OwlTimerComponent<T> {
   protected get hourBoxValue(): number {
     let hours = this.hourValue;
 
-    if (!this.hour12Timer) {
+    if (!this.hour12Timer()) {
       return hours;
     } else {
       if (hours === 0) {
@@ -164,22 +161,6 @@ export class OwlTimerComponent<T> {
     return this.isPM ? this.pickerIntl.hour12PMLabel : this.pickerIntl.hour12AMLabel;
   }
 
-  protected get owlDTTimerClass(): boolean {
-    return true;
-  }
-
-  protected get owlDTTimeTabIndex(): number {
-    return -1;
-  }
-
-  constructor(
-    private ngZone: NgZone,
-    private elmRef: ElementRef,
-    private pickerIntl: OwlDateTimeIntl,
-    private cdRef: ChangeDetectorRef,
-    @Optional() private dateTimeAdapter: DateTimeAdapter<T>
-  ) {}
-
   /**
    * Focus to the host element
    */
@@ -199,9 +180,10 @@ export class OwlTimerComponent<T> {
    * We need this to handle the hour value when the timer is in hour12 mode
    */
   public setHourValueViaInput(hours: number): void {
-    if (this.hour12Timer && this.isPM && hours >= 1 && hours <= 11) {
+    const hour12Timer = this.hour12Timer();
+    if (hour12Timer && this.isPM && hours >= 1 && hours <= 11) {
       hours = hours + 12;
-    } else if (this.hour12Timer && !this.isPM && hours === 12) {
+    } else if (hour12Timer && !this.isPM && hours === 12) {
       hours = 0;
     }
 
@@ -248,42 +230,42 @@ export class OwlTimerComponent<T> {
    * Check if the up hour button is enabled
    */
   public upHourEnabled(): boolean {
-    return !this.maxDateTime || this.compareHours(this.stepHour, this.maxDateTime) < 1;
+    return !this.maxDateTime || this.compareHours(this.stepHour(), this.maxDateTime) < 1;
   }
 
   /**
    * Check if the down hour button is enabled
    */
   public downHourEnabled(): boolean {
-    return !this.minDateTime || this.compareHours(-this.stepHour, this.minDateTime) > -1;
+    return !this.minDateTime || this.compareHours(-this.stepHour(), this.minDateTime) > -1;
   }
 
   /**
    * Check if the up minute button is enabled
    */
   public upMinuteEnabled(): boolean {
-    return !this.maxDateTime || this.compareMinutes(this.stepMinute, this.maxDateTime) < 1;
+    return !this.maxDateTime || this.compareMinutes(this.stepMinute(), this.maxDateTime) < 1;
   }
 
   /**
    * Check if the down minute button is enabled
    */
   public downMinuteEnabled(): boolean {
-    return !this.minDateTime || this.compareMinutes(-this.stepMinute, this.minDateTime) > -1;
+    return !this.minDateTime || this.compareMinutes(-this.stepMinute(), this.minDateTime) > -1;
   }
 
   /**
    * Check if the up second button is enabled
    */
   public upSecondEnabled(): boolean {
-    return !this.maxDateTime || this.compareSeconds(this.stepSecond, this.maxDateTime) < 1;
+    return !this.maxDateTime || this.compareSeconds(this.stepSecond(), this.maxDateTime) < 1;
   }
 
   /**
    * Check if the down second button is enabled
    */
   public downSecondEnabled(): boolean {
-    return !this.minDateTime || this.compareSeconds(-this.stepSecond, this.minDateTime) > -1;
+    return !this.minDateTime || this.compareSeconds(-this.stepSecond(), this.minDateTime) > -1;
   }
 
   /**

@@ -5,7 +5,7 @@ import DocsCategory from '../ng-doc.category';
 import { DateTimeInlineDemoComponent } from './date-time-inline-demo.component';
 
 const DateTimeInlinePage: NgDocPage = {
-  mdFile: './index.md',
+  mdFile: ['./index.md', './index-api.md'],
   title: 'DateTimePicker',
   route: 'date-time-picker',
   imports: [OwlDateTimeModule, OwlNativeDateTimeModule],

@@ -1,6 +1,3 @@
-/**
- * calendar-body.component.spec
- */
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -9,12 +6,7 @@ import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.componen
 describe('OwlCalendarBodyComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        OwlCalendarBodyComponent,
-
-        // Test components
-        StandardCalendarBodyComponent
-      ]
+      imports: [OwlCalendarBodyComponent, StandardCalendarBodyComponent]
     }).compileComponents();
   });
 
@@ -93,16 +85,18 @@ describe('OwlCalendarBodyComponent', () => {
 });
 
 @Component({
-  standalone: false,
-  template: ` <table
-    [activeCell]="activeCell"
-    [rows]="rows"
-    [selectMode]="'single'"
-    [selectedValues]="selectedValues"
-    [todayValue]="todayValue"
-    (select)="handleSelect()"
-    owl-date-time-calendar-body></table>`,
-  changeDetection: ChangeDetectionStrategy.Default
+  template: `
+    <table
+      [activeCell]="activeCell"
+      [rows]="rows"
+      [selectMode]="'single'"
+      [selectedValues]="selectedValues"
+      [todayValue]="todayValue"
+      (selectCell)="handleSelect()"
+      owl-date-time-calendar-body></table>
+  `,
+  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [OwlCalendarBodyComponent]
 })
 class StandardCalendarBodyComponent {
   public rows = [

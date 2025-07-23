@@ -1,7 +1,3 @@
-/**
- * calendar.component.spec
- */
-
 import { ENTER, RIGHT_ARROW } from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, NgZone } from '@angular/core';
 import { ComponentFixture, inject, TestBed } from '@angular/core/testing';
@@ -34,8 +30,13 @@ describe('OwlCalendarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule],
-      declarations: [StandardCalendarComponent, CalendarWithMinMaxComponent, CalendarWithDateFilterComponent],
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardCalendarComponent,
+        CalendarWithMinMaxComponent,
+        CalendarWithDateFilterComponent
+      ],
       providers: [
         OwlDateTimeIntl,
         {
@@ -112,17 +113,15 @@ describe('OwlCalendarComponent', () => {
       expect(normalizedYear.getFullYear()).toEqual(2018);
     });
 
-    it('should re-render when the i18n labels have changed', () => {
-      inject([OwlDateTimeIntl], (intl: OwlDateTimeIntl) => {
-        const button = fixture.debugElement.nativeElement.querySelector('.owl-dt-control-period-button');
+    it('should re-render when the i18n labels have changed', inject([OwlDateTimeIntl], (intl: OwlDateTimeIntl) => {
+      const button = fixture.debugElement.nativeElement.querySelector('.owl-dt-control-period-button');
 
-        intl.switchToMultiYearViewLabel = 'Go to multi-year view?';
-        intl.changes.next();
-        fixture.detectChanges();
+      intl.switchToMultiYearViewLabel = 'Go to multi-year view?';
+      intl.changes.next();
+      fixture.detectChanges();
 
-        expect(button.getAttribute('aria-label')).toBe('Go to multi-year view?');
-      });
-    });
+      expect(button.getAttribute('aria-label')).toBe('Go to multi-year view?');
+    }));
 
     it('should set all buttons to be `type="button"`', () => {
       const invalidButtons = calendarElement.querySelectorAll('button:not([type="button"])');
@@ -369,7 +368,7 @@ describe('OwlCalendarComponent', () => {
 });
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [pickerMoment]="pickerMoment"
@@ -389,7 +388,7 @@ class StandardCalendarComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [maxDate]="maxDate"
@@ -408,7 +407,7 @@ class CalendarWithMinMaxComponent {
 }
 
 @Component({
-  standalone: false,
+  imports: [OwlCalendarComponent],
   template: `
     <owl-date-time-calendar
       [dateFilter]="dateFilter"

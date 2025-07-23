@@ -1,8 +1,4 @@
-/**
- * calendar-body.component
- */
-
-import { ChangeDetectionStrategy, Component, ElementRef, Input, NgZone, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, NgZone, output } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { SelectMode } from './date-time.class';
 
@@ -18,84 +14,73 @@ export class CalendarCell {
 }
 
 @Component({
-  standalone: false,
   selector: '[owl-date-time-calendar-body]',
   exportAs: 'owlDateTimeCalendarBody',
   templateUrl: './calendar-body.component.html',
-  styleUrls: ['./calendar-body.component.scss'],
-  host: {
-    '[class.owl-dt-calendar-body]': 'owlDTCalendarBodyClass'
-  },
-  preserveWhitespaces: false,
+  host: { 'class': 'owl-dt-calendar-body' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OwlCalendarBodyComponent {
+  private readonly elmRef = inject(ElementRef);
+  private readonly ngZone = inject(NgZone);
+
   /**
    * The cell number of the active cell in the table.
    */
   @Input()
-  activeCell = 0;
+  public activeCell = 0;
 
   /**
    * The cells to display in the table.
    */
   @Input()
-  rows: Array<Array<CalendarCell>>;
+  public rows: Array<Array<CalendarCell>>;
 
   /**
    * The number of columns in the table.
    */
   @Input()
-  numCols = 7;
+  public numCols = 7;
 
   /**
    * The ratio (width / height) to use for the cells in the table.
    */
   @Input()
-  cellRatio = 1;
+  public cellRatio = 1;
 
   /**
    * The value in the table that corresponds to today.
    */
   @Input()
-  todayValue: number;
+  public todayValue: number;
 
   /**
    * The value in the table that is currently selected.
    */
   @Input()
-  selectedValues: Array<number>;
+  public selectedValues: Array<number>;
 
   /**
    * Current picker select mode
    */
   @Input()
-  selectMode: SelectMode;
+  public selectMode: SelectMode;
 
   /**
    * Emit when a calendar cell is selected
    */
-  public readonly select = output<CalendarCell>();
+  public readonly selectCell = output<CalendarCell>();
 
-  get owlDTCalendarBodyClass(): boolean {
-    return true;
+  protected handleSelect(cell: CalendarCell): void {
+    this.selectCell.emit(cell);
   }
 
-  get isInSingleMode(): boolean {
+  protected get isInSingleMode(): boolean {
     return this.selectMode === 'single';
   }
 
-  get isInRangeMode(): boolean {
+  protected get isInRangeMode(): boolean {
     return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
-  }
-
-  constructor(
-    private elmRef: ElementRef,
-    private ngZone: NgZone
-  ) {}
-
-  public selectCell(cell: CalendarCell): void {
-    this.select.emit(cell);
   }
 
   public isActiveCell(rowIndex: number, colIndex: number): boolean {

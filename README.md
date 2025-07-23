@@ -39,7 +39,6 @@ or
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@netwin/angular-datetime-picker';
 
 @Component({
-  standalone: true,
   selector: 'app-my-feature-with-datetime-picker',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

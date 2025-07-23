@@ -5,7 +5,7 @@
   [inputLabel]="'Hour'"
   [max]="23"
   [min]="0"
-  [step]="stepHour"
+  [step]="stepHour()"
   [upBtnAriaLabel]="upHourButtonLabel"
   [upBtnDisabled]="!upHourEnabled()"
   [value]="hourValue"
@@ -18,14 +18,14 @@
   [max]="59"
   [min]="0"
   [showDivider]="true"
-  [step]="stepMinute"
+  [step]="stepMinute()"
   [upBtnAriaLabel]="upMinuteButtonLabel"
   [upBtnDisabled]="!upMinuteEnabled()"
   [value]="minuteValue"
   (inputChange)="setMinuteValue($event)"
   (valueChange)="setMinuteValue($event)"></owl-date-time-timer-box>
 
-@if (showSecondsTimer) {
+@if (showSecondsTimer()) {
   <owl-date-time-timer-box
     [downBtnAriaLabel]="downSecondButtonLabel"
     [downBtnDisabled]="!downSecondEnabled()"
@@ -33,7 +33,7 @@
     [max]="59"
     [min]="0"
     [showDivider]="true"
-    [step]="stepSecond"
+    [step]="stepSecond()"
     [upBtnAriaLabel]="upSecondButtonLabel"
     [upBtnDisabled]="!upSecondEnabled()"
     [value]="secondValue"
@@ -41,7 +41,7 @@
     (valueChange)="setSecondValue($event)"></owl-date-time-timer-box>
 }
 
-@if (hour12Timer) {
+@if (hour12Timer()) {
   <div class="owl-dt-timer-hour12">
     <button
       (click)="setMeridiem($event)"
