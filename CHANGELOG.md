@@ -1,3 +1,21 @@
+# [20.0.0](https://github.com/netwin/date-time-picker/compare/19.1.0...20.0.0) (2025-07-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependencies ([7762b54](https://github.com/netwin/date-time-picker/commit/7762b54f66338a2bc560850503cbe4f5db813aad))
+
+
+### Features
+
+* convert all components to standalone ([98092d2](https://github.com/netwin/date-time-picker/commit/98092d2795606639d55077306015c09a2838461b))
+* update Angular, Drop dialog support, move from scss to css ([f35dd7f](https://github.com/netwin/date-time-picker/commit/f35dd7feab35d52ee2b6cf604a662b9823dd7cdf))
+
+
+### BREAKING CHANGES
+
+* Clients need to update to Angular 20 in order to use this version. As I wrote last october in #3, Dialog and Popup support were finally dropped. Only the "inline" mode is supported from now on. Additionally, probably irrelevant for clients, this library switched from scss to css which simplifies the build process.
+
 # [19.1.0](https://github.com/netwin/date-time-picker/compare/19.0.0...19.1.0) (2025-05-15)
 
 
