@@ -34,7 +34,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
    * Value would be displayed in the box
    * If it is null, the box would display [value]
    */
-  @Input() public boxValue: number;
+  @Input() public boxValue: number | null = null;
 
   @Input() public value: number;
 
@@ -54,14 +54,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
 
   private inputStreamSub = Subscription.EMPTY;
 
-  private hasFocus = false;
-
   protected get displayValue(): string {
-    if (this.hasFocus) {
-      // Don't try to reformat the value that user is currently editing
-      return this.valueInput.nativeElement.value;
-    }
-
     const value = this.boxValue || this.value;
 
     if (value === null || isNaN(value)) {
@@ -98,16 +91,21 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
     this.updateValue(this.value - this.step);
   }
 
+  protected downViaArrowKey(): void {
+    if (this.downBtnDisabled) return;
+    this.downBtnClicked();
+  }
+
+  protected upViaArrowKey(): void {
+    if (this.upBtnDisabled) return;
+    this.upBtnClicked();
+  }
+
   public handleInputChange(val: string): void {
     this.inputStream.next(val);
   }
 
-  public focusIn(): void {
-    this.hasFocus = true;
-  }
-
   public focusOut(value: string): void {
-    this.hasFocus = false;
     if (value) {
       const inputValue = coerceNumberProperty(value, 0);
       this.updateValueViaInput(inputValue);

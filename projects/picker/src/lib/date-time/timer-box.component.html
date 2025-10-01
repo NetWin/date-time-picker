@@ -35,11 +35,10 @@
   <input
     #valueInput
     [value]="displayValue"
-    (focusin)="focusIn()"
     (focusout)="focusOut(valueInput.value)"
     (input)="handleInputChange(valueInput.value)"
-    (keydown.arrowdown)="!downBtnDisabled && downBtnClicked()"
-    (keydown.arrowup)="!upBtnDisabled && upBtnClicked()"
+    (keydown.arrowdown)="downViaArrowKey()"
+    (keydown.arrowup)="upViaArrowKey()"
     class="owl-dt-timer-input"
     maxlength="2" />
   <span class="owl-hidden-accessible">{{ inputLabel }}</span>
