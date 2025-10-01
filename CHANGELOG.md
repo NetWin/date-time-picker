@@ -1,3 +1,10 @@
+## [20.0.1](https://github.com/netwin/date-time-picker/compare/20.0.0...20.0.1) (2025-10-01)
+
+
+### Bug Fixes
+
+* **timer-box:** update input value when changing values via arrow keys ([8299376](https://github.com/netwin/date-time-picker/commit/8299376d392d1cb24dbc40ce7ccae9d0174f1de5))
+
 # [20.0.0](https://github.com/netwin/date-time-picker/compare/19.1.0...20.0.0) (2025-07-23)
 
 
