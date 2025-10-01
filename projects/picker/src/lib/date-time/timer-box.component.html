@@ -1,11 +1,11 @@
-@if (showDivider) {
+@if (showDivider()) {
   <div
     aria-hidden="true"
     class="owl-dt-timer-divider"></div>
 }
 <button
-  [attr.aria-label]="upBtnAriaLabel"
-  [disabled]="upBtnDisabled"
+  [attr.aria-label]="upBtnAriaLabel()"
+  [disabled]="upBtnDisabled()"
   (click)="upBtnClicked()"
   class="owl-dt-control-button owl-dt-control-arrow-button"
   tabindex="-1"
@@ -34,18 +34,18 @@
 <label class="owl-dt-timer-content">
   <input
     #valueInput
-    [value]="displayValue"
+    [value]="displayValue()"
     (focusout)="focusOut(valueInput.value)"
     (input)="handleInputChange(valueInput.value)"
-    (keydown.arrowdown)="downViaArrowKey()"
-    (keydown.arrowup)="upViaArrowKey()"
+    (keydown.arrowdown)="downBtnClicked()"
+    (keydown.arrowup)="upBtnClicked()"
     class="owl-dt-timer-input"
     maxlength="2" />
-  <span class="owl-hidden-accessible">{{ inputLabel }}</span>
+  <span class="owl-hidden-accessible">{{ inputLabel() }}</span>
 </label>
 <button
-  [attr.aria-label]="downBtnAriaLabel"
-  [disabled]="downBtnDisabled"
+  [attr.aria-label]="downBtnAriaLabel()"
+  [disabled]="downBtnDisabled()"
   (click)="downBtnClicked()"
   class="owl-dt-control-button owl-dt-control-arrow-button"
   tabindex="-1"
