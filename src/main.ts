@@ -1,5 +1,5 @@
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes, withHashLocation, withInMemoryScrolling } from '@angular/router';
@@ -20,6 +20,7 @@ const routes: Routes = [...NG_DOC_ROUTING, { path: '**', redirectTo: 'home', pat
 const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
+    provideZoneChangeDetection(),
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
       routes,
