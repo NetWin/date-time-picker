@@ -1,3 +1,15 @@
+# [21.0.0](https://github.com/netwin/date-time-picker/compare/20.0.1...21.0.0) (2026-01-08)
+
+
+### Features
+
+* update Angular to v21 ([05e5122](https://github.com/netwin/date-time-picker/commit/05e512227d10c956e798c78698fb67240f1c963a))
+
+
+### BREAKING CHANGES
+
+* Clients need to update to Angular 21 aswell in order to use the latest version
+
 ## [20.0.1](https://github.com/netwin/date-time-picker/compare/20.0.0...20.0.1) (2025-10-01)
 
 
