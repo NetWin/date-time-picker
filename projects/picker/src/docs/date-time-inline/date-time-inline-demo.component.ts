@@ -1,7 +1,12 @@
 import { JsonPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OwlDateTimeModule, OwlNativeDateTimeModule, type PickerType, type SelectMode } from 'picker';
+import {
+  OwlDateTimeModule,
+  OwlNativeDateTimeModule,
+  type PickerType,
+  type SelectMode
+} from 'picker';
 
 type SingleDate = Date | null;
 type DateRange = [from: Date | null, to: Date | null];

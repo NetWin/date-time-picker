@@ -4,36 +4,36 @@
   "description": "Angular Date Time Picker",
   "keywords": [
     "Angular",
-    "datepicker",
     "date picker",
-    "timepicker",
-    "time picker",
-    "datetime picker",
     "date time picker",
+    "datepicker",
+    "datetime picker",
     "material",
-    "ngx"
+    "ngx",
+    "time picker",
+    "timepicker"
   ],
-  "author": "Maintained and updated by NetWin, forked from Daniel Moncada, original implementatiom by Daniel Pan",
+  "homepage": "https://github.com/NetWin/date-time-picker",
   "license": "MIT",
+  "author": "Maintained and updated by NetWin, forked from Daniel Moncada, original implementatiom by Daniel Pan",
   "repository": {
     "type": "git",
     "url": "https://github.com/NetWin/date-time-picker.git"
-  },
-  "homepage": "https://github.com/NetWin/date-time-picker",
-  "publishConfig": {
-    "access": "public"
-  },
-  "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/cdk": "^21.0.0"
-  },
-  "dependencies": {
-    "tslib": "^2.8.1"
   },
   "exports": {
     "./assets/style/picker.min.css": {
       "default": "./assets/style/picker.min.css"
     }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
+  },
+  "peerDependencies": {
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0"
   }
 }

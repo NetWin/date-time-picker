@@ -1,7 +1,6 @@
 const js = require('@eslint/js');
 const typescriptEslintParser = require('@typescript-eslint/parser');
 const ngEslint = require('angular-eslint');
-const prettierConfig = require('eslint-config-prettier');
 const tsEslint = require('typescript-eslint');
 const stylistic = require('@stylistic/eslint-plugin');
 
@@ -15,8 +14,7 @@ module.exports = tsEslint.config(
       js.configs.recommended,
       ...tsEslint.configs.recommended,
       ...tsEslint.configs.stylistic,
-      ...ngEslint.configs.tsRecommended,
-      prettierConfig
+      ...ngEslint.configs.tsRecommended
     ],
     plugins: {
       '@stylistic': stylistic
@@ -30,11 +28,13 @@ module.exports = tsEslint.config(
       }
     },
     rules: {
-      /** #################################################
+      /**
+       * #################################################
        *
        * General rules
        *
-       * ############################################### */
+       * ###############################################
+       */
 
       // https://eslint.style/rules/js/semi
       // Enforce semicolons at the end of statements
@@ -61,11 +61,13 @@ module.exports = tsEslint.config(
       // Allow declarations (`const foo = 1`) in case clauses
       'no-case-declarations': 'off',
 
-      /** #################################################
+      /**
+       * #################################################
        *
        * TypeScript specific rules
        *
-       * ############################################### */
+       * ###############################################
+       */
 
       // https://typescript-eslint.io/rules/no-explicit-any
       // Disallow usage of the `any` type
@@ -102,7 +104,10 @@ module.exports = tsEslint.config(
       '@typescript-eslint/no-floating-promises': 'error',
       // https://typescript-eslint.io/rules/no-unused-vars
       // Disallow unused variables
-      '@typescript-eslint/no-unused-vars': ['warn', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }
+      ],
       // https://typescript-eslint.io/rules/array-type
       // Enforce the use of the array type (i.e. prever `Array<T>` over `T[]`)
       '@typescript-eslint/array-type': ['warn', { 'default': 'generic' }],
@@ -113,11 +118,13 @@ module.exports = tsEslint.config(
       // warn about self-assignment for now (this.foo = this.foo)
       'no-self-assign': 'warn',
 
-      /** #################################################
+      /**
+       * #################################################
        *
        * Angular specific rules
        *
-       * ############################################### */
+       * ###############################################
+       */
 
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/use-component-view-encapsulation.md
       // Disallow the use of the `ViewEncapsulation.None` in Angular components
@@ -146,7 +153,10 @@ module.exports = tsEslint.config(
       '@angular-eslint/directive-class-suffix': 'error',
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/directive-selector.md
       // Directive selectors should be camelCase prefixed with "owl"
-      '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: ['owl'], style: 'camelCase' }],
+      '@angular-eslint/directive-selector': [
+        'error',
+        { type: 'attribute', prefix: ['owl'], style: 'camelCase' }
+      ],
       // https://github.com/angular-eslint/angular-eslint/blob/main/packages/eslint-plugin/docs/rules/component-class-suffix.md
       // Component class names should have the suffix "Component"
       '@angular-eslint/component-class-suffix': ['error'],

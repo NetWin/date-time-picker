@@ -1,0 +1,23 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  esbuild: true
+  lightningcss-cli: true
+  lmdb: true
+  msgpackr-extract: true
+
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - '@ng-doc/app@21.1.0'
+  - '@ng-doc/builder@21.1.0'
+  - '@ng-doc/core@21.1.0'
+  - '@ng-doc/ui-kit@21.1.0'
+  - '@ng-doc/utils@21.1.0'
+
+trustLockfile: true
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - ua-parser-js@0.7.41
+  - mermaid@10.9.5
+  - chokidar@4.0.3
+  - semver@6.3.1 || 5.7.2

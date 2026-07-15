@@ -31,10 +31,7 @@ export class OwlTimerBoxComponent implements OnInit, OnDestroy {
 
   public readonly downBtnDisabled = input<boolean>();
 
-  /**
-   * Value would be displayed in the box
-   * If it is null, the box would display [value]
-   */
+  /** Value would be displayed in the box If it is null, the box would display [value] */
   public readonly boxValue = input<number>();
 
   public readonly value = input<number>();

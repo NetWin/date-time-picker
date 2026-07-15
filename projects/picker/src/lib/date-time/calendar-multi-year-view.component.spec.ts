@@ -1,7 +1,17 @@
-import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
+import {
+  DOWN_ARROW,
+  END,
+  HOME,
+  LEFT_ARROW,
+  PAGE_DOWN,
+  PAGE_UP,
+  RIGHT_ARROW,
+  UP_ARROW
+} from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlMultiYearViewComponent } from './calendar-multi-year-view.component';
@@ -36,7 +46,9 @@ describe('OwlMultiYearViewComponent', () => {
       fixture = TestBed.createComponent(StandardMultiYearViewComponent);
       fixture.detectChanges();
 
-      multiYearViewDebugElement = fixture.debugElement.query(By.directive(OwlMultiYearViewComponent));
+      multiYearViewDebugElement = fixture.debugElement.query(
+        By.directive(OwlMultiYearViewComponent)
+      );
       multiYearViewElement = multiYearViewDebugElement.nativeElement;
       testComponent = fixture.componentInstance;
       multiYearViewInstance = multiYearViewDebugElement.componentInstance;
@@ -72,13 +84,12 @@ describe('OwlMultiYearViewComponent', () => {
       const selectedElContent = multiYearViewElement.querySelector(
         '.owl-dt-calendar-cell-active .owl-dt-calendar-cell-content'
       );
-      console.info(selectedElContent);
       expect(selectedElContent.innerHTML.trim()).toBe('2030');
     });
 
     it('should mark active date', () => {
       const cell2017 = multiYearViewElement.querySelector('[aria-label="2018"]');
-      expect((cell2017 as HTMLElement).innerText.trim()).toBe('2018');
+      expect((cell2017 as HTMLElement).textContent.trim()).toBe('2018');
       expect(cell2017.classList).toContain('owl-dt-calendar-cell-active');
     });
 
@@ -118,7 +129,9 @@ describe('OwlMultiYearViewComponent', () => {
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', UP_ARROW);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * 2, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 - YEARS_PER_ROW * 2, JAN, 5)
+      );
     });
 
     it('should go down a row on down arrow press', () => {
@@ -131,7 +144,9 @@ describe('OwlMultiYearViewComponent', () => {
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', DOWN_ARROW);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * 2, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 + YEARS_PER_ROW * 2, JAN, 5)
+      );
     });
 
     it('should go to first year in current range on home press', () => {
@@ -165,12 +180,16 @@ describe('OwlMultiYearViewComponent', () => {
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_UP);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * YEAR_ROWS, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 - YEARS_PER_ROW * YEAR_ROWS, JAN, 5)
+      );
 
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_UP);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 - YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 - YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5)
+      );
     });
 
     it('should go to same index in next year range on page down press', () => {
@@ -178,12 +197,16 @@ describe('OwlMultiYearViewComponent', () => {
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_DOWN);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * YEAR_ROWS, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 + YEARS_PER_ROW * YEAR_ROWS, JAN, 5)
+      );
 
       dispatchKeyboardEvent(calendarBodyEl, 'keydown', PAGE_DOWN);
       fixture.detectChanges();
 
-      expect(multiYearViewInstance.pickerMoment).toEqual(new Date(2018 + YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5));
+      expect(multiYearViewInstance.pickerMoment).toEqual(
+        new Date(2018 + YEARS_PER_ROW * YEAR_ROWS * 2, JAN, 5)
+      );
     });
   });
 
@@ -195,7 +218,9 @@ describe('OwlMultiYearViewComponent', () => {
       fixture = TestBed.createComponent(MultiYearViewWithDateFilterComponent);
       fixture.detectChanges();
 
-      const multiYearViewDebugElement = fixture.debugElement.query(By.directive(OwlMultiYearViewComponent));
+      const multiYearViewDebugElement = fixture.debugElement.query(
+        By.directive(OwlMultiYearViewComponent)
+      );
       multiYearViewElement = multiYearViewDebugElement.nativeElement;
     });
 
@@ -217,7 +242,7 @@ describe('OwlMultiYearViewComponent', () => {
       (changeYear)="handleChange($event)">
     </owl-date-time-multi-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 class StandardMultiYearViewComponent {
   public selected = new Date(2020, JAN, 10);
@@ -236,7 +261,7 @@ class StandardMultiYearViewComponent {
       [(pickerMoment)]="pickerMoment">
     </owl-date-time-multi-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 class MultiYearViewWithDateFilterComponent {
   public pickerMoment = new Date(2018, JAN, 1);

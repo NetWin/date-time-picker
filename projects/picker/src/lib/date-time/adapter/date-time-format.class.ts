@@ -1,6 +1,4 @@
-/**
- * date-time-format.class
- */
+/** Date-time-format.class */
 
 import { InjectionToken } from '@angular/core';
 
@@ -14,4 +12,6 @@ export type OwlDateTimeFormats = {
 };
 
 /** InjectionToken for date time picker that can be used to override default format. */
-export const OWL_DATE_TIME_FORMATS = new InjectionToken<OwlDateTimeFormats>('OWL_DATE_TIME_FORMATS');
+export const OWL_DATE_TIME_FORMATS = new InjectionToken<OwlDateTimeFormats>(
+  'OWL_DATE_TIME_FORMATS'
+);

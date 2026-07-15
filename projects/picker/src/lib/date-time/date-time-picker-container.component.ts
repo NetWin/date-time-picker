@@ -62,7 +62,11 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
 
   set pickerMoment(value: T) {
     if (value) {
-      this._clamPickerMoment = this.dateTimeAdapter.clampDate(value, this.picker.minDateTime, this.picker.maxDateTime);
+      this._clamPickerMoment = this.dateTimeAdapter.clampDate(
+        value,
+        this.picker.minDateTime,
+        this.picker.maxDateTime
+      );
     }
     this.cdRef.markForCheck();
   }
@@ -71,31 +75,23 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     return this.picker.pickerType;
   }
 
-  /**
-   * The range 'from' label
-   */
+  /** The range 'from' label */
   get fromLabel(): string {
     return this.pickerIntl.rangeFromLabel;
   }
 
-  /**
-   * The range 'to' label
-   */
+  /** The range 'to' label */
   get toLabel(): string {
     return this.pickerIntl.rangeToLabel;
   }
 
-  /**
-   * The range 'from' formatted value
-   */
+  /** The range 'from' formatted value */
   get fromFormattedValue(): string {
     const value = this.picker.selecteds[0];
     return value ? this.dateTimeAdapter.format(value, this.picker.displayFormat) : '';
   }
 
-  /**
-   * The range 'to' formatted value
-   */
+  /** The range 'to' formatted value */
   get toFormattedValue(): string {
     const value = this.picker.selecteds[1];
     return value ? this.dateTimeAdapter.format(value, this.picker.displayFormat) : '';
@@ -182,18 +178,14 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     }
   }
 
-  /**
-   * Handle click on inform radio group
-   */
+  /** Handle click on inform radio group */
   public handleClickOnInfoGroup(event: Event, index: number): void {
     this.setActiveSelectedIndex(index);
     event.preventDefault();
     event.stopPropagation();
   }
 
-  /**
-   * Handle click on inform radio group
-   */
+  /** Handle click on inform radio group */
   public handleKeydownOnInfoGroup(event: KeyboardEvent, next: HTMLElement, index: number): void {
     switch (event.keyCode) {
       case DOWN_ARROW:
@@ -217,9 +209,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     }
   }
 
-  /**
-   * Set the value of activeSelectedIndex
-   */
+  /** Set the value of activeSelectedIndex */
   private setActiveSelectedIndex(index: number): void {
     if (this.picker.selectMode === 'range' && this.activeSelectedIndex !== index) {
       this.activeSelectedIndex = index;
@@ -237,10 +227,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     this.activeSelectedIndex = this.picker.selectMode === 'rangeTo' ? 1 : 0;
   }
 
-  /**
-   * Select calendar date in single mode,
-   * it returns null when date is not selected.
-   */
+  /** Select calendar date in single mode, it returns null when date is not selected. */
   private dateSelectedInSingleMode(date: T): T | null {
     if (this.dateTimeAdapter.isSameDay(date, this.picker.selected)) {
       return null;
@@ -249,9 +236,7 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
     return this.updateAndCheckCalendarDate(date);
   }
 
-  /**
-   * Select dates in range Mode
-   */
+  /** Select dates in range Mode */
   private dateSelectedInRangeMode(date: T): Array<T> | null {
     let from = this.picker.selecteds[0];
     let to = this.picker.selecteds[1];
@@ -339,11 +324,10 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
   }
 
   /**
-   * Update the given calendar date's time and check if it is valid
-   * Because the calendar date has 00:00:00 as default time, if the picker type is 'both',
-   * we need to update the given calendar date's time before selecting it.
-   * if it is valid, return the updated dateTime
-   * if it is not valid, return null
+   * Update the given calendar date's time and check if it is valid Because the calendar date has
+   * 00:00:00 as default time, if the picker type is 'both', we need to update the given calendar
+   * date's time before selecting it. if it is valid, return the updated dateTime if it is not
+   * valid, return null
    */
   private updateAndCheckCalendarDate(date: T): T {
     let result;
@@ -358,7 +342,11 @@ export class OwlDateTimeContainerComponent<T> implements OnInit, AfterContentIni
         this.dateTimeAdapter.getMinutes(this.pickerMoment),
         this.dateTimeAdapter.getSeconds(this.pickerMoment)
       );
-      result = this.dateTimeAdapter.clampDate(result, this.picker.minDateTime, this.picker.maxDateTime);
+      result = this.dateTimeAdapter.clampDate(
+        result,
+        this.picker.minDateTime,
+        this.picker.maxDateTime
+      );
     } else {
       result = this.dateTimeAdapter.clone(date);
     }

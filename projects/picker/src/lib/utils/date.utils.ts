@@ -1,6 +1,6 @@
 /**
- * Creates a date with the given year, month, date, hour, minute and second. Does not allow over/under-flow of the
- * month and date.
+ * Creates a date with the given year, month, date, hour, minute and second. Does not allow
+ * over/under-flow of the month and date.
  */
 export function createDate(
   year: number,
@@ -41,18 +41,14 @@ export function createDate(
   return result;
 }
 
-/**
- * Gets the number of days in the month of the given date.
- */
+/** Gets the number of days in the month of the given date. */
 export function getNumDaysInMonth(date: Date): number {
   const lastDateOfMonth = createDateWithOverflow(date.getFullYear(), date.getMonth() + 1, 0);
 
   return lastDateOfMonth.getDate();
 }
 
-/**
- * Creates a date but allows the month and date to overflow.
- */
+/** Creates a date but allows the month and date to overflow. */
 function createDateWithOverflow(
   year: number,
   month: number,

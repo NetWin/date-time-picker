@@ -40,12 +40,12 @@ const MONTHS_PER_ROW = 3;
 })
 export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDestroy {
   private readonly cdRef = inject(ChangeDetectorRef);
-  private readonly dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter<T>, { optional: true });
+  private readonly dateTimeAdapter = inject<DateTimeAdapter<T>>(DateTimeAdapter<T>, {
+    optional: true
+  });
   private readonly dateTimeFormats = inject(OWL_DATE_TIME_FORMATS, { optional: true });
 
-  /**
-   * The select mode of the picker;
-   */
+  /** The select mode of the picker; */
   private _selectMode: SelectMode = 'single';
   @Input()
   public get selectMode(): SelectMode {
@@ -105,9 +105,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     }
   }
 
-  /**
-   * A function used to filter which dates are selectable
-   */
+  /** A function used to filter which dates are selectable */
   private _dateFilter: (date: T) => boolean;
   @Input()
   public get dateFilter(): (date: T) => boolean {
@@ -170,7 +168,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   }
 
   protected get isInRangeMode(): boolean {
-    return this.selectMode === 'range' || this.selectMode === 'rangeFrom' || this.selectMode === 'rangeTo';
+    return (
+      this.selectMode === 'range' ||
+      this.selectMode === 'rangeFrom' ||
+      this.selectMode === 'rangeTo'
+    );
   }
 
   private localeSub: Subscription = Subscription.EMPTY;
@@ -179,20 +181,13 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
 
   public todayMonth: number | null;
 
-  /**
-   * An array to hold all selectedDates' month value
-   * the value is the month number in current year
-   */
+  /** An array to hold all selectedDates' month value the value is the month number in current year */
   public selectedMonths: Array<number> = [];
 
-  /**
-   * Callback to invoke when a new month is selected
-   */
+  /** Callback to invoke when a new month is selected */
   public readonly changeMonth = output<T>();
 
-  /**
-   * Emits the selected year. This doesn't imply a change on the selected date
-   */
+  /** Emits the selected year. This doesn't imply a change on the selected date */
   public readonly monthSelected = output<T>();
 
   /** Emits when any date is activated. */
@@ -221,18 +216,18 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     this.localeSub.unsubscribe();
   }
 
-  /**
-   * Handle a calendarCell selected
-   */
+  /** Handle a calendarCell selected */
   public selectCalendarCell(cell: CalendarCell): void {
     this.selectMonth(cell.value);
   }
 
-  /**
-   * Handle a new month selected
-   */
+  /** Handle a new month selected */
   private selectMonth(month: number): void {
-    const firstDateOfMonth = this.dateTimeAdapter.createDate(this.dateTimeAdapter.getYear(this.pickerMoment), month, 1);
+    const firstDateOfMonth = this.dateTimeAdapter.createDate(
+      this.dateTimeAdapter.getYear(this.pickerMoment),
+      month,
+      1
+    );
 
     this.monthSelected.emit(firstDateOfMonth);
 
@@ -249,9 +244,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     this.changeMonth.emit(result);
   }
 
-  /**
-   * Handle keydown event on calendar body
-   */
+  /** Handle keydown event on calendar body */
   public handleCalendarKeydown(event: KeyboardEvent): void {
     let moment;
     switch (event.keyCode) {
@@ -322,9 +315,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     event.preventDefault();
   }
 
-  /**
-   * Generate the calendar month list
-   */
+  /** Generate the calendar month list */
   private generateMonthList(): void {
     if (!this.pickerMoment) {
       return;
@@ -349,21 +340,35 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     return;
   }
 
-  /**
-   * Creates an CalendarCell for the given month.
-   */
+  /** Creates an CalendarCell for the given month. */
   private createMonthCell(month: number): CalendarCell {
-    const startDateOfMonth = this.dateTimeAdapter.createDate(this.dateTimeAdapter.getYear(this.pickerMoment), month, 1);
-    const ariaLabel = this.dateTimeAdapter.format(startDateOfMonth, this.dateTimeFormats.monthYearA11yLabel);
+    const startDateOfMonth = this.dateTimeAdapter.createDate(
+      this.dateTimeAdapter.getYear(this.pickerMoment),
+      month,
+      1
+    );
+    const ariaLabel = this.dateTimeAdapter.format(
+      startDateOfMonth,
+      this.dateTimeFormats.monthYearA11yLabel
+    );
     const cellClass = `owl-dt-month-${month}`;
-    return new CalendarCell(month, this.monthNames[month], ariaLabel, this.isMonthEnabled(month), false, cellClass);
+    return new CalendarCell(
+      month,
+      this.monthNames[month],
+      ariaLabel,
+      this.isMonthEnabled(month),
+      false,
+      cellClass
+    );
   }
 
-  /**
-   * Check if the given month is enable
-   */
+  /** Check if the given month is enable */
   private isMonthEnabled(month: number): boolean {
-    const firstDateOfMonth = this.dateTimeAdapter.createDate(this.dateTimeAdapter.getYear(this.pickerMoment), month, 1);
+    const firstDateOfMonth = this.dateTimeAdapter.createDate(
+      this.dateTimeAdapter.getYear(this.pickerMoment),
+      month,
+      1
+    );
 
     // If any date in the month is selectable,
     // we count the month as enable
@@ -386,8 +391,8 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   }
 
   /**
-   * Gets the month in this year that the given Date falls on.
-   * Returns null if the given Date is in another year.
+   * Gets the month in this year that the given Date falls on. Returns null if the given Date is in
+   * another year.
    */
   private getMonthInCurrentYear(date: T | null): number {
     if (this.getValidDate(date) && this.getValidDate(this._pickerMoment)) {
@@ -409,9 +414,9 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
   }
 
   /**
-   * Set the selectedMonths value
-   * In single mode, it has only one value which represent the month the selected date in
-   * In range mode, it would has two values, one for the month the fromValue in and the other for the month the toValue in
+   * Set the selectedMonths value In single mode, it has only one value which represent the month
+   * the selected date in In range mode, it would has two values, one for the month the fromValue in
+   * and the other for the month the toValue in
    */
   private setSelectedMonths(): void {
     this.selectedMonths = [];
@@ -425,9 +430,7 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     }
   }
 
-  /**
-   * Check the given dates are in the same year
-   */
+  /** Check the given dates are in the same year */
   private hasSameYear(dateLeft: T, dateRight: T): boolean {
     return !!(
       dateLeft &&
@@ -436,11 +439,11 @@ export class OwlYearViewComponent<T> implements OnInit, AfterContentInit, OnDest
     );
   }
 
-  /**
-   * Get a valid date object
-   */
+  /** Get a valid date object */
   private getValidDate(obj: unknown): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
+    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj)
+      ? obj
+      : null;
   }
 
   private focusActiveCell(): void {

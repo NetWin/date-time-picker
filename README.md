@@ -20,8 +20,8 @@ Afterwards, add the global stylesheet to your styles section within your angular
 ]
 ```
 
-To then use it, import both the `OwlDateTimeModule` and `OwlNativeDateTimeModule` in your `app.module.ts` or
-in your component that wants to use it:
+To then use it, import both the `OwlDateTimeModule` and `OwlNativeDateTimeModule` in your
+`app.module.ts` or in your component that wants to use it:
 
 ```typescript
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from '@netwin/angular-datetime-picker';
@@ -76,15 +76,16 @@ See below for more information on the properties you can use.
 | `max`               | `<T>`                                     | Optional | `null`   | The maximum valid date time.                                                                                                                                                                                                                                                                                                       |
 | `selectMode`        | `single`, `range`, `rangeFrom`, `rangeTo` | Optional | `single` | Specify the picker's select mode. `single`: a single value allowed, `range`: allow users to select a range of date-time, `rangeFrom`: the input would only show the 'from' value and the picker could only selects 'from' value, `rangeTo`: the input would only show the 'to' value and the picker could only selects 'to' value. |
 
-> [!NOTE]
-> There are more expored / usable components in the [previous implementation](https://github.com/danielmoncada/date-time-picker).
-> In order to improve simplicity and reusability, these components (while still in the bundle as of version 18.x)
-> are not recommended to be used anymore.
+> [!NOTE] There are more expored / usable components in the
+> [previous implementation](https://github.com/danielmoncada/date-time-picker). In order to improve
+> simplicity and reusability, these components (while still in the bundle as of version 18.x) are
+> not recommended to be used anymore.
 
 ## Localization and DateTime Format
 
-Localization for different languages and formats is defined by `OWL_DATE_TIME_LOCALE` and `OWL_DATE_TIME_FORMATS`.
-You could learn more about this from [here](https://danielykpan.github.io/date-time-picker#locale-formats).
+Localization for different languages and formats is defined by `OWL_DATE_TIME_LOCALE` and
+`OWL_DATE_TIME_FORMATS`. You could learn more about this from
+[here](https://danielykpan.github.io/date-time-picker#locale-formats).
 
 ## License
 
@@ -92,5 +93,5 @@ You could learn more about this from [here](https://danielykpan.github.io/date-t
 
 ## Author
 
-Maintained by NetWin, based on the awesome work from Daniel Moncada and Daniel Pan.
-The original repo is still active, go check it out [here](https://github.com/danielmoncada/date-time-picker).
+Maintained by NetWin, based on the awesome work from Daniel Moncada and Daniel Pan. The original
+repo is still active, go check it out [here](https://github.com/danielmoncada/date-time-picker).

@@ -1,6 +1,4 @@
-/**
- * unix-timestamp-date-time.module
- */
+/** Unix-timestamp-date-time.module */
 
 import { PlatformModule } from '@angular/cdk/platform';
 import { NgModule } from '@angular/core';

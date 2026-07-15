@@ -1,7 +1,17 @@
-import { DOWN_ARROW, END, HOME, LEFT_ARROW, PAGE_DOWN, PAGE_UP, RIGHT_ARROW, UP_ARROW } from '@angular/cdk/keycodes';
+import {
+  DOWN_ARROW,
+  END,
+  HOME,
+  LEFT_ARROW,
+  PAGE_DOWN,
+  PAGE_UP,
+  RIGHT_ARROW,
+  UP_ARROW
+} from '@angular/cdk/keycodes';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { dispatchKeyboardEvent, dispatchMouseEvent } from '../../test-helpers';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlYearViewComponent } from './calendar-year-view.component';
@@ -22,7 +32,12 @@ const DEC = 11;
 describe('OwlYearViewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OwlNativeDateTimeModule, OwlDateTimeModule, StandardYearViewComponent, YearViewWithDateFilterComponent],
+      imports: [
+        OwlNativeDateTimeModule,
+        OwlDateTimeModule,
+        StandardYearViewComponent,
+        YearViewWithDateFilterComponent
+      ],
       providers: [OwlDateTimeIntl]
     }).compileComponents();
   });
@@ -79,7 +94,7 @@ describe('OwlYearViewComponent', () => {
 
     it('should mark active date', () => {
       const cellDecember = yearViewElement.querySelector('[aria-label="January 2018"]');
-      expect((cellDecember as HTMLElement).innerText.trim()).toBe('Jan');
+      expect((cellDecember as HTMLElement).textContent.trim()).toBe('Jan');
       expect(cellDecember.classList).toContain('owl-dt-calendar-cell-active');
     });
 
@@ -261,7 +276,7 @@ describe('OwlYearViewComponent', () => {
       [(pickerMoment)]="pickerMoment"
       (changeMonth)="handleChange($event)"></owl-date-time-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlYearViewComponent]
 })
 class StandardYearViewComponent {
@@ -279,7 +294,7 @@ class StandardYearViewComponent {
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-year-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlYearViewComponent]
 })
 class YearViewWithDateFilterComponent {

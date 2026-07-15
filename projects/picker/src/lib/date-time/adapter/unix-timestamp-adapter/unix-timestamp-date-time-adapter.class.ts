@@ -1,6 +1,4 @@
-/**
- * unix-timestamp-date-time-adapter.class
- */
+/** Unix-timestamp-date-time-adapter.class */
 
 import { Platform } from '@angular/cdk/platform';
 import { inject, Injectable } from '@angular/core';
@@ -32,10 +30,10 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   private readonly _clampDate: boolean;
 
   /**
-   * Whether to use `timeZone: 'utc'` with `Intl.DateTimeFormat` when formatting dates.
-   * Without this `Intl.DateTimeFormat` sometimes chooses the wrong timeZone, which can throw off
-   * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
-   * will produce `'8/13/1800'`.
+   * Whether to use `timeZone: 'utc'` with `Intl.DateTimeFormat` when formatting dates. Without this
+   * `Intl.DateTimeFormat` sometimes chooses the wrong timeZone, which can throw off the result.
+   * (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()` will produce
+   * `'8/13/1800'`.
    */
   public useUtcForDisplay: boolean;
 
@@ -50,11 +48,11 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
   }
 
   /**
-   * When converting Date object to string, javascript built-in functions may return wrong
-   * results because it applies its internal DST rules. The DST rules around the world change
-   * very frequently, and the current valid rule is not always valid in previous years though.
-   * We work around this problem building a new Date object which has its internal UTC
-   * representation with the local date and time.
+   * When converting Date object to string, javascript built-in functions may return wrong results
+   * because it applies its internal DST rules. The DST rules around the world change very
+   * frequently, and the current valid rule is not always valid in previous years though. We work
+   * around this problem building a new Date object which has its internal UTC representation with
+   * the local date and time.
    */
   private static _format(dtf: Intl.DateTimeFormat, date: Date): string {
     const d = new Date(
@@ -127,7 +125,8 @@ export class UnixTimestampDateTimeAdapter extends DateTimeAdapter<number> {
       );
 
       const timeStampLeft =
-        this.getTime(dateLeftStartOfDay) - new Date(dateLeftStartOfDay).getTimezoneOffset() * this.milliseondsInMinute;
+        this.getTime(dateLeftStartOfDay) -
+        new Date(dateLeftStartOfDay).getTimezoneOffset() * this.milliseondsInMinute;
       const timeStampRight =
         this.getTime(dateRightStartOfDay) -
         new Date(dateRightStartOfDay).getTimezoneOffset() * this.milliseondsInMinute;

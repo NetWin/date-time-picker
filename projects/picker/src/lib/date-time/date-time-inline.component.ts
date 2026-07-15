@@ -29,16 +29,17 @@ const OWL_DATETIME_VALUE_ACCESSOR: Provider = {
   imports: [OwlDateTimeContainerComponent],
   host: { 'class': 'owl-dt-inline' }
 })
-export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnInit, ControlValueAccessor {
+export class OwlDateTimeInlineComponent<T>
+  extends OwlDateTime<T>
+  implements OnInit, ControlValueAccessor
+{
   readonly #changeDetector = inject(ChangeDetectorRef);
 
   protected readonly container = viewChild(OwlDateTimeContainerComponent);
 
   /**
-   * Set the type of the dateTime picker
-   *      'both' -- show both calendar and timer
-   *      'calendar' -- show only calendar
-   *      'timer' -- show only timer
+   * Set the type of the dateTime picker 'both' -- show both calendar and timer 'calendar' -- show
+   * only calendar 'timer' -- show only timer
    */
   @Input()
   public pickerType: PickerType;
@@ -165,38 +166,24 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     }
   }
 
-  /**
-   * Limit to the amount of days that can be selected at once.
-   */
+  /** Limit to the amount of days that can be selected at once. */
   @Input()
   public rangeLimit: number | null = null;
 
-  /**
-   * Flag to show today button to jump to today's date. Defaults to `false`.
-   */
+  /** Flag to show today button to jump to today's date. Defaults to `false`. */
   @Input({ transform: booleanAttribute })
   public showTodayButton = false;
 
-  /**
-   * Variable to hold the old max date time value for when we override it with rangeLimit
-   */
+  /** Variable to hold the old max date time value for when we override it with rangeLimit */
   private _initialMaxDateTime: T | null;
 
-  /**
-   * Emits selected year in multi-year view
-   * This doesn't imply a change on the selected date.
-   */
+  /** Emits selected year in multi-year view This doesn't imply a change on the selected date. */
   public readonly yearSelected = output<T>();
 
-  /**
-   * Emits selected month in year view
-   * This doesn't imply a change on the selected date.
-   */
+  /** Emits selected month in year view This doesn't imply a change on the selected date. */
   public readonly monthSelected = output<T>();
 
-  /**
-   * Emits selected date
-   */
+  /** Emits selected date */
   public readonly dateSelected = output<T>();
 
   private _selected: T | null;
@@ -225,7 +212,11 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
   }
 
   public get isInRangeMode(): boolean {
-    return this._selectMode === 'range' || this._selectMode === 'rangeFrom' || this._selectMode === 'rangeTo';
+    return (
+      this._selectMode === 'range' ||
+      this._selectMode === 'rangeFrom' ||
+      this._selectMode === 'rangeTo'
+    );
   }
 
   private onModelChange: (v: T | Array<T>) => void = () => {
@@ -271,7 +262,10 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
 
     // If range limit is set, we need to set the max date time to the range limit, so days after the max range are not selectable
     if (this.rangeLimit && !this.values[1] && this.values[0]) {
-      const rangeLimitDate = this.dateTimeAdapter.addCalendarDays(this.values[0], this.rangeLimit - 1);
+      const rangeLimitDate = this.dateTimeAdapter.addCalendarDays(
+        this.values[0],
+        this.rangeLimit - 1
+      );
       if (!this.maxDateTime || this.dateTimeAdapter.compare(this.maxDateTime, rangeLimitDate) > 0) {
         this._initialMaxDateTime = this.maxDateTime;
         this.maxDateTime = rangeLimitDate;
@@ -287,23 +281,17 @@ export class OwlDateTimeInlineComponent<T> extends OwlDateTime<T> implements OnI
     this.onModelTouched();
   }
 
-  /**
-   * Emits the selected year in multi-year view
-   */
+  /** Emits the selected year in multi-year view */
   public selectYear(normalizedYear: T): void {
     this.yearSelected.emit(normalizedYear);
   }
 
-  /**
-   * Emits selected month in year view
-   */
+  /** Emits selected month in year view */
   public selectMonth(normalizedMonth: T): void {
     this.monthSelected.emit(normalizedMonth);
   }
 
-  /**
-   * Emits the selected date
-   */
+  /** Emits the selected date */
   public selectDate(normalizedDate: T): void {
     this.dateSelected.emit(normalizedDate);
   }
