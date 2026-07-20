@@ -1,3 +1,15 @@
+# [22.0.0](https://github.com/netwin/date-time-picker/compare/21.0.0...22.0.0) (2026-07-20)
+
+
+### Features
+
+* update Angular, move to pnpm, move to oxfmt ([c4278ea](https://github.com/netwin/date-time-picker/commit/c4278eabd29efdc372b11ca1bf5db92c266c2fe6))
+
+
+### BREAKING CHANGES
+
+* consumers need to update their Angular version to use the latest version of this library.
+
 # [21.0.0](https://github.com/netwin/date-time-picker/compare/20.0.1...21.0.0) (2026-01-08)
 
 ### Features
