@@ -209,8 +209,10 @@ owl-date-time-inline {
     }
   }
 
-  .owl-dt-calendar-cell-active:focus > .owl-dt-calendar-cell-content:not(.owl-dt-calendar-cell-selected),
-  :not(.owl-dt-calendar-cell-disabled):hover > .owl-dt-calendar-cell-content:not(.owl-dt-calendar-cell-selected) {
+  .owl-dt-calendar-cell-active:focus
+    > .owl-dt-calendar-cell-content:not(.owl-dt-calendar-cell-selected),
+  :not(.owl-dt-calendar-cell-disabled):hover
+    > .owl-dt-calendar-cell-content:not(.owl-dt-calendar-cell-selected) {
     background-color: rgb(0 0 0 / 0.04);
   }
 

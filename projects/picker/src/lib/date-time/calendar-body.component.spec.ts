@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CalendarCell, OwlCalendarBodyComponent } from './calendar-body.component';
 
 describe('OwlCalendarBodyComponent', () => {
@@ -26,7 +27,9 @@ describe('OwlCalendarBodyComponent', () => {
       fixture = TestBed.createComponent(StandardCalendarBodyComponent);
       fixture.detectChanges();
 
-      const calendarBodyDebugElement = fixture.debugElement.query(By.directive(OwlCalendarBodyComponent));
+      const calendarBodyDebugElement = fixture.debugElement.query(
+        By.directive(OwlCalendarBodyComponent)
+      );
       calendarBodyNativeElement = calendarBodyDebugElement.nativeElement;
       testComponent = fixture.componentInstance;
 
@@ -45,15 +48,19 @@ describe('OwlCalendarBodyComponent', () => {
     });
 
     it('should highlight selected', () => {
-      const selectedCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-selected');
+      const selectedCell = calendarBodyNativeElement.querySelector(
+        '.owl-dt-calendar-cell-selected'
+      );
       expect(selectedCell).not.toBeNull();
       expect(selectedCell.innerHTML.trim()).toBe('4');
     });
 
     it('cell should be selected on click', () => {
-      spyOn(testComponent, 'handleSelect');
+      vi.spyOn(testComponent, 'handleSelect').mockReturnValue(undefined);
       expect(testComponent.handleSelect).not.toHaveBeenCalled();
-      const todayElement = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-today') as HTMLElement;
+      const todayElement = calendarBodyNativeElement.querySelector(
+        '.owl-dt-calendar-cell-today'
+      ) as HTMLElement;
       todayElement.click();
       fixture.detectChanges();
 
@@ -61,12 +68,14 @@ describe('OwlCalendarBodyComponent', () => {
     });
 
     it('should mark active date', () => {
-      expect((cellEls[10] as HTMLElement).innerText.trim()).toBe('11');
+      expect((cellEls[10] as HTMLElement).textContent.trim()).toBe('11');
       expect(cellEls[10].classList).toContain('owl-dt-calendar-cell-active');
     });
 
     it('should have aria-current set for today', () => {
-      const currentCells = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell[aria-current]');
+      const currentCells = calendarBodyNativeElement.querySelectorAll(
+        '.owl-dt-calendar-cell[aria-current]'
+      );
       expect(currentCells.length).toBe(1);
       const todayCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-today');
       expect(currentCells[0].getAttribute('aria-current')).toBe('date');
@@ -75,10 +84,16 @@ describe('OwlCalendarBodyComponent', () => {
 
     it('should have aria-selected set on selected cells', () => {
       const calendarCells = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell');
-      const selectedCells = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell[aria-selected=true]');
-      const nonSelectedCells = calendarBodyNativeElement.querySelectorAll('.owl-dt-calendar-cell[aria-selected=false]');
+      const selectedCells = calendarBodyNativeElement.querySelectorAll(
+        '.owl-dt-calendar-cell[aria-selected=true]'
+      );
+      const nonSelectedCells = calendarBodyNativeElement.querySelectorAll(
+        '.owl-dt-calendar-cell[aria-selected=false]'
+      );
       expect(nonSelectedCells.length).toBe(calendarCells.length - selectedCells.length);
-      const selectedCell = calendarBodyNativeElement.querySelector('.owl-dt-calendar-cell-selected');
+      const selectedCell = calendarBodyNativeElement.querySelector(
+        '.owl-dt-calendar-cell-selected'
+      );
       expect(selectedCells[0].firstChild).toBe(selectedCell);
     });
   });
@@ -95,7 +110,7 @@ describe('OwlCalendarBodyComponent', () => {
       (selectCell)="handleSelect()"
       owl-date-time-calendar-body></table>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlCalendarBodyComponent]
 })
 class StandardCalendarBodyComponent {

@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, DebugElement, EventEmitter, NgZone } from '@angular/core';
-import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testing';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DebugElement,
+  EventEmitter,
+  NgZone
+} from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { dispatchFakeEvent } from '../../test-helpers';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
 import { OwlDateTimeIntl } from './date-time-picker-intl.service';
@@ -87,55 +94,57 @@ describe('OwlTimerComponent', () => {
       expect(toggleBtn).toBeTruthy();
     });
 
-    it('should dispatch an event when a timer arrow button clicked', fakeAsync(() => {
-      spyOn(testComponent, 'handleSelectedChange');
+    it('should dispatch an event when a timer arrow button clicked', () => {
+      vi.spyOn(testComponent, 'handleSelectedChange').mockReturnValue(undefined);
       expect(testComponent.handleSelectedChange).not.toHaveBeenCalled();
 
       testComponent.showSecondsTimer = true;
       fixture.detectChanges();
 
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(6);
 
       for (const btn of Array.from(arrowBtns)) {
         btn.click();
         fixture.detectChanges();
-        flush();
       }
 
       expect(testComponent.handleSelectedChange).toHaveBeenCalledTimes(6);
-    }));
+    });
 
-    it('should dispatch an event when hour12 toggle button clicked', fakeAsync(() => {
-      spyOn(testComponent, 'handleSelectedChange');
+    it('should dispatch an event when hour12 toggle button clicked', () => {
+      vi.spyOn(testComponent, 'handleSelectedChange').mockReturnValue(undefined);
       expect(testComponent.handleSelectedChange).not.toHaveBeenCalled();
 
       testComponent.hour12Timer = true;
       fixture.detectChanges();
 
-      const toggleBtn = timerElement.querySelector<HTMLButtonElement>('button.owl-dt-timer-hour12-box');
+      const toggleBtn = timerElement.querySelector<HTMLButtonElement>(
+        'button.owl-dt-timer-hour12-box'
+      );
 
       toggleBtn.click();
       fixture.detectChanges();
-      flush();
 
       expect(testComponent.handleSelectedChange).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('should add or minus stepHour hours when hour arrow button clicked', fakeAsync(() => {
+    it('should add or minus stepHour hours when hour arrow button clicked', () => {
       expect(timerInstance.stepHour()).toBe(1);
 
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(4);
 
       arrowBtns[0].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 13, 30, 30));
 
       arrowBtns[1].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
 
       testComponent.stepHour = 2;
@@ -144,29 +153,27 @@ describe('OwlTimerComponent', () => {
 
       arrowBtns[0].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 14, 30, 30));
 
       arrowBtns[1].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
-    }));
+    });
 
-    it('should add or minus stepMinute minutes when minute arrow button clicked', fakeAsync(() => {
+    it('should add or minus stepMinute minutes when minute arrow button clicked', () => {
       expect(timerInstance.stepMinute()).toBe(1);
 
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(4);
 
       arrowBtns[2].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 31, 30));
 
       arrowBtns[3].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
 
       testComponent.stepMinute = 2;
@@ -175,31 +182,29 @@ describe('OwlTimerComponent', () => {
 
       arrowBtns[2].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 32, 30));
 
       arrowBtns[3].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
-    }));
+    });
 
-    it('should add or minus stepSecond seconds when second arrow button clicked', fakeAsync(() => {
+    it('should add or minus stepSecond seconds when second arrow button clicked', () => {
       expect(timerInstance.stepSecond()).toBe(1);
 
       testComponent.showSecondsTimer = true;
       fixture.detectChanges();
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(6);
 
       arrowBtns[4].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 31));
 
       arrowBtns[5].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
 
       testComponent.stepSecond = 2;
@@ -208,34 +213,35 @@ describe('OwlTimerComponent', () => {
 
       arrowBtns[4].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 32));
 
       arrowBtns[5].click();
       fixture.detectChanges();
-      flush();
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 12, 30, 30));
-    }));
+    });
 
-    it('should toggle between PM and AM when hour12 toggle button clicked', fakeAsync(() => {
+    it('should toggle between PM and AM when hour12 toggle button clicked', () => {
       testComponent.hour12Timer = true;
       fixture.detectChanges();
 
-      const toggleBtn = timerElement.querySelector<HTMLButtonElement>('button.owl-dt-timer-hour12-box');
+      const toggleBtn = timerElement.querySelector<HTMLButtonElement>(
+        'button.owl-dt-timer-hour12-box'
+      );
       expect(toggleBtn.innerHTML).toContain('PM');
 
       toggleBtn.click();
       fixture.detectChanges();
-      flush();
 
       expect(toggleBtn.innerHTML).toContain('AM');
       expect(testComponent.pickerMoment).toEqual(new Date(2018, JAN, 31, 0, 30, 30));
-    }));
+    });
 
     it('should disable all down arrow button if pickerMoment equals to minDateTime', () => {
       testComponent.showSecondsTimer = true;
       fixture.detectChanges();
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(6);
 
       testComponent.pickerMoment = new Date(testComponent.minDateTime);
@@ -255,7 +261,9 @@ describe('OwlTimerComponent', () => {
     it('should disable all up arrow button if pickerMoment equals to maxDateTime', () => {
       testComponent.showSecondsTimer = true;
       fixture.detectChanges();
-      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>('button.owl-dt-control-arrow-button');
+      const arrowBtns = timerElement.querySelectorAll<HTMLButtonElement>(
+        'button.owl-dt-control-arrow-button'
+      );
       expect(arrowBtns.length).toBe(6);
 
       testComponent.pickerMoment = new Date(testComponent.maxDateTime);
@@ -272,29 +280,21 @@ describe('OwlTimerComponent', () => {
       expect(arrowBtns[5].hasAttribute('disabled')).toBe(false);
     });
 
-    it('should not reformat input text while field is focused', fakeAsync(() => {
+    it('should not reformat input text while field is focused', () => {
       const timeCells = timerElement.querySelectorAll<HTMLInputElement>('.owl-dt-timer-input');
 
       dispatchFakeEvent(timeCells[0], 'focusin');
       timeCells[0].value = '5';
       dispatchFakeEvent(timeCells[0], 'input');
-      setTimeout(() => {
-        /* noop */
-      }, 1000);
 
       timeCells[1].value = '8';
       dispatchFakeEvent(timeCells[1], 'input');
-      setTimeout(() => {
-        /* noop */
-      }, 1000);
 
       fixture.detectChanges();
 
       expect(timeCells[0].value).toEqual('5');
       expect(timeCells[1].value).toEqual('8');
-
-      flush();
-    }));
+    });
   });
 });
 
@@ -311,7 +311,7 @@ describe('OwlTimerComponent', () => {
       [stepSecond]="stepSecond"
       (selectedChange)="handleSelectedChange($event)"></owl-date-time-timer>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlTimerComponent]
 })
 class StandardTimerComponent {

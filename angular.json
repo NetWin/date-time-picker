@@ -165,16 +165,19 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "projects/picker/tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"]
+            "providersFile": "projects/picker/src/test-setup.ts"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["projects/picker/src/lib/**/*.ts", "projects/picker/src/lib/**/*.html"],
+            "lintFilePatterns": [
+              "projects/picker/src/lib/**/*.ts",
+              "projects/picker/src/lib/**/*.html"
+            ],
             "eslintConfig": "./eslint.config.js"
           }
         }

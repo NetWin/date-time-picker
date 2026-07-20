@@ -7,6 +7,12 @@ import { NgDocNavbarComponent, NgDocRootComponent, NgDocSidebarComponent } from 
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, NgDocRootComponent, NgDocNavbarComponent, NgDocSidebarComponent]
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    NgDocRootComponent,
+    NgDocNavbarComponent,
+    NgDocSidebarComponent
+  ]
 })
 export class AppComponent {}

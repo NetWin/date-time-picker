@@ -1,6 +1,4 @@
-/**
- * native-date-time.module
- */
+/** Native-date-time.module */
 
 import { PlatformModule } from '@angular/cdk/platform';
 import { NgModule } from '@angular/core';

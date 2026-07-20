@@ -11,9 +11,7 @@ export function dispatchFakeEvent(node: Node | Window, type: string): Event {
 }
 
 export function createFakeEvent(type: string): Event {
-  const event = document.createEvent('Event');
-  event.initEvent(type, false, true);
-  return event;
+  return new Event(type, { bubbles: false, cancelable: true });
 }
 
 export function dispatchKeyboardEvent(node: Node, type: string, keyCode: number): KeyboardEvent {
@@ -21,17 +19,11 @@ export function dispatchKeyboardEvent(node: Node, type: string, keyCode: number)
 }
 
 export function createKeyboardEvent(type: string, keyCode: number): KeyboardEvent {
-  const event = document.createEvent('KeyboardEvent') as any;
+  const event = new KeyboardEvent(type, { bubbles: true, cancelable: true });
 
-  // Firefox does not support `initKeyboardEvent`, but supports `initKeyEvent`.
-  if (event.initKeyEvent) {
-    event.initKeyEvent(type, true, true, window, 0, 0, 0, 0, 0, keyCode);
-  } else {
-    event.initKeyboardEvent(type, true, true, window, 0, undefined, 0, '', false);
-  }
-
-  // Webkit Browsers don't set the keyCode when calling the init function.
-  // See related bug https://bugs.webkit.org/show_bug.cgi?id=16735
+  // The `keyCode` property is not settable through the constructor's init dictionary,
+  // so it is defined explicitly here. `key` and `target` are overridden to match the
+  // behaviour the tests rely on.
   Object.defineProperties(event, {
     keyCode: { get: () => keyCode },
     key: { get: () => undefined },
@@ -47,31 +39,23 @@ export function dispatchMouseEvent(node: Node, type: string): MouseEvent {
 
 /** Creates a browser MouseEvent with the specified options. */
 export function createMouseEvent(type: string, x = 0, y = 0, button = 0): MouseEvent {
-  const event = document.createEvent('MouseEvent');
-
-  event.initMouseEvent(
-    type,
-    true /* canBubble */,
-    false /* cancelable */,
-    window /* view */,
-    0 /* detail */,
-    x /* screenX */,
-    y /* screenY */,
-    x /* clientX */,
-    y /* clientY */,
-    false /* ctrlKey */,
-    false /* altKey */,
-    false /* shiftKey */,
-    false /* metaKey */,
-    button /* button */,
-    null /* relatedTarget */
-  );
-
-  // `initMouseEvent` doesn't allow us to pass the `buttons` and
-  // defaults it to 0 which looks like a fake event.
-  Object.defineProperty(event, 'buttons', { get: () => 1 });
-
-  return event;
+  // `buttons` is set to 1 because a value of 0 looks like a fake event.
+  return new MouseEvent(type, {
+    bubbles: true,
+    cancelable: false,
+    detail: 0,
+    screenX: x,
+    screenY: y,
+    clientX: x,
+    clientY: y,
+    ctrlKey: false,
+    altKey: false,
+    shiftKey: false,
+    metaKey: false,
+    button,
+    buttons: 1,
+    relatedTarget: null
+  });
 }
 
 export class MockNgZone extends NgZone {

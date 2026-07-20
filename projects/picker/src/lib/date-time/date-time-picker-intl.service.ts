@@ -1,30 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { Subject } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class OwlDateTimeIntl {
   /**
-   * Stream that emits whenever the labels here are changed. Use this to notify
-   * components if the labels have changed after initialization.
+   * Stream that emits whenever the labels here are changed. Use this to notify components if the
+   * labels have changed after initialization.
    */
   public readonly changes: Subject<void> = new Subject<void>();
 
-  /** A label for the up second button (used by screen readers).  */
+  /** A label for the up second button (used by screen readers). */
   public upSecondLabel = 'Add a second';
 
-  /** A label for the down second button (used by screen readers).  */
+  /** A label for the down second button (used by screen readers). */
   public downSecondLabel = 'Minus a second';
 
-  /** A label for the up minute button (used by screen readers).  */
+  /** A label for the up minute button (used by screen readers). */
   public upMinuteLabel = 'Add a minute';
 
-  /** A label for the down minute button (used by screen readers).  */
+  /** A label for the down minute button (used by screen readers). */
   public downMinuteLabel = 'Minus a minute';
 
-  /** A label for the up hour button (used by screen readers).  */
+  /** A label for the up hour button (used by screen readers). */
   public upHourLabel = 'Add a hour';
 
-  /** A label for the down hour button (used by screen readers).  */
+  /** A label for the down hour button (used by screen readers). */
   public downHourLabel = 'Minus a hour';
 
   /** A label for the previous month button (used by screen readers). */

@@ -1,13 +1,5 @@
 {
-  "*.ts": [
-    "eslint --fix --cache",
-    "prettier --write --cache"
-  ],
-  "*.html": [
-    "eslint --fix --cache",
-    "prettier --write --cache"
-  ],
-  "*.css": [
-    "prettier --write --cache"
-  ]
+  "*.ts": ["eslint --fix --cache", "oxfmt --no-error-on-unmatched-pattern"],
+  "*.html": ["eslint --fix --cache", "oxfmt --no-error-on-unmatched-pattern"],
+  "!(*.{ts,html})": ["oxfmt --no-error-on-unmatched-pattern"]
 }

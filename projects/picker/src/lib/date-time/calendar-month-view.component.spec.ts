@@ -14,6 +14,7 @@ import localeDutch from '@angular/common/locales/nl';
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { dispatchKeyboardEvent } from '../../test-helpers';
 import { DateTimeAdapter } from './adapter/date-time-adapter.class';
 import { OwlNativeDateTimeModule } from './adapter/native-date-time.module';
@@ -281,7 +282,7 @@ describe('OwlMonthViewComponent', () => {
 
       fixture.detectChanges();
       const weekdayCells = monthViewElement.querySelectorAll('.owl-dt-weekday');
-      expect(['Sonntag', 'Sunday'].includes(weekdayCells[0].getAttribute('aria-label'))).toBeTrue();
+      expect(['Sonntag', 'Sunday'].includes(weekdayCells[0].getAttribute('aria-label'))).toBe(true);
     });
 
     it('should update the default day of the week when locale changes', () => {
@@ -307,7 +308,7 @@ describe('OwlMonthViewComponent', () => {
       [(selected)]="selected">
     </owl-date-time-month-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlMonthViewComponent]
 })
 class StandardMonthViewComponent {
@@ -321,7 +322,7 @@ class StandardMonthViewComponent {
       [dateFilter]="dateFilter"
       [(pickerMoment)]="pickerMoment"></owl-date-time-month-view>
   `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [OwlMonthViewComponent]
 })
 class MonthViewWithDateFilterComponent {

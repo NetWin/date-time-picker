@@ -25,9 +25,7 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true,
-    "fullTemplateTypeCheck": true,
-    // TODO: enable when possible
-    "strictStandalone": false,
+    "strictStandalone": true,
     "typeCheckHostBindings": true
   }
 }

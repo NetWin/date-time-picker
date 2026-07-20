@@ -7,50 +7,63 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref }}
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Setup node
+        uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          node-version-file: .nvmrc
 
-      - name: Prepare Changelog Entries
-        id: changelog
-        run: |
-          ./build/changelog-preview.sh "master" "${{ github.event.pull_request.head.sha }}"
-
-      - name: Find Comment
-        uses: peter-evans/find-comment@v3
-        id: fc
+      - name: Run semantic-release dry-run
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: changelog-preview-1337
+          ci: false
+          dry_run: true
+          unset_gha_env: true
+          branches: |
+            ['${{ github.head_ref }}']
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+            conventional-changelog-conventionalcommits@9
 
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v4
+      - name: Comment PR with release preview
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            This repository uses [semantic-release](https://github.com/semantic-release/semantic-release) to automate the process of releasing new versions. The following changelog entries would be generated for the next release. Please review them to ensure they correctly reflect the changes in this pull request.
-            If you want to change the changelog entries, please edit the commit messages in this pull request following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) guidelines. Use `git rebase -i ${{ github.event.pull_request.base.ref }}` to edit the commit history.
+          header: semantic-release-preview
+          message: |
+            ## 📋 Release Preview
 
-            Changelog preview (the formatting is slightly different from the actual release):
+            ### Changelog
+            ${{ steps.semantic.outputs.new_release_notes }}
 
-            ```md
-            ${{ steps.changelog.outputs.changelog || 'This PR does not trigger any release. No changelog entries will be generated.'}}
-            ```
+      - name: Comment PR with no release info
+        if: steps.semantic.outputs.new_release_published != 'true'
+        uses: marocchino/sticky-pull-request-comment@v3
+        with:
+          header: semantic-release-preview
+          message: |
+            ## 📋 Release Preview
 
-            <!-- changelog-preview-1337 -->
-          edit-mode: replace
+            ### ℹ️ No Release
+
+            This PR does not contain any commits that trigger a release.
+
+            **Commits that trigger a release:**
+            - `feat(scope):` New features → minor version
+            - `fix(scope):` Bug fixes → patch version
+            - `refactor(scope):` Code refactoring → patch version
+            - `build(deps):` Dependency updates → patch version
+            - `BREAKING CHANGE:` in commit body → major version

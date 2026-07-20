@@ -1,6 +1,4 @@
-/**
- * native-date-time-adapter.class
- */
+/** Native-date-time-adapter.class */
 
 import { Platform } from '@angular/cdk/platform';
 import { inject, Injectable } from '@angular/core';
@@ -19,7 +17,8 @@ import { DateTimeAdapter, OWL_DATE_TIME_LOCALE } from './date-time-adapter.class
  * (https://tools.ietf.org/html/rfc3339). Note that the string may not actually be a valid date
  * because the regex will match strings an with out of bounds month, date, etc.
  */
-const ISO_8601_REGEX = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+-]\d{2}:\d{2}))?)?$/;
+const ISO_8601_REGEX =
+  /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|(?:[+-]\d{2}:\d{2}))?)?$/;
 
 @Injectable()
 export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
@@ -30,10 +29,10 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   private readonly _clampDate: boolean;
 
   /**
-   * Whether to use `timeZone: 'utc'` with `Intl.DateTimeFormat` when formatting dates.
-   * Without this `Intl.DateTimeFormat` sometimes chooses the wrong timeZone, which can throw off
-   * the result. (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()`
-   * will produce `'8/13/1800'`.
+   * Whether to use `timeZone: 'utc'` with `Intl.DateTimeFormat` when formatting dates. Without this
+   * `Intl.DateTimeFormat` sometimes chooses the wrong timeZone, which can throw off the result.
+   * (e.g. in the en-US locale `new Date(1800, 7, 14).toLocaleDateString()` will produce
+   * `'8/13/1800'`.
    */
   public useUtcForDisplay: boolean;
 
@@ -96,9 +95,11 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
       );
 
       const timeStampLeft =
-        this.getTime(dateLeftStartOfDay) - dateLeftStartOfDay.getTimezoneOffset() * this.milliseondsInMinute;
+        this.getTime(dateLeftStartOfDay) -
+        dateLeftStartOfDay.getTimezoneOffset() * this.milliseondsInMinute;
       const timeStampRight =
-        this.getTime(dateRightStartOfDay) - dateRightStartOfDay.getTimezoneOffset() * this.milliseondsInMinute;
+        this.getTime(dateRightStartOfDay) -
+        dateRightStartOfDay.getTimezoneOffset() * this.milliseondsInMinute;
       return Math.round((timeStampLeft - timeStampRight) / this.millisecondsInDay);
     } else {
       return null;
@@ -119,7 +120,9 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   public getMonthNames(style: Intl.DateTimeFormatOptions['month']): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), { month: style, timeZone: 'utc' });
-      return range(12, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, i, 1))));
+      return range(12, (i) =>
+        this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, i, 1)))
+      );
     }
     return DEFAULT_MONTH_NAMES[style];
   }
@@ -127,7 +130,9 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   public getDayOfWeekNames(style: Intl.DateTimeFormatOptions['weekday']): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), { weekday: style, timeZone: 'utc' });
-      return range(7, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1))));
+      return range(7, (i) =>
+        this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1)))
+      );
     }
 
     return DEFAULT_DAY_OF_WEEK_NAMES[style];
@@ -136,7 +141,9 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   public getDateNames(): Array<string> {
     if (SUPPORTS_INTL_API) {
       const dtf = new Intl.DateTimeFormat(this.getLocale(), { day: 'numeric', timeZone: 'utc' });
-      return range(31, (i) => this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1))));
+      return range(31, (i) =>
+        this.stripDirectionalityCharacters(this._format(dtf, new Date(2017, 0, i + 1)))
+      );
     }
     return DEFAULT_DATE_NAMES;
   }
@@ -305,11 +312,11 @@ export class NativeDateTimeAdapter extends DateTimeAdapter<Date> {
   }
 
   /**
-   * When converting Date object to string, javascript built-in functions may return wrong
-   * results because it applies its internal DST rules. The DST rules around the world change
-   * very frequently, and the current valid rule is not always valid in previous years though.
-   * We work around this problem building a new Date object which has its internal UTC
-   * representation with the local date and time.
+   * When converting Date object to string, javascript built-in functions may return wrong results
+   * because it applies its internal DST rules. The DST rules around the world change very
+   * frequently, and the current valid rule is not always valid in previous years though. We work
+   * around this problem building a new Date object which has its internal UTC representation with
+   * the local date and time.
    */
   private _format(dtf: Intl.DateTimeFormat, date: Date): string {
     const d = new Date(

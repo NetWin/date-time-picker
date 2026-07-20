@@ -1,7 +1,6 @@
-import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, Routes, withHashLocation, withInMemoryScrolling } from '@angular/router';
 import {
   NG_DOC_DEFAULT_PAGE_PROCESSORS,
@@ -19,7 +18,6 @@ const routes: Routes = [...NG_DOC_ROUTING, { path: '**', redirectTo: 'home', pat
 
 const appConfig: ApplicationConfig = {
   providers: [
-    provideAnimations(),
     provideZoneChangeDetection(),
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
@@ -27,7 +25,6 @@ const appConfig: ApplicationConfig = {
       withHashLocation(),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
     ),
-    provideHttpClient(withInterceptorsFromDi(), withFetch()),
     provideNgDocContext(),
     provideNgDocApp(),
     provideSearchEngine(NgDocDefaultSearchEngine),

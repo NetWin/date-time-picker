@@ -12,7 +12,10 @@ export {
 export { NativeDateTimeAdapter } from './lib/date-time/adapter/native-date-time-adapter.class';
 export { UnixTimestampDateTimeAdapter } from './lib/date-time/adapter/unix-timestamp-adapter/unix-timestamp-date-time-adapter.class';
 
-export { OWL_DATE_TIME_FORMATS, type OwlDateTimeFormats } from './lib/date-time/adapter/date-time-format.class';
+export {
+  OWL_DATE_TIME_FORMATS,
+  type OwlDateTimeFormats
+} from './lib/date-time/adapter/date-time-format.class';
 export { OWL_UNIX_TIMESTAMP_DATE_TIME_FORMATS } from './lib/date-time/adapter/unix-timestamp-adapter/unix-timestamp-date-time-format.class';
 
 export * from './lib/date-time/calendar-body.component';
@@ -25,4 +28,9 @@ export * from './lib/date-time/timer.component';
 
 export * from './lib/date-time/options-provider';
 
-export { DateView, type DateViewType, type PickerType, type SelectMode } from './lib/date-time/date-time.class';
+export {
+  DateView,
+  type DateViewType,
+  type PickerType,
+  type SelectMode
+} from './lib/date-time/date-time.class';

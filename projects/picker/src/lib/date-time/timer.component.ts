@@ -67,29 +67,19 @@ export class OwlTimerComponent<T> {
 
   private isPM = false; // a flag indicates the current timer moment is in PM or AM
 
-  /**
-   * Whether to show the second's timer
-   */
+  /** Whether to show the second's timer */
   public readonly showSecondsTimer = input<boolean>(undefined);
 
-  /**
-   * Whether the timer is in hour12 format
-   */
+  /** Whether the timer is in hour12 format */
   public readonly hour12Timer = input<boolean>(undefined);
 
-  /**
-   * Hours to change per step
-   */
+  /** Hours to change per step */
   public readonly stepHour = input(1);
 
-  /**
-   * Minutes to change per step
-   */
+  /** Minutes to change per step */
   public readonly stepMinute = input(1);
 
-  /**
-   * Seconds to change per step
-   */
+  /** Seconds to change per step */
   public readonly stepSecond = input(1);
 
   public readonly selectedChange = output<T>();
@@ -99,9 +89,8 @@ export class OwlTimerComponent<T> {
   }
 
   /**
-   * The value would be displayed in hourBox.
-   * We need this because the value displayed in hourBox it not
-   * the same as the hourValue when the timer is in hour12Timer mode.
+   * The value would be displayed in hourBox. We need this because the value displayed in hourBox it
+   * not the same as the hourValue when the timer is in hour12Timer mode.
    */
   protected get hourBoxValue(): number {
     let hours = this.hourValue;
@@ -161,9 +150,7 @@ export class OwlTimerComponent<T> {
     return this.isPM ? this.pickerIntl.hour12PMLabel : this.pickerIntl.hour12AMLabel;
   }
 
-  /**
-   * Focus to the host element
-   */
+  /** Focus to the host element */
   public focus(): void {
     this.ngZone.runOutsideAngular(() => {
       this.ngZone.onStable
@@ -176,8 +163,8 @@ export class OwlTimerComponent<T> {
   }
 
   /**
-   * Set the hour value via typing into timer box input
-   * We need this to handle the hour value when the timer is in hour12 mode
+   * Set the hour value via typing into timer box input We need this to handle the hour value when
+   * the timer is in hour12 mode
    */
   public setHourValueViaInput(hours: number): void {
     const hour12Timer = this.hour12Timer();
@@ -226,53 +213,39 @@ export class OwlTimerComponent<T> {
     event.preventDefault();
   }
 
-  /**
-   * Check if the up hour button is enabled
-   */
+  /** Check if the up hour button is enabled */
   public upHourEnabled(): boolean {
     return !this.maxDateTime || this.compareHours(this.stepHour(), this.maxDateTime) < 1;
   }
 
-  /**
-   * Check if the down hour button is enabled
-   */
+  /** Check if the down hour button is enabled */
   public downHourEnabled(): boolean {
     return !this.minDateTime || this.compareHours(-this.stepHour(), this.minDateTime) > -1;
   }
 
-  /**
-   * Check if the up minute button is enabled
-   */
+  /** Check if the up minute button is enabled */
   public upMinuteEnabled(): boolean {
     return !this.maxDateTime || this.compareMinutes(this.stepMinute(), this.maxDateTime) < 1;
   }
 
-  /**
-   * Check if the down minute button is enabled
-   */
+  /** Check if the down minute button is enabled */
   public downMinuteEnabled(): boolean {
     return !this.minDateTime || this.compareMinutes(-this.stepMinute(), this.minDateTime) > -1;
   }
 
-  /**
-   * Check if the up second button is enabled
-   */
+  /** Check if the up second button is enabled */
   public upSecondEnabled(): boolean {
     return !this.maxDateTime || this.compareSeconds(this.stepSecond(), this.maxDateTime) < 1;
   }
 
-  /**
-   * Check if the down second button is enabled
-   */
+  /** Check if the down second button is enabled */
   public downSecondEnabled(): boolean {
     return !this.minDateTime || this.compareSeconds(-this.stepSecond(), this.minDateTime) > -1;
   }
 
   /**
-   * PickerMoment's hour value +/- certain amount and compare it to the give date
-   * 1 is after the comparedDate
-   * -1 is before the comparedDate
-   * 0 is equal the comparedDate
+   * PickerMoment's hour value +/- certain amount and compare it to the give date 1 is after the
+   * comparedDate -1 is before the comparedDate 0 is equal the comparedDate
    */
   private compareHours(amount: number, comparedDate: T): number {
     const hours = this.dateTimeAdapter.getHours(this.pickerMoment) + amount;
@@ -281,10 +254,8 @@ export class OwlTimerComponent<T> {
   }
 
   /**
-   * PickerMoment's minute value +/- certain amount and compare it to the give date
-   * 1 is after the comparedDate
-   * -1 is before the comparedDate
-   * 0 is equal the comparedDate
+   * PickerMoment's minute value +/- certain amount and compare it to the give date 1 is after the
+   * comparedDate -1 is before the comparedDate 0 is equal the comparedDate
    */
   private compareMinutes(amount: number, comparedDate: T): number {
     const minutes = this.dateTimeAdapter.getMinutes(this.pickerMoment) + amount;
@@ -293,10 +264,8 @@ export class OwlTimerComponent<T> {
   }
 
   /**
-   * PickerMoment's second value +/- certain amount and compare it to the give date
-   * 1 is after the comparedDate
-   * -1 is before the comparedDate
-   * 0 is equal the comparedDate
+   * PickerMoment's second value +/- certain amount and compare it to the give date 1 is after the
+   * comparedDate -1 is before the comparedDate 0 is equal the comparedDate
    */
   private compareSeconds(amount: number, comparedDate: T): number {
     const seconds = this.dateTimeAdapter.getSeconds(this.pickerMoment) + amount;
@@ -304,10 +273,10 @@ export class OwlTimerComponent<T> {
     return this.dateTimeAdapter.compare(result, comparedDate);
   }
 
-  /**
-   * Get a valid date object
-   */
+  /** Get a valid date object */
   private getValidDate(obj: unknown): T | null {
-    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj) ? obj : null;
+    return this.dateTimeAdapter.isDateInstance(obj) && this.dateTimeAdapter.isValid(obj)
+      ? obj
+      : null;
   }
 }
