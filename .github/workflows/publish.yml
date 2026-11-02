@@ -21,20 +21,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup node
-        uses: actions/setup-node@v6
+        uses: pnpm/setup@v3
         with:
-          node-version-file: .nvmrc
-          registry-url: 'https://registry.npmjs.org'
-          cache: 'pnpm'
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+          cache: true
 
       - name: Run Linter
         run: pnpm lint
@@ -46,7 +38,12 @@ jobs:
         run: pnpm build
 
       - name: Release
+        uses: cycjimmy/semantic-release-action@v8
+        with:
+          semantic_version: 25
+          extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/git
+            conventional-changelog-conventionalcommits@9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm exec semantic-release

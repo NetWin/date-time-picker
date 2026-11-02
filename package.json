@@ -59,8 +59,6 @@
     "@commitlint/config-angular": "^21.2.4",
     "@commitlint/types": "^21.2.3",
     "@eslint/js": "^10.0.1",
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/git": "^11.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "angular-eslint": "^22.6.0",
     "eslint": "^10.13.0",
@@ -70,7 +68,6 @@
     "lint-staged": "^17.6.0",
     "ng-packagr": "^22.2.5",
     "oxfmt": "^0.74.0",
-    "semantic-release": "^25.0.9",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
