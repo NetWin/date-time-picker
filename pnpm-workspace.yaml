@@ -1,6 +1,5 @@
 allowBuilds:
   '@parcel/watcher': true
-  '@swc/core': true
   esbuild: true
   lightningcss-cli: true
   lmdb: true
