@@ -37,6 +37,10 @@ jobs:
       - name: Build library
         run: pnpm build
 
+      # Trusted publishing needs npm >= 11.5.1, the Node runtime installed by pnpm ships without npm
+      - name: Install npm
+        run: pnpm add --global npm@^11 && npm --version
+
       - name: Release
         uses: cycjimmy/semantic-release-action@v8
         with:
