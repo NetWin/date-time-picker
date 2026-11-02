@@ -6,13 +6,8 @@ allowBuilds:
   lmdb: true
   msgpackr-extract: true
 
-minimumReleaseAge: 1440
-minimumReleaseAgeExclude:
-  - '@ng-doc/app@21.1.0'
-  - '@ng-doc/builder@21.1.0'
-  - '@ng-doc/core@21.1.0'
-  - '@ng-doc/ui-kit@21.1.0'
-  - '@ng-doc/utils@21.1.0'
+# Only allow packages that have been released for at least 7 days (10080 minutes)
+minimumReleaseAge: 10080
 
 trustLockfile: true
 trustPolicy: no-downgrade
