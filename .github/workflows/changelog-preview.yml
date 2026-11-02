@@ -17,14 +17,15 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
-      - name: Setup node
-        uses: actions/setup-node@v6
+      - name: Install pnpm
+        uses: pnpm/setup@v3
         with:
-          node-version-file: .nvmrc
+          install: false
+          cache: true
 
       - name: Run semantic-release dry-run
         id: semantic
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -20,12 +20,51 @@ var plugins = [
     {
       preset: 'angular',
       releaseRules: [
+        { breaking: true, release: 'major' },
         { type: 'build', scope: 'deps', release: 'patch' },
         { type: 'refactor', release: 'patch' }
       ]
     }
   ],
-  '@semantic-release/release-notes-generator'
+  [
+    '@semantic-release/release-notes-generator',
+    {
+      preset: 'conventionalcommits',
+      parserOpts: {
+        referenceActions: [
+          'close',
+          'closes',
+          'closed',
+          'fix',
+          'fixes',
+          'fixed',
+          'resolve',
+          'resolves',
+          'resolved',
+          'relates to',
+          'addresses'
+        ]
+          .map((word) => [word, `${word}:`])
+          .flat()
+      },
+      presetConfig: {
+        types: [
+          { type: 'feat', section: '🚀 Features' },
+          { type: 'fix', section: '🩹 Bug Fixes' },
+          { type: 'perf', section: '⚡ Performance Improvements' },
+          { type: 'revert', section: '↩️ Reverts' },
+          { type: 'docs', section: '📖 Documentation' },
+          { type: 'style', section: '🎨 Code Style' },
+          { type: 'chore', section: '🔧 Miscellaneous Chores' },
+          { type: 'refactor', section: '🛠️ Code Refactoring' },
+          { type: 'test', section: '🧪 Tests' },
+          { type: 'build', scope: 'deps', section: '🏗 Dependency updates' },
+          { type: 'build', hidden: true },
+          { type: 'ci', section: '🔄️ Continuous Integration' }
+        ]
+      }
+    }
+  ]
 ];
 
 if (!isPreview) {
@@ -45,7 +84,6 @@ if (!isPreview) {
   );
 }
 
-/** @type {import('semantic-release').Options} */
 var config = {
   repositoryUrl: 'git@github.com:netwin/date-time-picker.git',
   branches: ['master', { name: 'release/*', channel: 'next', prerelease: 'rc' }],
