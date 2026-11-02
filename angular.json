@@ -37,93 +37,33 @@
       "prefix": "owl",
       "architect": {
         "build": {
-          "builder": "@ng-doc/builder:application",
+          "builder": "@ng-doc/builder:vite-application",
           "options": {
-            "allowedCommonJsDependencies": ["@ng-doc/core"],
-            "aot": true,
-            "outputPath": {
-              "base": "dist/docs"
-            },
-            "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
-            "tsConfig": "src/tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "node_modules/@ng-doc/app/assets",
-                "output": "assets/ng-doc/app"
-              },
-              {
-                "glob": "**/*",
-                "input": "node_modules/@ng-doc/ui-kit/assets",
-                "output": "assets/ng-doc/ui-kit"
-              },
-              {
-                "glob": "**/*",
-                "input": "ng-doc/docs/assets",
-                "output": "assets/ng-doc"
-              },
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": ["node_modules/@ng-doc/app/styles/global.css", "src/styles.css"],
-            "scripts": [],
-            "browser": "src/main.ts"
+            "configFile": "src/vite.config.mjs",
+            "outputPath": "dist/docs"
           },
           "configurations": {
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ]
+              "mode": "production"
             },
             "development": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ],
-              "optimization": false,
-              "outputHashing": "none",
-              "sourceMap": true,
-              "namedChunks": true,
-              "aot": true,
-              "extractLicenses": false
+              "mode": "development"
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ng-doc/builder:dev-server",
+          "builder": "@ng-doc/builder:vite-dev-server",
           "options": {
-            "buildTarget": "docs:build",
+            "configFile": "src/vite.config.mjs",
             "port": 4201
           },
           "configurations": {
             "production": {
-              "buildTarget": "docs:build:production"
+              "mode": "production"
             },
             "development": {
-              "buildTarget": "docs:build:development"
+              "mode": "development"
             }
           },
           "defaultConfiguration": "development"

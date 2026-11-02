@@ -12,5 +12,5 @@
   },
   "include": [],
   "exclude": ["test.ts", "**/*.spec.ts"],
-  "files": ["main.ts", "polyfills.ts"]
+  "files": ["main.ts"]
 }
