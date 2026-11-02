@@ -1,3 +1,20 @@
+## [22.0.1](https://github.com/netwin/date-time-picker/compare/22.0.0...22.0.1) (2026-11-02)
+
+### 🛠️ Code Refactoring
+
+* **oxfmt:** do not format CHANGELOG.md anymore ([d19239e](https://github.com/netwin/date-time-picker/commit/d19239e7a3f8c955c77aef9134b9925c3ba4894d))
+
+### 🏗 Dependency updates
+
+* **deps:** require a minimum release age of 7 days for dependencies ([4871772](https://github.com/netwin/date-time-picker/commit/487177294978f085bbb6335f8752f388b47bb9c0))
+* **deps:** update dependencies to their latest versions and drop unused ones ([6afdac4](https://github.com/netwin/date-time-picker/commit/6afdac4b93d8d8b2d327b7fdd771d802759c6f7d))
+* **deps:** update pnpm to 12.15.0 ([a6dd81b](https://github.com/netwin/date-time-picker/commit/a6dd81b4553c77d0d5208c513371574fb819c5e8))
+
+### 🔄️ Continuous Integration
+
+* **release:** install an npm version that supports trusted publishing ([b76914a](https://github.com/netwin/date-time-picker/commit/b76914aac1fb9a49e3d759833458d9d4f3f60d33))
+* **workflows:** switch to pnpm/setup and the semantic-release action ([4be16de](https://github.com/netwin/date-time-picker/commit/4be16de3032d3b7d887c8798ea4d0a82b894741d))
+
 # [22.0.0](https://github.com/netwin/date-time-picker/compare/21.0.0...22.0.0) (2026-07-20)
 
 
