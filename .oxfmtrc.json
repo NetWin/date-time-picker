@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": ["CHANGELOG.md"],
   "bracketSameLine": true,
   "jsdoc": true,
   "singleAttributePerLine": true,
